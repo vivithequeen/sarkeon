@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://q240hopceoi0"]
+
+[ext_resource type="Texture2D" uid="uid://ghch5q1h7qcs" path="res://assets/sand/particles/sand_yellow.png" id="1_jyxhg"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dbuvf"]
+texture = ExtResource("1_jyxhg")
+texture_region_size = Vector2i(1, 1)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_7m8aq"]
+tile_size = Vector2i(1, 1)
+physics_layer_0/collision_layer = 2
+physics_layer_0/collision_mask = 0
+sources/0 = SubResource("TileSetAtlasSource_dbuvf")
+
+[node name="Sand" type="Node2D"]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_set = SubResource("TileSet_7m8aq")
