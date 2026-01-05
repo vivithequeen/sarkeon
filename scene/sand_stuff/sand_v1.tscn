@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://q240hopceoi0"]
+[gd_scene load_steps=6 format=3 uid="uid://q240hopceoi0"]
 
 [ext_resource type="Texture2D" uid="uid://bf1yn4xulhhf7" path="res://assets/sand/particles/MainColors.png" id="1_dbuvf"]
 [ext_resource type="Script" uid="uid://dgmvrh7r65l2m" path="res://scene/sand_stuff/TileMapLayer.cs" id="2_dbuvf"]
+[ext_resource type="PackedScene" uid="uid://du8jev8sr22mj" path="res://player/Player.tscn" id="3_7m8aq"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7m8aq"]
 texture = ExtResource("1_dbuvf")
@@ -527,7 +528,12 @@ sources/0 = SubResource("TileSetAtlasSource_7m8aq")
 
 [node name="Sand" type="Node2D"]
 
+[node name="Player" parent="." instance=ExtResource("3_7m8aq")]
+position = Vector2(123.99999, 48)
+scale = Vector2(0.4, 0.4)
+
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
+position = Vector2(10, 40)
 scale = Vector2(4, 4)
 tile_set = SubResource("TileSet_7m8aq")
 script = ExtResource("2_dbuvf")

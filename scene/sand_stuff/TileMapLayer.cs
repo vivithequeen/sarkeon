@@ -12,66 +12,65 @@ public partial class TileMapLayer : Godot.TileMapLayer
 		STONE,
 		AIR
 	}
-	private struct NB_cell
+	private class NB_cell
 	{
-		public NB_cell(Vector2I p_position, Vector2 p_velocity, NB_cell_types p_type)
+		public NB_cell(Vector2 p_velocity, NB_cell_types p_type)
 		{
-			position = p_position;
 			velocity = p_velocity;
 			type = p_type;
 		}
-		public Vector2I position{ get; init; }
-		public Vector2 velocity{ get; init; }
-		public NB_cell_types type{ get; init; }
+		public Vector2 velocity;
+		public NB_cell_types type;
 	}
-	Vector2I size_x = new Vector2I(100,100);
-	List<int> moving_id;
+	//TODO make so it only rerenders updated pixels for optimization
+	// List<int> moving_id;
+		// Use this for initing ;-;
+		// moving_id = new List<int>();
+	//!X MUST NOT DIVIDE BY 2 SO IT CHECKS IN CHECKER PATTERN
+	Vector2I particle_sim_size = new Vector2I(201,100);
+	int particle_sim_abs_size;
 	NB_cell[] particles;
 	RandomNumberGenerator random_color;
 	public override void _Ready()
 	{
 		//Sets values
-		moving_id = new List<int>();
-		particles = new NB_cell[size_x.X * size_x.Y];
+		particle_sim_abs_size = particle_sim_size.X * particle_sim_size.Y;
+		particles = new NB_cell[particle_sim_abs_size];
 		random_color = new RandomNumberGenerator();
 		random_color.Randomize();
 
 		//Sets all particles
 		RandomNumberGenerator random_sand = new RandomNumberGenerator();
 		random_sand.Randomize();
-		for (int y = 0; y < size_x.Y; y++)
+		for (int y = 0; y < particle_sim_size.Y; y++)
 		{
-			for (int x = 0; x < size_x.X; x++)
+			for (int x = 0; x < particle_sim_size.X; x++)
 			{
 				if (random_sand.RandiRange(0, 5) == 0)
 				{
 					NB_cell temp_cell = new NB_cell(
-					new Vector2I(x,y),
 					new Vector2(0,0),
 					NB_cell_types.SAND);
-					particles[x+y*size_x.X] = temp_cell;
-					moving_id.Add(x+y*size_x.X);
+					particles[x+y*particle_sim_size.X] = temp_cell;
 				} else
 				{
 					NB_cell temp_cell = new NB_cell(
-					new Vector2I(x,y),
 					new Vector2(0,0),
 					NB_cell_types.AIR);
-					particles[x+y*size_x.X] = temp_cell;
-					moving_id.Append(x+y*size_x.X);
+					particles[x+y*particle_sim_size.X] = temp_cell;
 				}
 			}
 		}
 
 		//Sets base stone
-		for (int x = 0; x < size_x.X; x++)
+		for (int x = 0; x < particle_sim_size.X; x++)
 		{
 			NB_cell temp_cell = new NB_cell(
-			new Vector2I(x,50),
 			new Vector2(0,0),
 			NB_cell_types.STONE);
-			particles[x+50*size_x.X] = temp_cell;
+			particles[x+(particle_sim_size.Y-1)*particle_sim_size.X] = temp_cell;
 		}
+
 
 		//Updates visuals
 		updateParticleVisuals();
@@ -80,34 +79,78 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	public void updateParticleVisuals()
 	{
 		int color_var = 0;
-		foreach (NB_cell particle in particles)
+		for (int i = 0; i < particle_sim_abs_size; i++)
 		{
+			
+			Vector2I position = idToPosition(i);
+			NB_cell particle = particles[i];
 			//TODO make it render for each type instead matching each time ;-;
 			switch (particle.type)
 			{
 				case NB_cell_types.SAND:
 					color_var += random_color.RandiRange(-2,2);
 					color_var = Math.Clamp(color_var, 0, 4);
-					SetCell(particle.position, 0, new Vector2I(14,color_var));
+					SetCell(position, 0, new Vector2I(14,color_var));
 					break;
 				case NB_cell_types.STONE:
 					color_var += random_color.RandiRange(-2,2);
 					color_var = Math.Clamp(color_var, 0, 5);
-					SetCell(particle.position, 0, new Vector2I(color_var + 9,15));
+					SetCell(position, 0, new Vector2I(color_var + 9,15));
 					break;
 				case NB_cell_types.AIR:
-					SetCell(particle.position, -1);
+					SetCell(position, -1);
 					break;
 			}
 		}
-		
+	}
+	private Vector2I idToPosition(int id)
+	{
+		return new Vector2I(
+			id % particle_sim_size.X,
+			id / particle_sim_size.X
+		);
 	}
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	float timer_update = 0;
-	float timer_update_max = 1;
+	double timer_update = 0;
+	double timer_update_max = 0.1;
+	//Used to eliminate race condition
+	int pair_update_cycle = 0;
+
+	public void updateParticleMovings()
+	{
+		for (int i = 0; i < particle_sim_abs_size / 2; i++)
+		{
+			int index = i*2+pair_update_cycle;
+			NB_cell particle = particles[index];
+			switch (particle.type)
+			{
+				case NB_cell_types.SAND:
+					if (index+particle_sim_size.X >= particle_sim_abs_size){break;}
+					if (particles[index+particle_sim_size.X].type == NB_cell_types.AIR)
+					{
+						particles[index] = new NB_cell(
+						new Vector2(0,0),
+						NB_cell_types.AIR);
+						particles[index+particle_sim_size.X] = particle;
+					}
+					break;
+				case NB_cell_types.STONE:
+					break;
+				case NB_cell_types.AIR:
+					break;
+			}
+		}
+	}
 
 	public override void _Process(double delta)
 	{
-		
+		timer_update += delta;
+		if (timer_update > timer_update_max)
+		{
+			updateParticleMovings();
+			updateParticleVisuals();
+			pair_update_cycle = (pair_update_cycle + 1) % 2;
+			timer_update = 0;
+		}
 	}
 }
