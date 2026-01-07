@@ -20,9 +20,8 @@ public partial class Player : CharacterBody2D
 	public int IdleDrag = 300;
 	public Vector2 IdleState(double delta, Vector2 velocity)
 	{
-		Vector2 direction = Input.GetVector("left", "right", "up", "down");
-		GD.Print(direction);
-		if (direction.X != 0)
+		float direction = Input.GetAxis("left", "right");
+		if (direction != 0)	
 		{
 			CurrentPlayerState = PlayerState.Walking;
 		}
@@ -33,15 +32,15 @@ public partial class Player : CharacterBody2D
 		return velocity;
 	}
 	//Walking
-	public float WalkingAcceleration = 30.0f;
+	public float WalkingAcceleration = 60.0f;
 	public int WalkingSpeed = 300;
-	public float WalkingDrag = 40.0f;
+	public float WalkingDrag = 60.0f;
 	public Vector2 WalkingState(double delta, Vector2 velocity)
 	{
-		Vector2 direction = Input.GetVector("left", "right", "up", "down");
-		if (direction.X != 0)
+		float direction = Input.GetAxis("left", "right");
+		if (direction != 0)
 		{
-			DesiredSpeed = direction.X * WalkingSpeed;
+			DesiredSpeed = direction * WalkingSpeed;
 			velocity.X = Mathf.MoveToward(velocity.X, DesiredSpeed,WalkingAcceleration);
 		}
 		else
@@ -54,22 +53,22 @@ public partial class Player : CharacterBody2D
 		return velocity;
 	}
 	//Air
-	public float AirAcceleration = 10.0f;
-	public int AirSpeed = 100;
+	public float AirAcceleration = 40.0f;
+	public int AirSpeed = 200;
 	public float AirDrag = 20.0f;
 	public Vector2 AirState(double delta, Vector2 velocity)
 	{
 
-		Vector2 direction = Input.GetVector("left", "right", "up", "down");
-		if (direction != Vector2.Zero)
+		float direction = Input.GetAxis("left", "right");
+		if (direction != 0)
 		{
-			DesiredSpeed = direction.X * WalkingSpeed;
+			DesiredSpeed = direction * WalkingSpeed;
 			velocity.X = Mathf.MoveToward(velocity.X, DesiredSpeed,AirAcceleration);
 		}
 		else
 		{
-			DesiredSpeed = direction.X * WalkingSpeed;
-			velocity.X = Mathf.MoveToward(velocity.X, DesiredSpeed,AirAcceleration);
+			DesiredSpeed = direction * WalkingSpeed;
+			velocity.X = Mathf.MoveToward(velocity.X, DesiredSpeed,AirDrag);
 		}
 		return velocity;
 	}
