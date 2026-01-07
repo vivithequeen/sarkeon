@@ -4,13 +4,11 @@
 [ext_resource type="Script" uid="uid://dcjagmo48jnr5" path="res://creatures/base_nodes/BodySegmentBase.cs" id="1_jyrl0"]
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_a6mud"]
-target_nodepath = NodePath("test_target")
 joint_one_bone_idx = 0
-joint_one_bone2d_node = NodePath("BaseLeg")
 joint_two_bone_idx = 1
-joint_two_bone2d_node = NodePath("BaseLeg/Bone2D")
 
 [sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_jyrl0"]
+enabled = true
 modification_count = 1
 modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_a6mud")
 
@@ -19,11 +17,3 @@ modification_stack = SubResource("SkeletonModificationStack2D_jyrl0")
 script = ExtResource("1_jyrl0")
 
 [node name="BaseLeg" parent="." instance=ExtResource("1_a6mud")]
-rest = Transform2D(1, 0, 0, 1, 0, 0)
-
-[node name="Bone2D" parent="BaseLeg" index="0"]
-rest = Transform2D(1, 0, 0, 1, 23, -1)
-
-[node name="test_target" type="Node2D" parent="."]
-
-[editable path="BaseLeg"]

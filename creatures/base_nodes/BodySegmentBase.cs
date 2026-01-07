@@ -11,6 +11,5 @@ public partial class BodySegmentBase : Skeleton2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		GetNode<Node2D>("test_target").GlobalPosition = GetGlobalMousePosition();
 	}
 }
