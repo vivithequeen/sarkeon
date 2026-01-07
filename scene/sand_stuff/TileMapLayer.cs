@@ -97,19 +97,21 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	{
 		foreach (var index_of_cell in particles_buffer_updated_index)
 		{
+			particles_buffer[index_of_cell] = false;
 			particlesUpdateVisual(index_of_cell, 1);
 		}
 		foreach (var index_of_cell in particles_marked_solid)
 		{
+			particles_buffer[index_of_cell] = true;
 			particlesUpdateVisual(index_of_cell, 0);
 		}
 		particles_buffer_updated_index.Clear();
+		particles_marked_solid.Clear();
 	}
 	private void particlesUpdateVisual(int p_index, int p_layer)
 	{
 		Vector2I position = idToPosition(p_index);
 		NB_cell particle = particles[p_index];
-		particles_buffer[p_index] = false;
 		switch (particle.type)
 		{
 			case NB_cell_types.SAND:
@@ -150,26 +152,32 @@ public partial class TileMapLayer : Godot.TileMapLayer
 					NB_cell end_cell = particlesCheck(exchange_cell);
 					if (end_cell.type == NB_cell_types.AIR)
 					{
-						particlesSwap(index, exchange_cell);
-						particleLockNUpdateDoubl(index, exchange_cell);
-						break;
+						particle.velocity += new Vector2(0,1);
 					} 
-					exchange_cell = index+particle_sim_size.X + (odd_update? 1: -1);
+					// exchange_cell = index+particle_sim_size.X + (odd_update? 1: -1);
+					// end_cell = particlesCheck(exchange_cell);
+					// if (end_cell.type == NB_cell_types.AIR)
+					// {
+					// 	particlesSwap(index, exchange_cell);
+					// 	particleLockNUpdateDoubl(index, exchange_cell);
+					// 	break;
+					// } 
+					// exchange_cell = index+particle_sim_size.X + (odd_update? -1: 1);
+					// end_cell = particlesCheck(exchange_cell);
+					// if (end_cell.type == NB_cell_types.AIR)
+					// {
+					// 	particlesSwap(index, exchange_cell);
+					// 	particleLockNUpdateDoubl(index, exchange_cell);
+					// 	break;
+					// } 
+					exchange_cell = (int)Math.Floor(index+particle.velocity.X + particle.velocity.Y*particle_sim_size.X);
 					end_cell = particlesCheck(exchange_cell);
 					if (end_cell.type == NB_cell_types.AIR)
 					{
 						particlesSwap(index, exchange_cell);
 						particleLockNUpdateDoubl(index, exchange_cell);
 						break;
-					} 
-					exchange_cell = index+particle_sim_size.X + (odd_update? -1: 1);
-					end_cell = particlesCheck(exchange_cell);
-					if (end_cell.type == NB_cell_types.AIR)
-					{
-						particlesSwap(index, exchange_cell);
-						particleLockNUpdateDoubl(index, exchange_cell);
-						break;
-					} 
+					}
 					particles_marked_solid.Add(index);
 					break;
 				case NB_cell_types.STONE:
@@ -205,9 +213,12 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	double timer_update = 0;
 	double timer_update_max = 0.01;
 	bool odd_update = false;
+	double last_fps = 0;
 
 	public override void _Process(double delta)
 	{
+		last_fps = (last_fps + delta) / 10;
+		GD.Print(0.1/last_fps);
 		timer_update += delta;
 		if (timer_update > timer_update_max)
 		{
