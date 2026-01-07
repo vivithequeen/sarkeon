@@ -159,24 +159,6 @@ public partial class TileMapLayer : Godot.TileMapLayer
 						{
 							particle.velocity += new Vector2(0,1);
 						}
-					} else
-					{
-						particle.vel_start = 0;
-						float lenght = particle.velocity.Length();
-						for (int step = 1; step < (int)lenght; step++)
-						{
-							exchange_cell = (int)(index+particle.velocity.X * step + particle.velocity.Y* step*particle_sim_size.X);
-							NB_cell result_cell = particlesCheck(exchange_cell);
-							if (result_cell.type != NB_cell_types.AIR)
-							{
-								step -= 1;
-								exchange_cell = (int)(index+particle.velocity.X * (step - 1) + particle.velocity.Y* (step - 1)*particle_sim_size.X);
-								particle.velocity = Vector2.Zero;
-								particlesSwap(index, exchange_cell);
-								particleLockNUpdateDoubl(index, exchange_cell);
-								break;
-							}
-						}
 					}
 					// exchange_cell = index+particle_sim_size.X + (odd_update? 1: -1);
 					// end_cell = particlesCheck(exchange_cell);
@@ -201,6 +183,35 @@ public partial class TileMapLayer : Godot.TileMapLayer
 						particlesSwap(index, exchange_cell);
 						particleLockNUpdateDoubl(index, exchange_cell);
 						break;
+					} else
+					{
+						particle.vel_start = 0;
+						int lenght = (int)Math.Max(particle.velocity.X, particle.velocity.Y) + 1;
+						Vector2 vector_directions = new Vector2(
+							(particle.velocity.X < 0)? -1 : 1,
+							(particle.velocity.Y < 0)? -1 : 1
+						);
+						Vector2 vector_abs = particle.velocity.Abs();
+						for (int step = 1; step < lenght; step++)
+						{
+							exchange_cell = (int)(index+
+								Math.Max(vector_abs.X - lenght - step, 0) * vector_directions.X+ 
+								Math.Max(vector_abs.Y - lenght - step, 0) * vector_directions.Y
+							);
+							NB_cell result_cell = particlesCheck(exchange_cell);
+							if (result_cell.type != NB_cell_types.AIR)
+							{
+								step -= 1;
+								exchange_cell = (int)(index+
+									Math.Max(vector_abs.X - lenght - step, 0) * vector_directions.X+ 
+									Math.Max(vector_abs.Y - lenght - step, 0) * vector_directions.Y
+								);
+								particle.velocity = Vector2.Zero;
+								particlesSwap(index, exchange_cell);
+								particleLockNUpdateDoubl(index, exchange_cell);
+								break;
+							}
+						}
 					}
 					break;
 				case NB_cell_types.STONE:
