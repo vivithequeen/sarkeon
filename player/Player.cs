@@ -49,7 +49,7 @@ public partial class Player : CharacterBody2D
 			velocity.X = Mathf.MoveToward(velocity.X, DesiredSpeed,WalkingDrag);
 			//CurrentPlayerState = PlayerState.Idle;
 		}
-		GD.Print(DesiredSpeed + " " + velocity.X);
+		// GD.Print(DesiredSpeed + " " + velocity.X);
 		return velocity;
 	}
 	//Air
