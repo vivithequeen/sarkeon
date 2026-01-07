@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://degnf08jcd5gy"]
+[gd_scene load_steps=5 format=3 uid="uid://degnf08jcd5gy"]
 
 [ext_resource type="Texture2D" uid="uid://37rti2u2jvdt" path="res://icon.svg" id="1_c083g"]
 [ext_resource type="PackedScene" uid="uid://du8jev8sr22mj" path="res://player/Player.tscn" id="2_gp5ux"]
+[ext_resource type="PackedScene" uid="uid://upxdswdj6xxv" path="res://creatures/base_nodes/BodySegmentBase.tscn" id="3_gp5ux"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uf1rh"]
 size = Vector2(1152, 104)
@@ -25,3 +26,5 @@ shape = SubResource("RectangleShape2D_uf1rh")
 position = Vector2(576, 596)
 scale = Vector2(9, 0.8125)
 texture = ExtResource("1_c083g")
+
+[node name="BodySegmentBase" parent="." instance=ExtResource("3_gp5ux")]

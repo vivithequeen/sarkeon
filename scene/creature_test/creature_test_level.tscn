@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3 uid="uid://dowdqq2cih1gf"]
+
+[ext_resource type="PackedScene" uid="uid://du8jev8sr22mj" path="res://player/Player.tscn" id="1_kkdob"]
+[ext_resource type="Texture2D" uid="uid://37rti2u2jvdt" path="res://icon.svg" id="2_k3v4h"]
+[ext_resource type="PackedScene" uid="uid://upxdswdj6xxv" path="res://creatures/base_nodes/BodySegmentBase.tscn" id="3_oefg8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uf1rh"]
+size = Vector2(1152, 104)
+
+[node name="PlayerTestLevel" type="Node2D"]
+
+[node name="Player" parent="." instance=ExtResource("1_kkdob")]
+position = Vector2(584, 400)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(392, 346)
+zoom = Vector2(1.73, 1.73)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(576, 596)
+shape = SubResource("RectangleShape2D_uf1rh")
+
+[node name="Icon" type="Sprite2D" parent="StaticBody2D"]
+position = Vector2(576, 596)
+scale = Vector2(9, 0.8125)
+texture = ExtResource("2_k3v4h")
+
+[node name="BodySegmentBase" parent="." instance=ExtResource("3_oefg8")]
+position = Vector2(361, 355)
