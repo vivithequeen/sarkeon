@@ -33,7 +33,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	// List<int> moving_id;
 		// Use this for initing ;-;
 		// moving_id = new List<int>();
-	Vector2I particle_sim_size = new Vector2I(100,500);
+	Vector2I particle_sim_size = new Vector2I(200,500);
 	int particle_sim_abs_size;
 	NB_cell[] particles;
 	bool[] particles_buffer;
@@ -99,7 +99,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 		foreach (var index_of_cell in particles_buffer_updated_index)
 		{
 			particles_buffer[index_of_cell] = false;
-			particlesUpdateVisual(index_of_cell, 1);
+			particlesUpdateVisual(index_of_cell, 0);
 		}
 		particles_buffer_updated_index.Clear();
 	}
@@ -155,7 +155,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 						end_cell = particlesCheck(exchange_cell);
 						if (end_cell.type == NB_cell_types.AIR)
 						{
-							particle.velocity += new Vector2(-1,0);
+							particle.velocity += new Vector2(odd_update?-1:1,1);
 						}
 						else
 						{
@@ -163,7 +163,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 							end_cell = particlesCheck(exchange_cell);
 							if (end_cell.type == NB_cell_types.AIR)
 							{
-								particle.velocity += new Vector2(-1,0);
+								particle.velocity += new Vector2(odd_update?1:-1,1);
 							}
 						}
 					}
@@ -246,9 +246,15 @@ public partial class TileMapLayer : Godot.TileMapLayer
 		last_fps = (last_fps + delta) / 10;
 		GD.Print(0.1/last_fps);
 		timer_update += delta;
+		odd_update = !odd_update;
 		if (timer_update > timer_update_max)
 		{
-			odd_update = !odd_update;
+			NB_cell temp_cell = new NB_cell(
+			new Vector2(0,0),
+			NB_cell_types.SAND);
+			particles[75101] = temp_cell;
+			particles[75100] = temp_cell;
+			particles[75102] = temp_cell;
 			updateParticleMovings();
 			updateParticleVisuals();
 			timer_update = 0;
