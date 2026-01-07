@@ -793,7 +793,7 @@ sources/1 = SubResource("TileSetAtlasSource_5myva")
 [node name="Sand" type="Node2D"]
 
 [node name="Player" parent="." instance=ExtResource("3_7m8aq")]
-position = Vector2(658.99994, 1899.9999)
+position = Vector2(17.000061, 1916.9999)
 scale = Vector2(0.4, 0.4)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]

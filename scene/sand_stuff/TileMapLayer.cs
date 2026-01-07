@@ -33,7 +33,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	// List<int> moving_id;
 		// Use this for initing ;-;
 		// moving_id = new List<int>();
-	Vector2I particle_sim_size = new Vector2I(500,500);
+	Vector2I particle_sim_size = new Vector2I(100,500);
 	int particle_sim_abs_size;
 	NB_cell[] particles;
 	bool[] particles_buffer;
@@ -145,37 +145,29 @@ public partial class TileMapLayer : Godot.TileMapLayer
 					//check bottom
 					int exchange_cell = index+particle_sim_size.X;
 					NB_cell end_cell = particlesCheck(exchange_cell);
-					// particle.velocity += new Vector2(1, 0);
 					if (end_cell.type == NB_cell_types.AIR)
 					{
-						particle.vel_start += 1;
-						if (particle.vel_start < 2)
+						particle.velocity += new Vector2(0,1);
+					}
+					else
+					{
+						exchange_cell = index+particle_sim_size.X + (odd_update?-1:1);
+						end_cell = particlesCheck(exchange_cell);
+						if (end_cell.type == NB_cell_types.AIR)
 						{
-							particlesSwap(index, exchange_cell);
-							particleLockNUpdateDoubl(index, exchange_cell);
-							break;
+							particle.velocity += new Vector2(-1,0);
 						}
 						else
 						{
-							particle.velocity += new Vector2(0,1);
+							exchange_cell = index+particle_sim_size.X + (odd_update?1:-1);
+							end_cell = particlesCheck(exchange_cell);
+							if (end_cell.type == NB_cell_types.AIR)
+							{
+								particle.velocity += new Vector2(-1,0);
+							}
 						}
 					}
-					// exchange_cell = index+particle_sim_size.X + (odd_update? 1: -1);
-					// end_cell = particlesCheck(exchange_cell);
-					// if (end_cell.type == NB_cell_types.AIR)
-					// {
-					// 	particlesSwap(index, exchange_cell);
-					// 	particleLockNUpdateDoubl(index, exchange_cell);
-					// 	break;
-					// } 
-					// exchange_cell = index+particle_sim_size.X + (odd_update? -1: 1);
-					// end_cell = particlesCheck(exchange_cell);
-					// if (end_cell.type == NB_cell_types.AIR)
-					// {
-					// 	particlesSwap(index, exchange_cell);
-					// 	particleLockNUpdateDoubl(index, exchange_cell);
-					// 	break;
-					// } 
+
 					exchange_cell = (int)(index+particle.velocity.X + particle.velocity.Y*particle_sim_size.X);
 					end_cell = particlesCheck(exchange_cell);
 					if (end_cell.type == NB_cell_types.AIR)
