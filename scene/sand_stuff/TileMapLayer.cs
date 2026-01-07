@@ -30,12 +30,15 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	Vector2I particle_sim_size = new Vector2I(201,100);
 	int particle_sim_abs_size;
 	NB_cell[] particles;
+	NB_cell[] particles_buffer;
+	List<int> particles_buffer_updated_index;
 	RandomNumberGenerator random_color;
 	public override void _Ready()
 	{
 		//Sets values
 		particle_sim_abs_size = particle_sim_size.X * particle_sim_size.Y;
 		particles = new NB_cell[particle_sim_abs_size];
+		particles_buffer = new NB_cell[particle_sim_abs_size];
 		random_color = new RandomNumberGenerator();
 		random_color.Randomize();
 
@@ -114,24 +117,35 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	double timer_update = 0;
 	double timer_update_max = 0.1;
 	//Used to eliminate race condition
-	int pair_update_cycle = 0;
-
 	public void updateParticleMovings()
 	{
-		for (int i = 0; i < particle_sim_abs_size / 2; i++)
+		for (int i = 0; i < particle_sim_abs_size; i++)
 		{
-			int index = i*2+pair_update_cycle;
+			int index = i;
 			NB_cell particle = particles[index];
 			switch (particle.type)
 			{
 				case NB_cell_types.SAND:
 					if (index+particle_sim_size.X >= particle_sim_abs_size){break;}
-					if (particles[index+particle_sim_size.X].type == NB_cell_types.AIR)
+					if (particles_buffer[index+particle_sim_size.X].type == NB_cell_types.AIR)
 					{
-						particles[index] = new NB_cell(
+						particles_buffer[index] = new NB_cell(
 						new Vector2(0,0),
 						NB_cell_types.AIR);
-						particles[index+particle_sim_size.X] = particle;
+						particles_buffer[index+particle_sim_size.X] = particle;
+						particles_buffer_updated_index.Add(index);
+						particles_buffer_updated_index.Add(index+particle_sim_size.X);
+					} else
+					{
+						if (particles_buffer[index+particle_sim_size.X - 1].type == NB_cell_types.AIR)
+						{
+							particles_buffer[index] = new NB_cell(
+							new Vector2(0,0),
+							NB_cell_types.AIR);
+							particles_buffer[index+particle_sim_size.X - 1] = particle;
+							particles_buffer_updated_index.Add(index);
+							particles_buffer_updated_index.Add(index+particle_sim_size.X - 1);
+						}
 					}
 					break;
 				case NB_cell_types.STONE:
@@ -149,7 +163,6 @@ public partial class TileMapLayer : Godot.TileMapLayer
 		{
 			updateParticleMovings();
 			updateParticleVisuals();
-			pair_update_cycle = (pair_update_cycle + 1) % 2;
 			timer_update = 0;
 		}
 	}
