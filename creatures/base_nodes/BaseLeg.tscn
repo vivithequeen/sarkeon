@@ -3,14 +3,16 @@
 [ext_resource type="Script" uid="uid://0kbab2yq2v4v" path="res://creatures/base_nodes/BaseLeg.cs" id="1_fwvm8"]
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_fwvm8"]
-target_nodepath = NodePath("test_target")
+target_nodepath = NodePath("Target")
+flip_bend_direction = true
 joint_one_bone_idx = 0
 joint_one_bone2d_node = NodePath("BaseLeg")
 joint_two_bone_idx = 1
 joint_two_bone2d_node = NodePath("BaseLeg/Bone2D")
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_x6ijj"]
-target_nodepath = NodePath("test_target")
+target_nodepath = NodePath("Target")
+flip_bend_direction = true
 joint_one_bone_idx = 1
 joint_one_bone2d_node = NodePath("BaseLeg/Bone2D")
 joint_two_bone_idx = 2
@@ -26,7 +28,7 @@ modifications/1 = SubResource("SkeletonModification2DTwoBoneIK_x6ijj")
 modification_stack = SubResource("SkeletonModificationStack2D_fwvm8")
 script = ExtResource("1_fwvm8")
 
-[node name="test_target" type="Node2D" parent="."]
+[node name="Target" type="Node2D" parent="."]
 position = Vector2(159, 0)
 
 [node name="BaseLeg" type="Bone2D" parent="."]
@@ -36,21 +38,20 @@ bone_angle = 0.0
 metadata/_local_pose_override_enabled_ = true
 
 [node name="Bone2D" type="Bone2D" parent="BaseLeg"]
-position = Vector2(31, -1)
+position = Vector2(31, 0)
 auto_calculate_length_and_angle = false
 length = 32.0
 bone_angle = 0.0
 metadata/_local_pose_override_enabled_ = true
 
 [node name="ColorRect2" type="ColorRect" parent="BaseLeg/Bone2D"]
-offset_left = 1.0
-offset_top = -4.0
-offset_right = 33.0
-offset_bottom = 6.0
+offset_left = -0.03906226
+offset_top = -4.9998474
+offset_right = 31.960938
+offset_bottom = 5.0001526
 
 [node name="Bone2D2" type="Bone2D" parent="BaseLeg/Bone2D"]
-position = Vector2(32, 0)
-rotation = 1.6922582
+position = Vector2(31, 0)
 scale = Vector2(0.99997944, 0.99997944)
 auto_calculate_length_and_angle = false
 length = 32.0
@@ -58,10 +59,10 @@ bone_angle = 0.0
 metadata/_local_pose_override_enabled_ = true
 
 [node name="ColorRect2" type="ColorRect" parent="BaseLeg/Bone2D/Bone2D2"]
-offset_left = 1.0
-offset_top = -4.0
-offset_right = 33.0
-offset_bottom = 6.0
+offset_left = -0.04003787
+offset_top = -5.249948
+offset_right = 31.959963
+offset_bottom = 4.750052
 
 [node name="ColorRect" type="ColorRect" parent="BaseLeg"]
 offset_top = -5.0
@@ -71,3 +72,6 @@ offset_bottom = 5.0
 [node name="WallChecker" type="RayCast2D" parent="."]
 rotation = 0.7853982
 target_position = Vector2(96, 0)
+
+[node name="ResetPosition" type="Node2D" parent="."]
+position = Vector2(43, 0)

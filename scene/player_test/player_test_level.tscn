@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://37rti2u2jvdt" path="res://icon.svg" id="1_c083g"]
 [ext_resource type="PackedScene" uid="uid://du8jev8sr22mj" path="res://player/Player.tscn" id="2_gp5ux"]
-[ext_resource type="PackedScene" uid="uid://bn10yjmn086db" path="res://creatures/base_nodes/BaseLeg.tscn" id="3_gp5ux"]
+[ext_resource type="PackedScene" uid="uid://upxdswdj6xxv" path="res://creatures/base_nodes/BodySegmentBase.tscn" id="3_gp5ux"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uf1rh"]
 size = Vector2(1152, 104)
@@ -13,8 +13,21 @@ size = Vector2(1152, 104)
 position = Vector2(584, 400)
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(576, 328)
-zoom = Vector2(0.91, 0.91)
+position = Vector2(584, 0)
+zoom = Vector2(0.43, 0.43)
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="."]
+position = Vector2(336, 544)
+rotation = -1.5707964
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2"]
+position = Vector2(576, 596)
+shape = SubResource("RectangleShape2D_uf1rh")
+
+[node name="Icon" type="Sprite2D" parent="StaticBody2D2"]
+position = Vector2(576, 596)
+scale = Vector2(9, 0.8125)
+texture = ExtResource("1_c083g")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
@@ -27,5 +40,5 @@ position = Vector2(576, 596)
 scale = Vector2(9, 0.8125)
 texture = ExtResource("1_c083g")
 
-[node name="BaseLeg" parent="." instance=ExtResource("3_gp5ux")]
-position = Vector2(368, 464)
+[node name="BodySegmentBase" parent="." instance=ExtResource("3_gp5ux")]
+position = Vector2(432, 43)
