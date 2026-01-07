@@ -39,6 +39,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	List<int> particles_marked_solid;
 	RandomNumberGenerator random_color;
 	NB_cell NB_CELL_VOID = new NB_cell(Vector2.Zero, NB_cell_types.VOID);
+	int color_var = 0;
 	public override void _Ready()
 	{
 		//Sets values
@@ -94,56 +95,37 @@ public partial class TileMapLayer : Godot.TileMapLayer
 
 	public void updateParticleVisuals()
 	{
-		int color_var = 0;
 		foreach (var index_of_cell in particles_buffer_updated_index)
 		{
-			Vector2I position = idToPosition(index_of_cell);
-			NB_cell particle = particles[index_of_cell];
-			particles_buffer[index_of_cell] = false;
-			switch (particle.type)
-			{
-				case NB_cell_types.SAND:
-					color_var += random_color.RandiRange(-2,2);
-					color_var = Math.Clamp(color_var, 0, 4);
-					SetCell(position, 0, new Vector2I(14,color_var));
-					break;
-				case NB_cell_types.STONE:
-					color_var += random_color.RandiRange(-2,2);
-					color_var = Math.Clamp(color_var, 0, 5);
-					SetCell(position, 0, new Vector2I(color_var + 9,15));
-					break;
-				case NB_cell_types.AIR:
-					SetCell(position, -1);
-					break;
-			}
+			particlesUpdateVisual(index_of_cell, 1);
 		}
-		// foreach (var index_of_cell in particles_marked_solid)
-		// {
-		// 	Vector2I position = idToPosition(index_of_cell);
-		// 	NB_cell particle = particles[index_of_cell];
-		// 	particles_buffer[index_of_cell] = false;
-		// 	switch (particle.type)
-		// 	{
-		// 		case NB_cell_types.SAND:
-		// 			color_var += random_color.RandiRange(-2,2);
-		// 			color_var = Math.Clamp(color_var, 0, 4);
-		// 			SetCell(position, 1, new Vector2I(14,color_var));
-		// 			break;
-		// 		case NB_cell_types.STONE:
-		// 			color_var += random_color.RandiRange(-2,2);
-		// 			color_var = Math.Clamp(color_var, 0, 5);
-		// 			SetCell(position, 1, new Vector2I(color_var + 9,15));
-		// 			break;
-		// 		case NB_cell_types.AIR:
-		// 			SetCell(position, -1);
-		// 			break;
-		// 	}
-		// }
+		foreach (var index_of_cell in particles_marked_solid)
+		{
+			particlesUpdateVisual(index_of_cell, 0);
+		}
 		particles_buffer_updated_index.Clear();
 	}
-	private void particlesUpdateVisual(int p_layer)
+	private void particlesUpdateVisual(int p_index, int p_layer)
 	{
-		
+		Vector2I position = idToPosition(p_index);
+		NB_cell particle = particles[p_index];
+		particles_buffer[p_index] = false;
+		switch (particle.type)
+		{
+			case NB_cell_types.SAND:
+				color_var += random_color.RandiRange(-1,1);
+				color_var = Math.Clamp(color_var, 0, 4);
+				SetCell(position, p_layer, new Vector2I(14,color_var));
+				break;
+			case NB_cell_types.STONE:
+				color_var += random_color.RandiRange(-2,2);
+				color_var = Math.Clamp(color_var, 0, 5);
+				SetCell(position, p_layer, new Vector2I(color_var + 9,15));
+				break;
+			case NB_cell_types.AIR:
+				SetCell(position, -1);
+				break;
+		}
 	}
 	private Vector2I idToPosition(int id)
 	{
