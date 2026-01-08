@@ -12,6 +12,7 @@ public partial class BaseLeg : Skeleton2D
 	Vector2 GrabbedBodyLocation;
 	//Node2D GrabbedBody;
 
+	bool isTweening = false;
 
 	public enum BaseLegState
 	{
@@ -45,7 +46,7 @@ public partial class BaseLeg : Skeleton2D
 		GD.Print(CurrentBaseLegState);
 
 
-		if (WallChecker.IsColliding() && CurrentBaseLegState != BaseLegState.Grab)
+		if (WallChecker.IsColliding() && CurrentBaseLegState == BaseLegState.Search)
 		{
 			GrabbedBodyLocation = WallChecker.GetCollisionPoint();
 
@@ -57,6 +58,7 @@ public partial class BaseLeg : Skeleton2D
 		if (!WallChecker.IsColliding() && CurrentBaseLegState == BaseLegState.Grab)
 		{
 			CurrentBaseLegState = BaseLegState.Reset;
+			isTweening = false;
 		}
 
 		if (CurrentBaseLegState == BaseLegState.Grab)
@@ -82,6 +84,16 @@ public partial class BaseLeg : Skeleton2D
 
 		}
 
+	}
+
+	public void Reset()
+	{
+		CurrentBaseLegState = BaseLegState.Reset;
+		WallChecker.Rotation = Mathf.DegToRad(WallCheckerRotationIndex);
+		if (WallChecker.IsColliding())
+		{
+			GrabbedBodyLocation = WallChecker.GetCollisionPoint();
+		}
 	}
 
 
