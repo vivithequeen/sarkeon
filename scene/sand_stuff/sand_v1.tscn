@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://q240hopceoi0"]
+[gd_scene load_steps=9 format=3 uid="uid://q240hopceoi0"]
 
 [ext_resource type="Texture2D" uid="uid://bf1yn4xulhhf7" path="res://assets/sand/particles/MainColors.png" id="1_dbuvf"]
+[ext_resource type="Script" uid="uid://cwn0bp5ta5kxp" path="res://noob/scripts/fps.cs" id="2_5myva"]
 [ext_resource type="Script" uid="uid://dgmvrh7r65l2m" path="res://scene/sand_stuff/TileMapLayer.cs" id="2_dbuvf"]
 [ext_resource type="PackedScene" uid="uid://du8jev8sr22mj" path="res://player/Player.tscn" id="3_7m8aq"]
 
@@ -793,12 +794,20 @@ sources/1 = SubResource("TileSetAtlasSource_5myva")
 [node name="Sand" type="Node2D"]
 
 [node name="Player" parent="." instance=ExtResource("3_7m8aq")]
-position = Vector2(606, -275.99988)
+position = Vector2(592, 1915.9999)
 scale = Vector2(0.4, 0.4)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
-position = Vector2(12.500063, -414.99963)
+position = Vector2(-29.999931, -609.99963)
 scale = Vector2(2.4999995, 2.4999995)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Player/Camera2D"]
+
+[node name="Label" type="Label" parent="Player/Camera2D/CanvasLayer"]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "FPS:"
+script = ExtResource("2_5myva")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 position = Vector2(10, 40)

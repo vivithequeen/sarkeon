@@ -36,22 +36,24 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	Vector2I particle_sim_size = new Vector2I(200,500);
 	int particle_sim_abs_size;
 	NB_cell[] particles;
-	bool[] particles_buffer;
+	bool[] particles_locked_cell;
 	List<int> particles_buffer_updated_index;
 	RandomNumberGenerator random_color;
+	bool[] particles_selection_row;
 	NB_cell NB_CELL_VOID = new NB_cell(Vector2.Zero, NB_cell_types.VOID);
 	int color_var = 0;
-
+	float fall_mul = 0.5f;
 	public override void _Ready()
 	{
 		//Sets values
 		particle_sim_abs_size = particle_sim_size.X * particle_sim_size.Y;
 		particles_buffer_updated_index = new List<int>();
+		particles_selection_row = new bool[particle_sim_size.Y];
 		random_color = new RandomNumberGenerator();
 		random_color.Randomize();
 		
 		particles = new NB_cell[particle_sim_abs_size];
-		particles_buffer = new bool[particle_sim_abs_size];
+		particles_locked_cell = new bool[particle_sim_abs_size];
 		// inits both arrays
 		for (int i = 0; i < particle_sim_abs_size; i++)
 		{
@@ -60,7 +62,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 			NB_cell_types.AIR);
 			
 			particles[i] = (NB_cell)temp_cell.Clone();
-			particles_buffer[i] = false;
+			particles_locked_cell[i] = false;
 		}
 		//Sets all particles
 		RandomNumberGenerator random_sand = new RandomNumberGenerator();
@@ -69,7 +71,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 		{
 			for (int x = 0; x < particle_sim_size.X; x++)
 			{
-				if (random_sand.RandiRange(0, 10) == 0)
+				if (random_sand.RandiRange(0, 1000) == 0)
 				{
 					NB_cell temp_cell = new NB_cell(
 					new Vector2(0,0),
@@ -98,9 +100,10 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	{
 		foreach (var index_of_cell in particles_buffer_updated_index)
 		{
-			particles_buffer[index_of_cell] = false;
-			particlesUpdateVisual(index_of_cell, 0);
+			particles_locked_cell[index_of_cell] = false;
+			particlesUpdateVisual(index_of_cell, 1);
 		}
+		
 		particles_buffer_updated_index.Clear();
 	}
 	private void particlesUpdateVisual(int p_index, int p_layer)
@@ -138,37 +141,37 @@ public partial class TileMapLayer : Godot.TileMapLayer
 		{
 			int index = i;
 			NB_cell particle = particles[index];
-			if (particles_buffer[index]) {continue;}
+			if (particles_locked_cell[index]) {continue;}
 			switch (particle.type)
 			{
 				case NB_cell_types.SAND:
 					//check bottom
-					int exchange_cell = index+particle_sim_size.X;
+					int exchange_cell = index + vecToIndex(0,1);
 					NB_cell end_cell = particlesCheck(exchange_cell);
 					if (end_cell.type == NB_cell_types.AIR)
 					{
-						particle.velocity += new Vector2(0,1);
+						particle.velocity += new Vector2(0,1) * fall_mul;
 					}
 					else
 					{
-						exchange_cell = index+particle_sim_size.X + (odd_update?-1:1);
+						exchange_cell = index + vecToIndex(odd_update?1:-1,1);
 						end_cell = particlesCheck(exchange_cell);
 						if (end_cell.type == NB_cell_types.AIR)
 						{
-							particle.velocity += new Vector2(odd_update?-1:1,1);
+							particle.velocity += new Vector2(odd_update?1:-1,1) * fall_mul;
 						}
 						else
 						{
-							exchange_cell = index+particle_sim_size.X + (odd_update?1:-1);
+							exchange_cell = index + vecToIndex(odd_update?-1:1,1);
 							end_cell = particlesCheck(exchange_cell);
 							if (end_cell.type == NB_cell_types.AIR)
 							{
-								particle.velocity += new Vector2(odd_update?1:-1,1);
+								particle.velocity += new Vector2(odd_update?-1:1,1) * fall_mul;
 							}
 						}
 					}
 
-					exchange_cell = (int)(index+particle.velocity.X + particle.velocity.Y*particle_sim_size.X);
+					exchange_cell = (int)(index+vecToIndex(particle.velocity.X, particle.velocity.Y));
 					end_cell = particlesCheck(exchange_cell);
 					if (end_cell.type == NB_cell_types.AIR)
 					{
@@ -186,16 +189,16 @@ public partial class TileMapLayer : Godot.TileMapLayer
 						Vector2 vector_abs = particle.velocity.Abs();
 						for (int step = 1; step < lenght; step++)
 						{
-							exchange_cell = (int)(index+
-								Math.Max(vector_abs.X - lenght - step, 0) * vector_directions.X+ 
+							exchange_cell = index+ vecToIndex(
+								Math.Max(vector_abs.X - lenght - step, 0) * vector_directions.X,
 								Math.Max(vector_abs.Y - lenght - step, 0) * vector_directions.Y
 							);
 							NB_cell result_cell = particlesCheck(exchange_cell);
 							if (result_cell.type != NB_cell_types.AIR)
 							{
 								step -= 1;
-								exchange_cell = (int)(index+
-									Math.Max(vector_abs.X - lenght - step, 0) * vector_directions.X+ 
+								exchange_cell = index+ vecToIndex(
+									Math.Max(vector_abs.X - lenght - step, 0) * vector_directions.X,
 									Math.Max(vector_abs.Y - lenght - step, 0) * vector_directions.Y
 								);
 								particle.velocity = Vector2.Zero;
@@ -213,10 +216,14 @@ public partial class TileMapLayer : Godot.TileMapLayer
 			}
 		}
 	}
+	private int vecToIndex(float p_x, float p_y)
+	{
+		return (int)Math.Ceiling(p_x) +particle_sim_size.X * (int)Math.Ceiling(p_y);
+	}
 	private NB_cell particlesCheck(int p_index)
 	{
 		if (p_index >= particle_sim_abs_size){return NB_CELL_VOID;}
-		if (particles_buffer[p_index]) {return NB_CELL_VOID;}
+		if (particles_locked_cell[p_index]) {return NB_CELL_VOID;}
 		return particles[p_index];
 	}
 	private void particlesSwap(int p_index_1, int p_index_2)
@@ -233,28 +240,31 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	private void particleLockNUpdate(int p_index_1)
 	{
 		particles_buffer_updated_index.Add(p_index_1);
-		particles_buffer[p_index_1] = true;
+		particles_locked_cell[p_index_1] = true;
 	}
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	double timer_update = 0;
 	double timer_update_max = 0.01;
-	bool odd_update = false;
-	double last_fps = 0;
-
+	bool odd_update = true;
+	double tx = 0;
 	public override void _Process(double delta)
 	{
-		last_fps = (last_fps + delta) / 10;
-		GD.Print(0.1/last_fps);
 		timer_update += delta;
 		odd_update = !odd_update;
+		tx += delta;
 		if (timer_update > timer_update_max)
 		{
 			NB_cell temp_cell = new NB_cell(
 			new Vector2(0,0),
 			NB_cell_types.SAND);
-			particles[75101] = temp_cell;
-			particles[75100] = temp_cell;
-			particles[75102] = temp_cell;
+			// for (int x = 0; x < 3; x++)
+			// {
+			// 	for (int y = 0; y < 3; y++)
+			// 	{
+			// 		particles[70100 + vecToIndex(x*10,y*10) + (int)(Math.Sin(tx)*50)] = temp_cell;
+			// 	}
+			// }
+			particles[70100] = temp_cell;
 			updateParticleMovings();
 			updateParticleVisuals();
 			timer_update = 0;
