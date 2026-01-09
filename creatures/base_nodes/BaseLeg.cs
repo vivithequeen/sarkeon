@@ -26,14 +26,14 @@ public partial class BaseLeg : Skeleton2D
 
 	public override void _Ready()
 	{
-		Node2D NewLeg = new Node2D();
+		Target = GetNode<Node2D>("Target");
 		
-		AddChild(NewLeg);
+
 		ResetPosition = GetNode<Node2D>("ResetPosition");
-		Target = NewLeg;
+
 		
 		WallChecker = GetNode<RayCast2D>("WallChecker");
-		SetIndexed("modification_stack:0:target_nodepath", NewLeg);
+		
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

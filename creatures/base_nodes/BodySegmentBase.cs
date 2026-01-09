@@ -9,12 +9,7 @@ public partial class BodySegmentBase : Skeleton2D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		foreach(Node2D positions in GetNode<Node2D>("EvenLegSpawns").GetChildren())
-		{
-			BaseLeg NewLeg = LegScene.Instantiate<BaseLeg>();
-			NewLeg.Position = positions.GlobalPosition;
-			GetNode<Node2D>("EvenLegs").AddChild(NewLeg);
-		}		
+
 		
 	}
 
