@@ -5,13 +5,28 @@
 
 [node name="BodySegmentBase" type="Skeleton2D"]
 script = ExtResource("1_jyrl0")
+LegScene = ExtResource("1_a6mud")
 
 [node name="EvenLegs" type="Node2D" parent="."]
-
-[node name="BaseLeg" parent="EvenLegs" instance=ExtResource("1_a6mud")]
 
 [node name="OddLegs" type="Node2D" parent="."]
 
 [node name="Timer" type="Timer" parent="."]
+
+[node name="EvenLegSpawns" type="Node2D" parent="."]
+
+[node name="Node2D" type="Node2D" parent="EvenLegSpawns"]
+
+[node name="Node2D2" type="Node2D" parent="EvenLegSpawns"]
+position = Vector2(0, -64)
+
+[node name="Node2D3" type="Node2D" parent="EvenLegSpawns"]
+position = Vector2(0, -128)
+
+[node name="Node2D4" type="Node2D" parent="EvenLegSpawns"]
+position = Vector2(0, 128)
+
+[node name="Node2D5" type="Node2D" parent="EvenLegSpawns"]
+position = Vector2(0, 64)
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

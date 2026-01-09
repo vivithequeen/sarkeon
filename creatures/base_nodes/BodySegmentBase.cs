@@ -4,9 +4,17 @@ using System;
 public partial class BodySegmentBase : Skeleton2D
 {
 	int Seconds = 0;
+    [Export]
+    public PackedScene LegScene { get; set; }
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		foreach(Node2D positions in GetNode<Node2D>("EvenLegSpawns").GetChildren())
+		{
+			BaseLeg NewLeg = LegScene.Instantiate<BaseLeg>();
+			NewLeg.Position = positions.GlobalPosition;
+			GetNode<Node2D>("EvenLegs").AddChild(NewLeg);
+		}		
 		
 	}
 
@@ -28,6 +36,13 @@ public partial class BodySegmentBase : Skeleton2D
 		//		leg.Reset();
 		//	}
 		//}
+		if (Input.IsActionJustPressed("f1"))
+		{
+			foreach(BaseLeg leg in GetNode<Node2D>("EvenLegs").GetChildren())
+			{
+				leg.Reset();
+			}		
+		}
 	}
 	public void _on_timer_timeout()
 	{
