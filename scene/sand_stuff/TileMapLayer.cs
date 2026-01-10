@@ -42,7 +42,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	bool[] particles_selection_row;
 	NB_cell NB_CELL_VOID = new NB_cell(Vector2.Zero, NB_cell_types.VOID);
 	int color_var = 0;
-	float fall_mul = 0.5f;
+	float fall_mul = 1f;
 	public override void _Ready()
 	{
 		//Sets values
@@ -158,7 +158,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 						end_cell = particlesCheck(exchange_cell);
 						if (end_cell.type == NB_cell_types.AIR)
 						{
-							particle.velocity += new Vector2(odd_update?1:-1,1) * fall_mul;
+							particle.velocity += new Vector2(odd_update?1:-1,0) * fall_mul;
 						}
 						else
 						{
@@ -166,12 +166,12 @@ public partial class TileMapLayer : Godot.TileMapLayer
 							end_cell = particlesCheck(exchange_cell);
 							if (end_cell.type == NB_cell_types.AIR)
 							{
-								particle.velocity += new Vector2(odd_update?-1:1,1) * fall_mul;
+								particle.velocity += new Vector2(odd_update?-1:1,0) * fall_mul;
 							}
 						}
 					}
 
-					exchange_cell = (int)(index+vecToIndex(particle.velocity.X, particle.velocity.Y));
+					exchange_cell = index+vecToIndex((float)Math.Floor(particle.velocity.X), (float)Math.Floor(particle.velocity.Y));
 					end_cell = particlesCheck(exchange_cell);
 					if (end_cell.type == NB_cell_types.AIR)
 					{
@@ -180,27 +180,23 @@ public partial class TileMapLayer : Godot.TileMapLayer
 						break;
 					} else
 					{
-						particle.vel_start = 0;
-						int lenght = (int)Math.Max(particle.velocity.X, particle.velocity.Y) + 1;
-						Vector2 vector_directions = new Vector2(
-							(particle.velocity.X < 0)? -1 : 1,
-							(particle.velocity.Y < 0)? -1 : 1
-						);
-						Vector2 vector_abs = particle.velocity.Abs();
-						for (int step = 1; step < lenght; step++)
+
+						// particle.velocity.X;
+						// particle.velocity.Y;
+						int naive_raycast_size = (int)Math.Ceiling(particle.velocity.Length());
+						Vector2 naive_raycast_normalized = particle.velocity.Normalized();
+
+						for (int step = 1; step < naive_raycast_size; step++)
 						{
-							exchange_cell = index+ vecToIndex(
-								Math.Max(vector_abs.X - lenght - step, 0) * vector_directions.X,
-								Math.Max(vector_abs.Y - lenght - step, 0) * vector_directions.Y
-							);
+							// exchange_cell = index+vecToIndex(step * naive_raycast_normalized.X, step * naive_raycast_normalized.Y);
+							exchange_cell = index+vecToIndex((float)Math.Floor(step * naive_raycast_normalized.X), (float)Math.Floor(step * naive_raycast_normalized.Y));
+							
 							NB_cell result_cell = particlesCheck(exchange_cell);
 							if (result_cell.type != NB_cell_types.AIR)
 							{
 								step -= 1;
-								exchange_cell = index+ vecToIndex(
-									Math.Max(vector_abs.X - lenght - step, 0) * vector_directions.X,
-									Math.Max(vector_abs.Y - lenght - step, 0) * vector_directions.Y
-								);
+								// exchange_cell = index+vecToIndex(step * naive_raycast_normalized.X, step * naive_raycast_normalized.Y);
+								exchange_cell = index+vecToIndex((float)Math.Floor(step * naive_raycast_normalized.X), (float)Math.Floor(step * naive_raycast_normalized.Y));
 								particle.velocity = Vector2.Zero;
 								particlesSwap(index, exchange_cell);
 								particleLockNUpdateDoubl(index, exchange_cell);
@@ -245,29 +241,55 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	double timer_update = 0;
 	double timer_update_max = 0.01;
-	bool odd_update = true;
+	bool odd_update = false;
 	double tx = 0;
 	public override void _Process(double delta)
 	{
-		timer_update += delta;
-		odd_update = !odd_update;
-		tx += delta;
-		if (timer_update > timer_update_max)
+		// timer_update += delta;
+		// tx += delta;
+		// if (timer_update > timer_update_max)
+		// {
+		// odd_update = !odd_update;
+		// 	NB_cell temp_cell = new NB_cell(
+		// 	new Vector2(0,0),
+		// 	NB_cell_types.SAND);
+		// 	// for (int x = 0; x < 3; x++)
+		// 	// {
+		// 	// 	for (int y = 0; y < 3; y++)
+		// 	// 	{
+		// 	// 		particles[70100 + vecToIndex(x*10,y*10) + (int)(Math.Sin(tx)*50)] = temp_cell;
+		// 	// 	}
+		// 	// }
+		// 	particles[70100] = temp_cell;
+		// 	updateParticleMovings();
+		// 	updateParticleVisuals();
+		// 	timer_update = 0;
+		// }
+		if (Input.IsActionJustPressed("ui_up") || Input.IsActionPressed("ui_down"))
 		{
+			odd_update = !odd_update;
 			NB_cell temp_cell = new NB_cell(
 			new Vector2(0,0),
 			NB_cell_types.SAND);
-			// for (int x = 0; x < 3; x++)
-			// {
-			// 	for (int y = 0; y < 3; y++)
-			// 	{
-			// 		particles[70100 + vecToIndex(x*10,y*10) + (int)(Math.Sin(tx)*50)] = temp_cell;
-			// 	}
-			// }
-			particles[70100] = temp_cell;
+			
+			if (Input.IsActionPressed("ui_right"))
+			{
+				for (int x = 0; x < 3; x++)
+				{
+					for (int y = 0; y < 3; y++)
+					{
+						particles[70100 + vecToIndex(x*10,y*10) + (int)(Math.Sin(tx)*50)] = temp_cell;
+					}
+				}
+			}
+			particles[75100] = temp_cell;
 			updateParticleMovings();
 			updateParticleVisuals();
-			timer_update = 0;
+			timer_update = 0;	
+		}
+		if (Input.IsActionJustPressed("ui_left"))
+		{
+			odd_update = !odd_update;
 		}
 	}
 }
