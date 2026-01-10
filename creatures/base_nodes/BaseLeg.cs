@@ -7,6 +7,7 @@ public partial class BaseLeg : Skeleton2D
 	RayCast2D WallChecker;
 	Node2D Target;
 	Node2D ResetPosition;
+	[Export]
 	int WallCheckerRotationIndex = 45;
 
 	Vector2 GrabbedBodyLocation;
@@ -40,16 +41,11 @@ public partial class BaseLeg : Skeleton2D
 	public override void _Process(double delta)
 	{
 		
-
-
-
 		WallCheckerLogic(delta);
 
 	}
 	public void WallCheckerLogic(double delta)
 	{
-		GD.Print(CurrentBaseLegState);
-
 
 		if (WallChecker.IsColliding() && CurrentBaseLegState == BaseLegState.Search)
 		{

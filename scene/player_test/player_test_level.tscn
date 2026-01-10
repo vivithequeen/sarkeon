@@ -13,8 +13,8 @@ size = Vector2(1152, 104)
 position = Vector2(584, 400)
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(680, 32)
-zoom = Vector2(1.615, 1.615)
+position = Vector2(560, 16)
+zoom = Vector2(0.84, 0.84)
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="."]
 position = Vector2(336, 544)

@@ -22,7 +22,7 @@ modification_stack = SubResource("SkeletonModificationStack2D_x6ijj")
 script = ExtResource("1_fwvm8")
 
 [node name="Target" type="Node2D" parent="."]
-position = Vector2(129, 5)
+position = Vector2(216, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="Target"]
 scale = Vector2(0.1, 0.1)
@@ -41,14 +41,14 @@ position = Vector2(64.001236, 0)
 scale = Vector2(0.99995947, 0.99995947)
 rest = Transform2D(-0.01913753, -0.9997712, 0.9997712, -0.01913753, 64.001236, 0)
 auto_calculate_length_and_angle = false
-length = 128.0
+length = 64.0
 bone_angle = 0.0
 metadata/_local_pose_override_enabled_ = true
 
 [node name="ColorRect2" type="ColorRect" parent="BaseLeg/Bone2D"]
 offset_left = -0.03906226
 offset_top = -4.9998474
-offset_right = 127.96094
+offset_right = 63.960938
 offset_bottom = 5.0001526
 
 [node name="ColorRect" type="ColorRect" parent="BaseLeg"]
@@ -57,7 +57,8 @@ offset_right = 64.0
 offset_bottom = 5.0
 
 [node name="WallChecker" type="RayCast2D" parent="."]
-target_position = Vector2(196, 0)
+position = Vector2(0, -1)
+target_position = Vector2(128, 0)
 
 [node name="ResetPosition" type="Node2D" parent="."]
 position = Vector2(80, 0)
