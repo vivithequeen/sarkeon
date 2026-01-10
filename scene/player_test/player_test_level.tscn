@@ -14,11 +14,10 @@ position = Vector2(584, 400)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(560, 16)
-zoom = Vector2(0.84, 0.84)
+zoom = Vector2(1.35, 1.35)
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="."]
-position = Vector2(336, 544)
-rotation = -1.5707964
+position = Vector2(-8, -304)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2"]
 position = Vector2(576, 596)
@@ -42,3 +41,4 @@ texture = ExtResource("1_c083g")
 
 [node name="BodySegmentBase" parent="." instance=ExtResource("3_gp5ux")]
 position = Vector2(432, 43)
+rotation = 1.5707964

@@ -1,7 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://bn10yjmn086db"]
+[gd_scene load_steps=8 format=3 uid="uid://bn10yjmn086db"]
 
 [ext_resource type="Script" uid="uid://0kbab2yq2v4v" path="res://creatures/base_nodes/BaseLeg.cs" id="1_fwvm8"]
 [ext_resource type="Texture2D" uid="uid://37rti2u2jvdt" path="res://icon.svg" id="2_x6ijj"]
+[ext_resource type="Texture2D" uid="uid://dogoo6a826t56" path="res://assets/creature/centipede/legsegment1.png" id="3_skaq3"]
+[ext_resource type="Texture2D" uid="uid://b50oxf5sw1y3o" path="res://assets/creature/centipede/legsegment2.png" id="4_hgxlw"]
+[ext_resource type="Texture2D" uid="uid://cm4kqe5de1a62" path="res://assets/creature/centipede/joint.png" id="5_4kpbl"]
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_fwvm8"]
 target_nodepath = NodePath("Target")
@@ -45,16 +48,25 @@ length = 64.0
 bone_angle = 0.0
 metadata/_local_pose_override_enabled_ = true
 
-[node name="ColorRect2" type="ColorRect" parent="BaseLeg/Bone2D"]
+[node name="ColorRect2" type="TextureRect" parent="BaseLeg/Bone2D"]
 offset_left = -0.03906226
 offset_top = -4.9998474
 offset_right = 63.960938
 offset_bottom = 5.0001526
+texture = ExtResource("3_skaq3")
 
-[node name="ColorRect" type="ColorRect" parent="BaseLeg"]
+[node name="ColorRect" type="TextureRect" parent="BaseLeg"]
 offset_top = -5.0
 offset_right = 64.0
 offset_bottom = 5.0
+texture = ExtResource("4_hgxlw")
+
+[node name="TextureRect" type="TextureRect" parent="BaseLeg"]
+offset_left = 59.00114
+offset_top = -5.000097
+offset_right = 69.001144
+offset_bottom = 4.999903
+texture = ExtResource("5_4kpbl")
 
 [node name="WallChecker" type="RayCast2D" parent="."]
 position = Vector2(0, -1)

@@ -17,20 +17,20 @@ public partial class BodySegmentBase : Skeleton2D
 	public override void _Process(double delta)
 	{
 		GlobalPosition = GetGlobalMousePosition();
-		if(Seconds % 2 == 0)
-		{
-			foreach(BaseLeg leg in GetNode<Node2D>("EvenLegs").GetChildren())
-			{
-				leg.Reset();
-			}
-		}
-		else
-		{
-			foreach(BaseLeg leg in GetNode<Node2D>("OddLegs").GetChildren())
-			{
-				leg.Reset();
-			}
-		}
+		//if(Seconds % 2 == 0)
+		//{
+		//	foreach(BaseLeg leg in GetNode<Node2D>("EvenLegs").GetChildren())
+		//	{
+		//		leg.Reset();
+		//	}
+		//}
+		//else
+		//{
+		//	foreach(BaseLeg leg in GetNode<Node2D>("OddLegs").GetChildren())
+		//	{
+		//		leg.Reset();
+		//	}
+		//}
 		
 		if (Input.IsActionJustPressed("f1"))
 		{

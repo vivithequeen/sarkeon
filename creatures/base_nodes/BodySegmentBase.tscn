@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://upxdswdj6xxv"]
+[gd_scene load_steps=19 format=3 uid="uid://upxdswdj6xxv"]
 
 [ext_resource type="PackedScene" uid="uid://bn10yjmn086db" path="res://creatures/base_nodes/BaseLeg.tscn" id="1_a6mud"]
 [ext_resource type="Script" uid="uid://dcjagmo48jnr5" path="res://creatures/base_nodes/BodySegmentBase.cs" id="1_jyrl0"]
@@ -31,6 +31,34 @@ enabled = true
 modification_count = 1
 modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_y4yyk")
 
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_il7l4"]
+target_nodepath = NodePath("Target")
+flip_bend_direction = true
+joint_one_bone_idx = 0
+joint_one_bone2d_node = NodePath("BaseLeg")
+joint_two_bone_idx = 1
+joint_two_bone2d_node = NodePath("BaseLeg/Bone2D")
+
+[sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_ivb0o"]
+resource_local_to_scene = true
+enabled = true
+modification_count = 1
+modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_il7l4")
+
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_ce4dg"]
+target_nodepath = NodePath("Target")
+flip_bend_direction = true
+joint_one_bone_idx = 0
+joint_one_bone2d_node = NodePath("BaseLeg")
+joint_two_bone_idx = 1
+joint_two_bone2d_node = NodePath("BaseLeg/Bone2D")
+
+[sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_8tmcm"]
+resource_local_to_scene = true
+enabled = true
+modification_count = 1
+modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_ce4dg")
+
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_xi8p8"]
 target_nodepath = NodePath("Target")
 flip_bend_direction = true
@@ -59,6 +87,34 @@ enabled = true
 modification_count = 1
 modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_ivb0o")
 
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_83qjb"]
+target_nodepath = NodePath("Target")
+flip_bend_direction = true
+joint_one_bone_idx = 0
+joint_one_bone2d_node = NodePath("BaseLeg")
+joint_two_bone_idx = 1
+joint_two_bone2d_node = NodePath("BaseLeg/Bone2D")
+
+[sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_j45p8"]
+resource_local_to_scene = true
+enabled = true
+modification_count = 1
+modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_83qjb")
+
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_3a1uy"]
+target_nodepath = NodePath("Target")
+flip_bend_direction = true
+joint_one_bone_idx = 0
+joint_one_bone2d_node = NodePath("BaseLeg")
+joint_two_bone_idx = 1
+joint_two_bone2d_node = NodePath("BaseLeg/Bone2D")
+
+[sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_yisb6"]
+resource_local_to_scene = true
+enabled = true
+modification_count = 1
+modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_3a1uy")
+
 [node name="BodySegmentBase" type="Skeleton2D"]
 script = ExtResource("1_jyrl0")
 
@@ -66,27 +122,47 @@ script = ExtResource("1_jyrl0")
 
 [node name="BaseLeg" parent="EvenLegs" instance=ExtResource("1_a6mud")]
 modification_stack = SubResource("SkeletonModificationStack2D_y4yyk")
-WallCheckerRotationIndex = 0
+StartWallCheckerRotation = 20
 
 [node name="BaseLeg4" parent="EvenLegs" instance=ExtResource("1_a6mud")]
-position = Vector2(0, 192)
+position = Vector2(0, 128)
 modification_stack = SubResource("SkeletonModificationStack2D_xi8p8")
-WallCheckerRotationIndex = 0
+StartWallCheckerRotation = 20
+
+[node name="BaseLeg2" parent="EvenLegs" instance=ExtResource("1_a6mud")]
+position = Vector2(0, 256)
+modification_stack = SubResource("SkeletonModificationStack2D_ivb0o")
+StartWallCheckerRotation = 20
+
+[node name="BaseLeg5" parent="EvenLegs" instance=ExtResource("1_a6mud")]
+position = Vector2(0, 384)
+modification_stack = SubResource("SkeletonModificationStack2D_8tmcm")
+StartWallCheckerRotation = 20
 
 [node name="OddLegs" type="Node2D" parent="."]
+position = Vector2(-24, -1)
 
 [node name="BaseLeg2" parent="OddLegs" instance=ExtResource("1_a6mud")]
-position = Vector2(0, 96)
+position = Vector2(24, 64)
 modification_stack = SubResource("SkeletonModificationStack2D_il7l4")
-WallCheckerRotationIndex = 0
+StartWallCheckerRotation = -45
 
 [node name="BaseLeg3" parent="OddLegs" instance=ExtResource("1_a6mud")]
-position = Vector2(0, -96)
+position = Vector2(24, -64)
 modification_stack = SubResource("SkeletonModificationStack2D_ce4dg")
-WallCheckerRotationIndex = 0
+StartWallCheckerRotation = -45
+
+[node name="BaseLeg4" parent="OddLegs" instance=ExtResource("1_a6mud")]
+position = Vector2(24, 321)
+modification_stack = SubResource("SkeletonModificationStack2D_j45p8")
+StartWallCheckerRotation = -45
+
+[node name="BaseLeg5" parent="OddLegs" instance=ExtResource("1_a6mud")]
+position = Vector2(24, 193)
+modification_stack = SubResource("SkeletonModificationStack2D_yisb6")
+StartWallCheckerRotation = -45
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 0.25
-autostart = true
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

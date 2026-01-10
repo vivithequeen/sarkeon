@@ -9,7 +9,10 @@ public partial class BaseLeg : Skeleton2D
 	Node2D ResetPosition;
 	[Export]
 	int WallCheckerRotationIndex = 45;
+	[Export]
+	int StartWallCheckerRotation = 45;
 
+	bool FirstStep = false;
 	Vector2 GrabbedBodyLocation;
 	//Node2D GrabbedBody;
 
@@ -27,6 +30,8 @@ public partial class BaseLeg : Skeleton2D
 
 	public override void _Ready()
 	{
+
+
 		Target = GetNode<Node2D>("Target");
 		
 
@@ -35,6 +40,7 @@ public partial class BaseLeg : Skeleton2D
 		
 		WallChecker = GetNode<RayCast2D>("WallChecker");
 		
+
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -55,6 +61,11 @@ public partial class BaseLeg : Skeleton2D
 			//GrabbedBody = collider as Node2D;
 
 			CurrentBaseLegState = BaseLegState.Grab;
+			if (!FirstStep)
+			{
+				FirstStep = true;
+			}
+			
 		}
 		if (!WallChecker.IsColliding() && CurrentBaseLegState == BaseLegState.Grab)
 		{
@@ -66,21 +77,21 @@ public partial class BaseLeg : Skeleton2D
 		{
 			Tween tween = GetTree().CreateTween();
 
-			tween.TweenProperty(Target, "global_position", GrabbedBodyLocation, delta * 40.0f);
+			tween.TweenProperty(Target, "global_position", GrabbedBodyLocation, delta * 20.0f);
 			WallChecker.GlobalRotation = (GrabbedBodyLocation - GlobalPosition).Angle();
 			//GrabbedBodyLocation = WallChecker.GetCollisionPoint();
 		}
 
 		if(CurrentBaseLegState == BaseLegState.Search)
 		{
-			WallChecker.Rotation = Mathf.DegToRad(WallCheckerRotationIndex);
+			WallChecker.Rotation = Mathf.DegToRad( FirstStep ? WallCheckerRotationIndex : StartWallCheckerRotation);
 		}
 
 		if (CurrentBaseLegState == BaseLegState.Reset)
 		{
 			Tween tween = GetTree().CreateTween();
-			WallChecker.Rotation = Mathf.DegToRad(WallCheckerRotationIndex);
-			tween.TweenProperty(Target, "global_position", ResetPosition.GlobalPosition, delta * 40.0f);
+			WallChecker.Rotation = Mathf.DegToRad( FirstStep ? WallCheckerRotationIndex : StartWallCheckerRotation);
+			tween.TweenProperty(Target, "global_position", ResetPosition.GlobalPosition, delta * 20.0f);
 			tween.TweenCallback(Callable.From(() => CurrentBaseLegState = BaseLegState.Search));
 
 		}
