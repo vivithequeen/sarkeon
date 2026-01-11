@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cm4kqe5de1a62" path="res://assets/creature/centipede/joint.png" id="5_4kpbl"]
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_fwvm8"]
+resource_local_to_scene = true
 target_nodepath = NodePath("Target")
 flip_bend_direction = true
 joint_one_bone_idx = 0
@@ -21,6 +22,7 @@ modification_count = 1
 modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_fwvm8")
 
 [node name="BaseLeg" type="Skeleton2D"]
+scale = Vector2(1.4, 1.4)
 modification_stack = SubResource("SkeletonModificationStack2D_x6ijj")
 script = ExtResource("1_fwvm8")
 
@@ -28,6 +30,7 @@ script = ExtResource("1_fwvm8")
 position = Vector2(216, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="Target"]
+visible = false
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("2_x6ijj")
 
