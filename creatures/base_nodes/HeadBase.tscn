@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://bcj406anqndhv"]
+
+[ext_resource type="Script" uid="uid://b10q1tlv0s8nn" path="res://creatures/base_nodes/HeadBase.cs" id="1_1jeo7"]
+[ext_resource type="Texture2D" uid="uid://bry1aynbt0246" path="res://assets/creature/centipede/head.png" id="2_6pxdm"]
+
+[node name="HeadBase" type="Node2D"]
+script = ExtResource("1_1jeo7")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_left = 64.0
+offset_top = -32.0
+offset_right = 133.0
+offset_bottom = 32.0
+rotation = 1.5707964
+texture = ExtResource("2_6pxdm")
