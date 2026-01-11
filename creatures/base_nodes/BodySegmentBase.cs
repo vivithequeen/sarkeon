@@ -6,18 +6,19 @@ public partial class BodySegmentBase : Node2D
 	public void InitSegment(Vector2 InitPosition)
 	{
 		GD.Print("I HAVE BEEN BORN");
-		Position = InitPosition;
+		GlobalPosition = InitPosition;
 	}
 
-	public void FollowTarget(Vector2 TargetPos, double delta)
+	public void FollowTarget(Vector2 TargetPosition, double delta)
 	{
-		float DistanceToTarget = Position.DistanceTo(TargetPos);
-		Vector2 DirectionToTarget = Position.DirectionTo(TargetPos);
+		float DistanceToTarget = GlobalPosition.DistanceTo(TargetPosition);
+		Vector2 DirectionToTarget = GlobalPosition.DirectionTo(TargetPosition);
+		LookAt(TargetPosition);
 
 
 		if(DistanceToTarget > 64)
 		{
-			Position = Position.MoveToward(TargetPos, 300 * (float)delta);
+			GlobalPosition = GlobalPosition.MoveToward(TargetPosition, 300 * (float)delta);
 		}
 	}
 }

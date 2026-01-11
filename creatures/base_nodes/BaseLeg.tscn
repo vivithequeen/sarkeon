@@ -70,7 +70,7 @@ texture = ExtResource("5_4kpbl")
 
 [node name="WallChecker" type="RayCast2D" parent="."]
 position = Vector2(0, -1)
-target_position = Vector2(128, 0)
+target_position = Vector2(160, 0)
 
 [node name="ResetPosition" type="Node2D" parent="."]
 position = Vector2(80, 0)

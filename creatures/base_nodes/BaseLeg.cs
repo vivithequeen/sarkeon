@@ -48,7 +48,6 @@ public partial class BaseLeg : Skeleton2D
 	{
 		
 		WallCheckerLogic(delta);
-
 	}
 	public void WallCheckerLogic(double delta)
 	{
@@ -77,7 +76,7 @@ public partial class BaseLeg : Skeleton2D
 		{
 			Tween tween = GetTree().CreateTween();
 
-			tween.TweenProperty(Target, "global_position", GrabbedBodyLocation, delta * 20.0f);
+			tween.TweenProperty(Target, "global_position", GrabbedBodyLocation, 0.1f);
 			WallChecker.GlobalRotation = (GrabbedBodyLocation - GlobalPosition).Angle();
 			//GrabbedBodyLocation = WallChecker.GetCollisionPoint();
 		}
@@ -91,7 +90,7 @@ public partial class BaseLeg : Skeleton2D
 		{
 			Tween tween = GetTree().CreateTween();
 			WallChecker.Rotation = Mathf.DegToRad( FirstStep ? WallCheckerRotationIndex : StartWallCheckerRotation);
-			tween.TweenProperty(Target, "global_position", ResetPosition.GlobalPosition, delta * 20.0f);
+			tween.TweenProperty(Target, "global_position", ResetPosition.GlobalPosition, 0.1f);
 			tween.TweenCallback(Callable.From(() => CurrentBaseLegState = BaseLegState.Search));
 
 		}
