@@ -30,14 +30,20 @@ public partial class TileMapLayer : Godot.TileMapLayer
 			velocity = p_velocity;
 			type = p_type;
 			property_type = p_property_type;
+			color = new Vector2I(0,0);
 		}
 		public int vel_start;
 		public Vector2 velocity;
 		public NB_cell_type type;
 		public NB_cell_property_type property_type;
+		public Vector2I color;
 		public object Clone()
 		{
 			return this.MemberwiseClone();
+		}
+		public void colorSet(Vector2I p_color)
+		{
+			color = p_color;
 		}
 	}
 	//TODO make so it only rerenders updated pixels for optimization
@@ -48,29 +54,32 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	int particle_sim_abs_size;
 	NB_cell[] particles;
 	bool[] particles_locked_cell;
+	//Used to update drawing and cells
 	List<int> particles_buffer_updated_index;
 	RandomNumberGenerator random_color;
-	bool[] particles_selection_simulation;
-	bool[] particles_selection_visual;
-	NB_cell NB_CELL_VOID = new NB_cell(Vector2.Zero,NB_cell_type.PLASMA, NB_cell_property_type.VOID);
+	//Used for physics
+	List<Rect2I> particles_rough_rect;
+	NB_cell NB_CELL_VOID;
 	int color_var = 0;
-	float fall_mul = 1f;
+	float fall_mul = 0.1f;
+	float terminal_vel = 4;
 	public override void _Ready()
 	{
 		//Sets values
 		particle_sim_abs_size = particle_sim_size.X * particle_sim_size.Y;
 		particles_buffer_updated_index = new List<int>();
-		particles_selection_simulation = new bool[particle_sim_size.Y];
-		particles_selection_visual = new bool[particle_sim_size.Y];
+		particles_rough_rect = new List<Rect2I>();
+		particles_rough_rect.Add(new Rect2I(0,250, particle_sim_size.X, particle_sim_size.Y - 250));
 		random_color = new RandomNumberGenerator();
 		random_color.Randomize();
+		NB_CELL_VOID = particleCreate(Vector2.Zero,NB_cell_type.PLASMA, NB_cell_property_type.VOID);
 		
 		particles = new NB_cell[particle_sim_abs_size];
 		particles_locked_cell = new bool[particle_sim_abs_size];
 		// inits both arrays
 		for (int i = 0; i < particle_sim_abs_size; i++)
 		{
-			NB_cell temp_cell = new NB_cell(
+			NB_cell temp_cell = particleCreate(
 			new Vector2(0,0),
 			NB_cell_type.GAS,
 			NB_cell_property_type.AIR);
@@ -82,7 +91,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 		//Sets base stone
 		for (int x = 0; x < particle_sim_size.X; x++)
 		{
-			NB_cell temp_cell = new NB_cell(
+			NB_cell temp_cell = particleCreate(
 			new Vector2(0,0),
 			NB_cell_type.SOLID,
 			NB_cell_property_type.STONE);
@@ -96,56 +105,57 @@ public partial class TileMapLayer : Godot.TileMapLayer
 
 	public void updateParticleVisuals()
 	{
-		for (int i = 0; i < particle_sim_abs_size; i++)
-		{
-			particles_locked_cell[i] = false;
-			// particles_locked_cell[i + vecToIndex(0,-1)] = false;
-			particlesUpdateVisual(i, 1);
-		}
-		//TODO OPTIMIZE :pray:
-		// for (int y = 0; y < particle_sim_size.Y; y++)
+		// for (int i = 0; i < particle_sim_abs_size; i++)
 		// {
-		// 	if (!particles_selection_visual[y])
+		// 	particles_locked_cell[i] = false;
+		// 	// particles_locked_cell[i + vecToIndex(0,-1)] = false;
+		// 	particlesUpdateVisual(i, 1);
+		// }
+		// foreach (Rect2I particle_rect in particles_rough_rect)
+		// {
+		// 	GD.Print(particle_rect);
+		// 	for (int check_x = particle_rect.Size.X -1; check_x > -1; check_x--)
 		// 	{
-		// 		continue;
-		// 	}
-		// 	particles_selection_visual[y] = false;
-		// 	for (int x = 0; x < particle_sim_size.X; x++)
-		// 	{
-		// 		var index = vecToIndex(x, y);
-		// 		particles_locked_cell[index] = false;
-
-		// 		// particles_locked_cell[index + vecToIndex(0,-1)] = false;
-		// 		particlesUpdateVisual(index, 1);
+		// 		for (int check_y = particle_rect.Size.Y-1; check_y > -1; check_y--)
+		// 		{
+		// 			int check_index = vecToIndex(
+		// 				particle_rect.Position.X + check_x,
+		// 				particle_rect.Position.Y + check_y
+		// 			);
+		// 			particles_locked_cell[check_index] = false;
+		// 			particlesUpdateVisual(check_index, 1);
+		// 		}
 		// 	}
 		// }
+		foreach (Rect2I particle_rect in particles_rough_rect)
+		{
+			GD.Print(particle_rect);
+			for (int check_x = 0; check_x < particle_rect.Size.X; check_x++)
+			{
+				for (int check_y = 0; check_y < particle_rect.Size.Y; check_y++)
+				{
+					int check_index = vecToIndex(
+						particle_rect.Position.X + check_x,
+						particle_rect.Position.Y + check_y
+					);
+					particles_locked_cell[check_index] = false;
+					particlesUpdateVisual(check_index, 1);
+				}
+			}
+		}
 		particles_buffer_updated_index.Clear();
 	}
 	private void particlesUpdateVisual(int p_index, int p_layer)
 	{
 		Vector2I position = idToPosition(p_index);
 		NB_cell particle = particles[p_index];
-		switch (particle.property_type)
+		// returns if the cell is air XD
+		if (particle.property_type == NB_cell_property_type.AIR) 
 		{
-			case NB_cell_property_type.SAND:
-				color_var += random_color.RandiRange(-1,1);
-				color_var = Math.Clamp(color_var, 0, 4);
-				SetCell(position, p_layer, new Vector2I(14,color_var));
-				break;
-			case NB_cell_property_type.STONE:
-				color_var += random_color.RandiRange(-2,2);
-				color_var = Math.Clamp(color_var, 0, 5);
-				SetCell(position, p_layer, new Vector2I(color_var + 9,15));
-				break;
-			case NB_cell_property_type.AIR:
-				SetCell(position, -1);
-				break;
-			case NB_cell_property_type.WATER:
-				color_var += random_color.RandiRange(-1,1);
-				color_var = Math.Clamp(color_var, 0, 2);
-				SetCell(position, p_layer, new Vector2I(10,color_var));
-				break;
+			SetCell(position, -1);
+			return;
 		}
+		SetCell(position, p_layer, particle.color);
 	}
 	private Vector2I idToPosition(int id)
 	{
@@ -172,9 +182,9 @@ public partial class TileMapLayer : Godot.TileMapLayer
 				case NB_cell_property_type.SAND:
 					//check bottom
 					//TODO ADD le funny NB_cell_type.LIQUID so it filters it all out ;PP
-					if(particleCheckAddVelocity(index, particle, 0,1)){
-					if(particleCheckAddVelocity(index, particle, odd_update?1:-1, 1))
-					{particleCheckAddVelocity(index, particle, odd_update?-1:1, 1);}}
+					particleCheckAddVelocity(index, particle, 0,1);
+					particleCheckAddVelocity(index, particle, odd_update?-1:1, 1);
+					particleCheckAddVelocity(index, particle, odd_update?1:-1, 1);
 
 					particleCollisionDetection(index, particle);
 					break;
@@ -183,39 +193,40 @@ public partial class TileMapLayer : Godot.TileMapLayer
 				case NB_cell_property_type.AIR:
 					break;
 				case NB_cell_property_type.WATER:
-					if(particleCheckAddVelocity(index, particle, 0,1)){
-					if(particleCheckAddVelocity(index, particle, odd_update?1:-1, 1)){
-					if(particleCheckAddVelocity(index, particle, odd_update?-1:1, 1)){
-					if(particleCheckAddVelocity(index, particle, odd_update?1:-1, 0)){
-					particleCheckAddVelocity(index, particle, odd_update?-1:1, 0);}}}}
+					// if(particleCheckAddVelocity(index, particle, 0,1)){
+					// if(particleCheckAddVelocity(index, particle, odd_update?1:-1, 1)){
+					// if(particleCheckAddVelocity(index, particle, odd_update?-1:1, 1)){
+					// if(particleCheckAddVelocity(index, particle, odd_update?1:-1, 0)){
+					// particleCheckAddVelocity(index, particle, odd_update?-1:1, 0);}}}}
 
 					particleCollisionDetection(index, particle);
 					break;
 			}
 	}
-	private bool particleCheckAddVelocity(int index, NB_cell particle, int p_x, int p_y)
+	private void particleCheckAddVelocity(int index, NB_cell particle, int p_x, int p_y)
 	{
 		int exchange_cell = index + vecToIndex(p_x,p_y);
 		NB_cell end_cell = particlesCheck(exchange_cell);
-		if (end_cell.type == NB_cell_type.GAS)
+		if (end_cell.property_type == NB_cell_property_type.VOID || end_cell.type == NB_cell_type.SOLID || end_cell.type == NB_cell_type.FALLING)
 		{
-			particle.velocity += new Vector2(p_x, p_y) * fall_mul;
-			return false;
+			return;
 		}
-		return true;
+		particle.velocity = (particle.velocity + new Vector2(p_x, p_y) * fall_mul).Clamp(-terminal_vel, terminal_vel);
 	}
 	private void particleCollisionDetection(int index, NB_cell particle)
 	{
 		int exchange_cell = index+vecToIndex((float)Math.Floor(particle.velocity.X), (float)Math.Floor(particle.velocity.Y));
+		if (index == exchange_cell) {return;}
 		NB_cell end_cell = particlesCheck(exchange_cell);
-		if (end_cell.property_type == NB_cell_property_type.AIR || end_cell.property_type == NB_cell_property_type.WATER)
+		if (end_cell.property_type == NB_cell_property_type.VOID || end_cell.type == NB_cell_type.SOLID || end_cell.type == NB_cell_type.FALLING)
+		{
+			particleCollisionRaycast(index, particle);
+			return;
+		} else
 		{
 			particlesSwap(index, exchange_cell);
 			particleLockNUpdateDoubl(index, exchange_cell);
 			return;
-		} else
-		{
-			particleCollisionRaycast(index, particle);
 		}
 	}
 	private void particleCollisionRaycast(int index, NB_cell particle)
@@ -247,6 +258,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	}
 	private NB_cell particlesCheck(int p_index)
 	{
+		if (p_index < 0){return NB_CELL_VOID;}
 		if (p_index >= particle_sim_abs_size){return NB_CELL_VOID;}
 		if (particles_locked_cell[p_index]) {return NB_CELL_VOID;}
 		return particles[p_index];
@@ -267,6 +279,36 @@ public partial class TileMapLayer : Godot.TileMapLayer
 		particles_buffer_updated_index.Add(p_index_1);
 		particles_locked_cell[p_index_1] = true;
 	}
+	private NB_cell particleCreate(Vector2 p_velocity, NB_cell_type p_type, NB_cell_property_type p_property_type)
+	{
+		NB_cell temp_particle = new NB_cell(p_velocity, p_type, p_property_type);
+		particleColorSet(temp_particle);
+		return temp_particle;
+	}
+	private void particleColorSet(NB_cell particle)
+	{
+		switch (particle.property_type)
+		{
+			case NB_cell_property_type.SAND:
+				color_var += random_color.RandiRange(-1,1);
+				color_var = Math.Clamp(color_var, 0, 4);
+				particle.colorSet(new Vector2I(14,color_var));
+				break;
+			case NB_cell_property_type.STONE:
+				color_var += random_color.RandiRange(-2,2);
+				color_var = Math.Clamp(color_var, 0, 5);
+				particle.colorSet(new Vector2I(color_var + 9,15));
+				break;
+			case NB_cell_property_type.AIR:
+				particle.colorSet(new Vector2I(0,0));
+				break;
+			case NB_cell_property_type.WATER:
+				color_var += random_color.RandiRange(-1,1);
+				color_var = Math.Clamp(color_var, 0, 2);
+				particle.colorSet(new Vector2I(10,color_var));
+				break;
+		}
+	}
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	double timer_update = 0;
 	double timer_update_max = 0.01;
@@ -279,12 +321,12 @@ public partial class TileMapLayer : Godot.TileMapLayer
 		tx += delta;
 		if (timer_update > timer_update_max)
 		{
-		odd_update = !odd_update;
-			NB_cell temp_cell = new NB_cell(
+			// odd_update = !odd_update;
+			NB_cell temp_cell = particleCreate(
 			new Vector2(0,0),
 			NB_cell_type.FALLING,
 			NB_cell_property_type.SAND);
-			NB_cell temp_water = new NB_cell(
+			NB_cell temp_water = particleCreate(
 			new Vector2(0,0),
 			NB_cell_type.LIQUID,
 			NB_cell_property_type.WATER);
