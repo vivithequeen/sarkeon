@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="CreatureBase" load_steps=2 format=3 uid="uid://dw6vrrc86knsv"]
+
+[ext_resource type="Script" uid="uid://bkt0b4re2kl2w" path="res://creatures/resources/CreatureBase.cs" id="1_dncj3"]
+
+[resource]
+script = ExtResource("1_dncj3")
+metadata/_custom_type_script = "uid://bkt0b4re2kl2w"

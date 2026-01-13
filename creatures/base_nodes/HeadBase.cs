@@ -8,13 +8,21 @@ public partial class HeadBase : Node2D
 
 	System.Collections.Generic.List<BodySegmentBase> BodySegments = new List<BodySegmentBase>();
 
-	int AmountOfSegments = 10;
+
+
+	[Export]
+
+	CreatureBase creatureBase;
+	int AmountOfSegments = 0;
 	Vector2 TargetPosition;
 	PackedScene bodySegmentBase = GD.Load<PackedScene>("res://creatures/base_nodes/BodySegmentBase.tscn");
 	PackedScene tailBase = GD.Load<PackedScene>("res://creatures/base_nodes/TailBase.tscn");
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+
+
+		AmountOfSegments = creatureBase.CreatureSegments;
 		Vector2 CurrentPosition = GlobalPosition;
 		Node parent = GetParent();
 		for(int i = 0; i < AmountOfSegments-1; i++)

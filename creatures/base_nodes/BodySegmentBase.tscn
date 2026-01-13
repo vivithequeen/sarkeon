@@ -55,9 +55,11 @@ texture = ExtResource("3_xi8p8")
 [node name="BaseLeg" parent="." instance=ExtResource("1_a6mud")]
 position = Vector2(30, 17)
 rotation = 1.5707964
+scale = Vector2(1.6, 1.6)
 modification_stack = SubResource("SkeletonModificationStack2D_xi8p8")
 
 [node name="BaseLeg2" parent="." instance=ExtResource("1_a6mud")]
 position = Vector2(29, -17)
 rotation = 4.712389
+scale = Vector2(1.6, 1.6)
 modification_stack = SubResource("SkeletonModificationStack2D_ivb0o")
