@@ -18,8 +18,27 @@ public partial class HeadBase : Node2D
 	PackedScene bodySegmentBase = GD.Load<PackedScene>("res://creatures/base_nodes/BodySegmentBase.tscn");
 	PackedScene tailBase = GD.Load<PackedScene>("res://creatures/base_nodes/TailBase.tscn");
 	// Called when the node enters the scene tree for the first time.
+
+
+
+	ShaderMaterial BaseColorMaterial;
+	Shader BaseColorShader = GD.Load<Shader>("res://assets/creature/shaders/Recolor.gdshader");
 	public override void _Ready()
 	{
+
+		BaseColorMaterial = new ShaderMaterial();
+		BaseColorMaterial.Shader = BaseColorShader;
+
+		BaseColorMaterial.SetShaderParameter("currentRow", creatureBase.ColorIndex);
+		BaseColorMaterial.SetShaderParameter("palette", creatureBase.ColorPallete);
+
+		foreach(Node node in GetChildren()){
+			if(node is TextureRect)
+			{
+				node.Set("material", BaseColorMaterial);
+			}
+		}
+
 
 
 		AmountOfSegments = creatureBase.CreatureSegments;

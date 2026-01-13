@@ -1,11 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://bn10yjmn086db"]
+[gd_scene load_steps=8 format=3 uid="uid://bn10yjmn086db"]
 
 [ext_resource type="Script" uid="uid://0kbab2yq2v4v" path="res://creatures/base_nodes/BaseLeg.cs" id="1_fwvm8"]
 [ext_resource type="Texture2D" uid="uid://37rti2u2jvdt" path="res://icon.svg" id="2_x6ijj"]
-[ext_resource type="Shader" uid="uid://dv2tus2wyj51l" path="res://assets/creature/shaders/Recolor.gdshader" id="3_4kpbl"]
 [ext_resource type="Texture2D" uid="uid://dogoo6a826t56" path="res://assets/creature/centipede/legsegment1.png" id="3_skaq3"]
 [ext_resource type="Texture2D" uid="uid://b50oxf5sw1y3o" path="res://assets/creature/centipede/legsegment2.png" id="4_hgxlw"]
-[ext_resource type="Texture2D" uid="uid://crpilfmy17kqk" path="res://assets/creature/palletes/gray-orange-gradiant.png" id="4_iu2s7"]
 [ext_resource type="Texture2D" uid="uid://cm4kqe5de1a62" path="res://assets/creature/centipede/joint.png" id="5_4kpbl"]
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_fwvm8"]
@@ -22,11 +20,6 @@ resource_local_to_scene = true
 enabled = true
 modification_count = 1
 modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_fwvm8")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_u40mq"]
-shader = ExtResource("3_4kpbl")
-shader_parameter/palette = ExtResource("4_iu2s7")
-shader_parameter/currentRow = 0.5150000244625
 
 [node name="BaseLeg" type="Skeleton2D"]
 scale = Vector2(1.4, 1.4)
@@ -60,23 +53,20 @@ bone_angle = 0.0
 editor_settings/show_bone_gizmo = false
 metadata/_local_pose_override_enabled_ = true
 
-[node name="ColorRect2" type="TextureRect" parent="BaseLeg/Bone2D"]
-material = SubResource("ShaderMaterial_u40mq")
+[node name="leg2" type="TextureRect" parent="BaseLeg/Bone2D"]
 offset_left = 0.28573513
 offset_top = -5.0002995
 offset_right = 64.285736
 offset_bottom = 4.9997005
 texture = ExtResource("3_skaq3")
 
-[node name="ColorRect" type="TextureRect" parent="BaseLeg"]
-material = SubResource("ShaderMaterial_u40mq")
+[node name="leg1" type="TextureRect" parent="BaseLeg"]
 offset_top = -5.0
 offset_right = 64.0
 offset_bottom = 5.0
 texture = ExtResource("4_hgxlw")
 
-[node name="TextureRect" type="TextureRect" parent="BaseLeg"]
-material = SubResource("ShaderMaterial_u40mq")
+[node name="joint" type="TextureRect" parent="BaseLeg"]
 offset_left = 59.00114
 offset_top = -5.000097
 offset_right = 69.001144
