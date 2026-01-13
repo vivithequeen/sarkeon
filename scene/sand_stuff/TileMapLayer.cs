@@ -24,19 +24,21 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	}
 	private class NB_cell
 	{
-		public NB_cell(Vector2 p_velocity, NB_cell_type p_type, NB_cell_property_type p_property_type)
+		public NB_cell(Vector2 p_velocity, NB_cell_type p_type, NB_cell_property_type p_property_type, bool p_fall)
 		{
 			vel_start = 0;
 			velocity = p_velocity;
 			type = p_type;
 			property_type = p_property_type;
 			color = new Vector2I(0,0);
+			fall_direction = p_fall;
 		}
 		public int vel_start;
 		public Vector2 velocity;
 		public NB_cell_type type;
 		public NB_cell_property_type property_type;
 		public Vector2I color;
+		public bool fall_direction;
 		public object Clone()
 		{
 			return this.MemberwiseClone();
@@ -44,6 +46,10 @@ public partial class TileMapLayer : Godot.TileMapLayer
 		public void colorSet(Vector2I p_color)
 		{
 			color = p_color;
+		}
+		public void velocity_flip()
+		{
+			fall_direction = !fall_direction;
 		}
 	}
 	//TODO make so it only rerenders updated pixels for optimization
@@ -62,7 +68,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	NB_cell NB_CELL_VOID;
 	int color_var = 0;
 	float fall_mul = 0.1f;
-	float terminal_vel = 4;
+	float terminal_vel = 100;
 	public override void _Ready()
 	{
 		//Sets values
@@ -129,7 +135,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 		// }
 		foreach (Rect2I particle_rect in particles_rough_rect)
 		{
-			GD.Print(particle_rect);
+			// GD.Print(particle_rect);
 			for (int check_x = 0; check_x < particle_rect.Size.X; check_x++)
 			{
 				for (int check_y = 0; check_y < particle_rect.Size.Y; check_y++)
@@ -139,7 +145,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 						particle_rect.Position.Y + check_y
 					);
 					particles_locked_cell[check_index] = false;
-					particlesUpdateVisual(check_index, 1);
+					particlesUpdateVisual(check_index, 0);
 				}
 			}
 		}
@@ -182,9 +188,13 @@ public partial class TileMapLayer : Godot.TileMapLayer
 				case NB_cell_property_type.SAND:
 					//check bottom
 					//TODO ADD le funny NB_cell_type.LIQUID so it filters it all out ;PP
-					particleCheckAddVelocity(index, particle, 0,1);
-					particleCheckAddVelocity(index, particle, odd_update?-1:1, 1);
-					particleCheckAddVelocity(index, particle, odd_update?1:-1, 1);
+					if(particleCheckAddVelocity(index, particle, 0, 1, 10))
+					{
+						if(particleCheckAddVelocity(index, particle, particle.fall_direction?-1:1, 1, 0.2f))
+						{
+							particle.velocity_flip();
+						}
+					}
 
 					particleCollisionDetection(index, particle);
 					break;
@@ -193,25 +203,33 @@ public partial class TileMapLayer : Godot.TileMapLayer
 				case NB_cell_property_type.AIR:
 					break;
 				case NB_cell_property_type.WATER:
-					// if(particleCheckAddVelocity(index, particle, 0,1)){
-					// if(particleCheckAddVelocity(index, particle, odd_update?1:-1, 1)){
-					// if(particleCheckAddVelocity(index, particle, odd_update?-1:1, 1)){
-					// if(particleCheckAddVelocity(index, particle, odd_update?1:-1, 0)){
-					// particleCheckAddVelocity(index, particle, odd_update?-1:1, 0);}}}}
+					if (particleCheckAddVelocity(index, particle, 0, 1, 10))
+					{
+						if(particleCheckAddVelocity(index, particle, particle.fall_direction?-1:1, 0, 10f))
+						{
+							particle.velocity_flip();
+						}
+					}
+					// particleCheckAddVelocity(index, particle, odd_update?-1:1, 1);
+					// particleCheckAddVelocity(index, particle, odd_update?1:-1, 0);
+					// particleCheckAddVelocity(index, particle, particle.fall_direction?-1:1, 0);
 
 					particleCollisionDetection(index, particle);
 					break;
 			}
 	}
-	private void particleCheckAddVelocity(int index, NB_cell particle, int p_x, int p_y)
+	private bool particleCheckAddVelocity(int index, NB_cell particle, int p_x, int p_y, float p_mul)
 	{
 		int exchange_cell = index + vecToIndex(p_x,p_y);
 		NB_cell end_cell = particlesCheck(exchange_cell);
 		if (end_cell.property_type == NB_cell_property_type.VOID || end_cell.type == NB_cell_type.SOLID || end_cell.type == NB_cell_type.FALLING)
 		{
-			return;
+			return true;
 		}
-		particle.velocity = (particle.velocity + new Vector2(p_x, p_y) * fall_mul).Clamp(-terminal_vel, terminal_vel);
+		// particlesSwap(index, exchange_cell);
+		// particleLockNUpdateDoubl(index, exchange_cell);
+		particle.velocity = (particle.velocity + new Vector2(p_x, p_y) * fall_mul * p_mul).Clamp(-terminal_vel, terminal_vel);
+		return false;
 	}
 	private void particleCollisionDetection(int index, NB_cell particle)
 	{
@@ -232,25 +250,39 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	private void particleCollisionRaycast(int index, NB_cell particle)
 	{
 		int naive_raycast_size = (int)Math.Ceiling(particle.velocity.Length());
-			Vector2 naive_raycast_normalized = particle.velocity.Normalized();
+		Vector2 naive_raycast_normalized = particle.velocity.Normalized();
 
-			for (int step = 1; step < naive_raycast_size; step++)
+		for (int step = 1; step < naive_raycast_size; step++)
+		{
+			// exchange_cell = index+vecToIndex(step * naive_raycast_normalized.X, step * naive_raycast_normalized.Y);
+			int exchange_cell = index+vecToIndex((float)Math.Floor(step * naive_raycast_normalized.X), (float)Math.Floor(step * naive_raycast_normalized.Y));
+			
+			NB_cell result_cell = particlesCheck(exchange_cell);
+			if (result_cell.property_type == NB_cell_property_type.VOID || result_cell.property_type == NB_cell_property_type.STONE)
 			{
+				step -= 1;
 				// exchange_cell = index+vecToIndex(step * naive_raycast_normalized.X, step * naive_raycast_normalized.Y);
-				int exchange_cell = index+vecToIndex((float)Math.Floor(step * naive_raycast_normalized.X), (float)Math.Floor(step * naive_raycast_normalized.Y));
-				
-				NB_cell result_cell = particlesCheck(exchange_cell);
-				if (result_cell.property_type != NB_cell_property_type.AIR && result_cell.property_type != NB_cell_property_type.WATER)
-				{
-					step -= 1;
-					// exchange_cell = index+vecToIndex(step * naive_raycast_normalized.X, step * naive_raycast_normalized.Y);
-					exchange_cell = index+vecToIndex((float)Math.Floor(step * naive_raycast_normalized.X), (float)Math.Floor(step * naive_raycast_normalized.Y));
-					particle.velocity = Vector2.Zero;
-					particlesSwap(index, exchange_cell);
-					particleLockNUpdateDoubl(index, exchange_cell);
-					break;
-				}
+				exchange_cell = index+vecToIndex((float)Math.Floor(step * naive_raycast_normalized.X), (float)Math.Floor(step * naive_raycast_normalized.Y));
+				particle.velocity = Vector2.Zero;
+				particlesSwap(index, exchange_cell);
+				particleLockNUpdateDoubl(index, exchange_cell);
+				return;
 			}
+			// NB_cell result_cell = particlesCheck(exchange_cell);
+			// if (result_cell.type == NB_cell_type.SOLID || result_cell.type == NB_cell_type.FALLING || result_cell.property_type == NB_cell_property_type.VOID)
+			// {
+			// 	// step -= 1;
+			// 	// exchange_cell = index+vecToIndex(step * naive_raycast_normalized.X, step * naive_raycast_normalized.Y);
+			// 	exchange_cell = index+vecToIndex((float)Math.Floor(step * naive_raycast_normalized.X), (float)Math.Floor(step * naive_raycast_normalized.Y));
+			// 	particle.velocity = Vector2.Zero;
+			// 	particlesSwap(index, exchange_cell);
+			// 	particleLockNUpdateDoubl(index, exchange_cell);
+			// 	break;
+			// }
+		}
+
+		// particlesSwap(index, index+vecToIndex(particle.velocity.X, particle.velocity.Y));
+		// particleLockNUpdateDoubl(index, index+vecToIndex(particle.velocity.X, particle.velocity.Y));
 	}
 	private int vecToIndex(float p_x, float p_y)
 	{
@@ -281,7 +313,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	}
 	private NB_cell particleCreate(Vector2 p_velocity, NB_cell_type p_type, NB_cell_property_type p_property_type)
 	{
-		NB_cell temp_particle = new NB_cell(p_velocity, p_type, p_property_type);
+		NB_cell temp_particle = new NB_cell(p_velocity, p_type, p_property_type, odd_update);
 		particleColorSet(temp_particle);
 		return temp_particle;
 	}
@@ -311,17 +343,17 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	}
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	double timer_update = 0;
-	double timer_update_max = 0.01;
+	double timer_update_max = 0.05;
 	bool odd_update = false;
 	double tx = 0;
-	int sand_left = 500;
+	int sand_left = 100;
 	public override void _Process(double delta)
 	{
 		timer_update += delta;
-		tx += delta;
 		if (timer_update > timer_update_max)
 		{
-			// odd_update = !odd_update;
+			tx += 0.1;
+			odd_update = !odd_update;
 			NB_cell temp_cell = particleCreate(
 			new Vector2(0,0),
 			NB_cell_type.FALLING,

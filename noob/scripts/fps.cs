@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class fps : Label
+public partial class NB_fps : Label
 {
 	double last_fps = 0;
 	public override void _Process(double delta)
