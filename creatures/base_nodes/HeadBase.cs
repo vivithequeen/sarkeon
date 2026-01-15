@@ -12,7 +12,7 @@ public partial class HeadBase : Node2D
 
 	[Export]
 
-	CreatureBase creatureBase;
+	BaseCreatureAttricutes baseCreatureAttricutes;
 	int AmountOfSegments = 0;
 	Vector2 TargetPosition;
 	PackedScene bodySegmentBase = GD.Load<PackedScene>("res://creatures/base_nodes/BodySegmentBase.tscn");
@@ -29,16 +29,16 @@ public partial class HeadBase : Node2D
 		BaseColorMaterial = new ShaderMaterial();
 		BaseColorMaterial.Shader = BaseColorShader;
 
-		BaseColorMaterial.SetShaderParameter("currentRow", creatureBase.ColorIndex);
-		BaseColorMaterial.SetShaderParameter("palette", creatureBase.ColorPallete);
+		BaseColorMaterial.SetShaderParameter("currentRow", baseCreatureAttricutes.ColorIndex);
+		BaseColorMaterial.SetShaderParameter("palette", baseCreatureAttricutes.ColorPallete);
 
 
 
 
 
-		AmountOfSegments = creatureBase.CreatureSegments;
+		AmountOfSegments = baseCreatureAttricutes.CreatureSegments;
 		Vector2 CurrentPosition = GlobalPosition;
-		Node parent = GetParent();
+		Node parent = GetParent().GetParent();
 		for(int i = 0; i < AmountOfSegments-1; i++)
 		{
 			BodySegmentBase NewSegment = bodySegmentBase.Instantiate<BodySegmentBase>();
@@ -86,8 +86,9 @@ public partial class HeadBase : Node2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _PhysicsProcess(double delta)
 	{
-		TargetPosition = GetGlobalMousePosition();
-		GlobalPosition = GlobalPosition.MoveToward(TargetPosition, 300 * (float)delta);
+		TargetPosition = GetGlobalMousePosition(); 
+		//TODO CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE
+		GetParent<Node2D>().GlobalPosition = GetParent<Node2D>().GlobalPosition.MoveToward(TargetPosition, 300 * (float)delta);
 		LookAt(TargetPosition);
 		for(int i = 0; i < AmountOfSegments; i++)
 		{

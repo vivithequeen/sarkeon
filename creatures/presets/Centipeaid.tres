@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CreatureBase" load_steps=3 format=3 uid="uid://dw6vrrc86knsv"]
 
-[ext_resource type="Script" uid="uid://bkt0b4re2kl2w" path="res://creatures/resources/CreatureBase.cs" id="1_dncj3"]
+[ext_resource type="Script" uid="uid://bkt0b4re2kl2w" path="res://creatures/resources/BaseCreatureAttricutes.cs" id="1_dncj3"]
 [ext_resource type="Texture2D" uid="uid://crpilfmy17kqk" path="res://assets/creature/palletes/gray-orange-gradiant.png" id="1_n01lo"]
 
 [resource]
