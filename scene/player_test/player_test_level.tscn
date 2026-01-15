@@ -1,9 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://degnf08jcd5gy"]
+[gd_scene load_steps=6 format=3 uid="uid://degnf08jcd5gy"]
 
 [ext_resource type="Texture2D" uid="uid://cewog7k5njhcg" path="res://assets/backgrounds/bg1.png" id="1_uf1rh"]
 [ext_resource type="Texture2D" uid="uid://dnihww87tvabv" path="res://assets/Rock058_1K-JPG_Color.jpg" id="3_30gg4"]
-[ext_resource type="PackedScene" uid="uid://bcj406anqndhv" path="res://creatures/base_nodes/HeadBase.tscn" id="3_gp5ux"]
-[ext_resource type="Resource" uid="uid://dw6vrrc86knsv" path="res://creatures/presets/Centipeaid.tres" id="4_uf1rh"]
+[ext_resource type="PackedScene" uid="uid://cj1mkah8bsvbx" path="res://creatures/base_nodes/BaseCreature.tscn" id="3_gp5ux"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uf1rh"]
 size = Vector2(1152, 104)
@@ -120,6 +119,4 @@ texture = ExtResource("3_30gg4")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="HeadBase" parent="." instance=ExtResource("3_gp5ux")]
-position = Vector2(600, 40)
-creatureBase = ExtResource("4_uf1rh")
+[node name="BaseCreature" parent="." instance=ExtResource("3_gp5ux")]

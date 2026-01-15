@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://cj1mkah8bsvbx"]
+
+[ext_resource type="PackedScene" uid="uid://bcj406anqndhv" path="res://creatures/base_nodes/HeadBase.tscn" id="1_rnmbi"]
+[ext_resource type="Script" uid="uid://bkt0b4re2kl2w" path="res://creatures/resources/CreatureBase.cs" id="2_6u6ia"]
+[ext_resource type="Texture2D" uid="uid://crpilfmy17kqk" path="res://assets/creature/palletes/gray-orange-gradiant.png" id="3_6rh8c"]
+
+[node name="BaseCreature" type="Node2D"]
+
+[node name="HeadBase" parent="." node_paths=PackedStringArray("creatureBase") instance=ExtResource("1_rnmbi")]
+creatureBase = NodePath("../CreatureBase")
+
+[node name="CreatureBase" type="Node" parent="."]
+script = ExtResource("2_6u6ia")
+ColorIndex = 0.15
+ColorPallete = ExtResource("3_6rh8c")
+metadata/_custom_type_script = "uid://bkt0b4re2kl2w"

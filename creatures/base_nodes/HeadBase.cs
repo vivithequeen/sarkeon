@@ -25,19 +25,14 @@ public partial class HeadBase : Node2D
 	Shader BaseColorShader = GD.Load<Shader>("res://assets/creature/shaders/Recolor.gdshader");
 	public override void _Ready()
 	{
-
+		
 		BaseColorMaterial = new ShaderMaterial();
 		BaseColorMaterial.Shader = BaseColorShader;
 
 		BaseColorMaterial.SetShaderParameter("currentRow", creatureBase.ColorIndex);
 		BaseColorMaterial.SetShaderParameter("palette", creatureBase.ColorPallete);
 
-		foreach(Node node in GetChildren()){
-			if(node is TextureRect)
-			{
-				node.Set("material", BaseColorMaterial);
-			}
-		}
+
 
 
 
@@ -65,6 +60,27 @@ public partial class HeadBase : Node2D
 		BodySegments.Add(NewTail);
 
 		NewTail.InitSegment(CurrentPosition);
+
+
+		
+		foreach(Node node in GetChildren()){
+			if(node is TextureRect)
+			{
+				
+				node.Set("material", BaseColorMaterial);
+			}
+		}
+		foreach(Node node in BodySegments){
+			Godot.Collections.Array<Node> textureChildren = node.FindChildren("*","TextureRect",true,false);
+			foreach(Node textureRect in textureChildren){
+				if(textureRect is TextureRect)
+				{
+					GD.Print(textureRect);
+					textureRect.Set("material", BaseColorMaterial);
+				}
+			}
+		}
+		
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

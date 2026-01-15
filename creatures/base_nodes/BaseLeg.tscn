@@ -43,6 +43,13 @@ bone_angle = 0.0
 editor_settings/show_bone_gizmo = false
 metadata/_local_pose_override_enabled_ = true
 
+[node name="joint" type="TextureRect" parent="BaseLeg"]
+offset_left = 59.001137
+offset_top = -5.0000963
+offset_right = 69.001144
+offset_bottom = 4.9999037
+texture = ExtResource("5_4kpbl")
+
 [node name="Bone2D" type="Bone2D" parent="BaseLeg"]
 position = Vector2(64.001236, 0)
 scale = Vector2(0.99995947, 0.99995947)
@@ -66,16 +73,9 @@ offset_right = 64.0
 offset_bottom = 5.0
 texture = ExtResource("4_hgxlw")
 
-[node name="joint" type="TextureRect" parent="BaseLeg"]
-offset_left = 59.00114
-offset_top = -5.000097
-offset_right = 69.001144
-offset_bottom = 4.999903
-texture = ExtResource("5_4kpbl")
-
 [node name="WallChecker" type="RayCast2D" parent="."]
-position = Vector2(0, -1)
-target_position = Vector2(160, 0)
+position = Vector2(0, -5.9604645e-08)
+target_position = Vector2(130, 0)
 
 [node name="ResetPosition" type="Node2D" parent="."]
 position = Vector2(80, 0)
