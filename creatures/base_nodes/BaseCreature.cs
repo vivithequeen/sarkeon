@@ -1,6 +1,6 @@
 using Godot;
 using System;
-using Godot.Collections.Array;
+using Godot.Collections;
 public partial class BaseCreature : Node2D
 {
 	// Called when the node enters the scene tree for the first time.
@@ -16,10 +16,13 @@ public partial class BaseCreature : Node2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		//Array<Array<Variant>> SeenObjects =baseSensors.EyeStep()
-		//if ()
-		//{
-		//	
-		//}
+		if (baseSensors != null)
+		{
+			Array<Dictionary<string, Variant>> SeenObjects = baseSensors.SearchWithEyes();
+			if (SeenObjects != null)
+			{
+				GD.Print(SeenObjects);
+			}
+		}
 	}
 }

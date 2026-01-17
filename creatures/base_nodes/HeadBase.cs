@@ -75,7 +75,6 @@ public partial class HeadBase : Node2D
 			foreach(Node textureRect in textureChildren){
 				if(textureRect is TextureRect)
 				{
-					GD.Print(textureRect);
 					textureRect.Set("material", BaseColorMaterial);
 				}
 			}

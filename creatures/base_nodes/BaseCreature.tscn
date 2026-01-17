@@ -7,8 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://do6ncdxqsu1aj" path="res://creatures/base_nodes/BaseSensors.tscn" id="4_6u6ia"]
 [ext_resource type="Script" uid="uid://byhi03m4i3all" path="res://creatures/critters/BaseCritter.cs" id="6_17ob1"]
 
-[node name="BaseCreature" type="Node2D"]
+[node name="BaseCreature" type="Node2D" node_paths=PackedStringArray("baseSensors")]
 script = ExtResource("1_6rh8c")
+baseSensors = NodePath("BaseSensors")
 
 [node name="HeadBase" parent="." node_paths=PackedStringArray("baseCreatureAttricutes") instance=ExtResource("1_rnmbi")]
 baseCreatureAttricutes = NodePath("../CreatureBase")
@@ -21,7 +22,7 @@ metadata/_custom_type_script = "uid://bkt0b4re2kl2w"
 
 [node name="BaseSensors" parent="." node_paths=PackedStringArray("baseCreatureAttricutes", "headBase") instance=ExtResource("4_6u6ia")]
 baseCreatureAttricutes = NodePath("../CreatureBase")
-headBase = NodePath("..")
+headBase = NodePath("../HeadBase")
 
 [node name="GoalPosition" type="Node2D" parent="."]
 

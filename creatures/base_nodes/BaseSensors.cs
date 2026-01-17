@@ -19,7 +19,7 @@ public partial class BaseSensors : Node2D
 
 	public int eyeIndex = 0;
 	public float eyeIndexStep;
-	public int eyeIndexTotalSteps = 20; // frames to completion
+	public int eyeIndexTotalSteps = 240; // frames to completion
 
 	RayCast2D eye;
 	
@@ -33,16 +33,19 @@ public partial class BaseSensors : Node2D
 
 	}
 
-	Array<Array<Variant>> SeenObjects;
-	public Array<Array<Variant>> SearchWithEyes()
+	Array<Dictionary<string, Variant>> SeenObjects = new Array<Dictionary<string, Variant>>();
+	public Array<Dictionary<string, Variant>> SearchWithEyes()
 	{
 		if(eyeIndex == 0)
 		{
 			SeenObjects.Clear();
 		}
-		
-		
-		SeenObjects.Add(EyeStep());
+
+		Dictionary<string, Variant> eyeResult = EyeStep();
+		if(eyeResult != null)
+		{
+			SeenObjects.Add(eyeResult);
+		}
 
 		if(eyeIndex >= eyeIndexTotalSteps)
 		{
@@ -52,7 +55,7 @@ public partial class BaseSensors : Node2D
 		return null;
 	}
 
-	public Array<Variant> EyeStep()
+	public Dictionary<string, Variant> EyeStep()
 	{
 		if(eyeIndex >= eyeIndexTotalSteps)
 		{
@@ -65,7 +68,12 @@ public partial class BaseSensors : Node2D
 
 		if (eye.IsColliding())
 		{
-			return new Array<Variant>{eye.GetCollider(),eyeIndex*eyeIndex};
+			return new Dictionary<string, Variant> {
+				{"collider", eye.GetCollider()}, 
+				{"rotation", eye.Rotation}, 
+				{"collectionPoint", eye.GetCollisionPoint()}, 
+				{"globalPosition", GlobalPosition},
+			};
 		}
 		return null;
 
