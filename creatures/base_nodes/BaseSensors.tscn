@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://drcdo0sclh1lt" path="res://creatures/base_nodes/BaseSensors.cs" id="1_24h80"]
 
 [node name="BaseSensors" type="Node2D"]
+rotation = -1.5707964
 script = ExtResource("1_24h80")
 
 [node name="eye1" type="RayCast2D" parent="."]

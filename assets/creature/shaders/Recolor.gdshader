@@ -7,7 +7,7 @@ void fragment() {
 
 	
 	float alpha = COLOR.a;
-	COLOR = texture(palette, vec2(COLOR.r + .05, currentRow));
+	COLOR = texture(palette, vec2(COLOR.r, currentRow));
 	COLOR.a *= alpha;
 
 	

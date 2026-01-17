@@ -89,7 +89,7 @@ public partial class HeadBase : Node2D
 		TargetPosition = GetGlobalMousePosition(); 
 		//TODO CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE
 		GetParent<Node2D>().GlobalPosition = GetParent<Node2D>().GlobalPosition.MoveToward(TargetPosition, 300 * (float)delta);
-		LookAt(TargetPosition);
+		GetParent<Node2D>().LookAt(TargetPosition);
 		for(int i = 0; i < AmountOfSegments; i++)
 		{
 			if(i == 0)

@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://bn10yjmn086db"]
 
 [ext_resource type="Script" uid="uid://0kbab2yq2v4v" path="res://creatures/base_nodes/BaseLeg.cs" id="1_fwvm8"]
-[ext_resource type="Texture2D" uid="uid://37rti2u2jvdt" path="res://icon.svg" id="2_x6ijj"]
+[ext_resource type="Texture2D" uid="uid://37rti2u2jvdt" path="res://scene/icon.svg" id="2_x6ijj"]
 [ext_resource type="Texture2D" uid="uid://dogoo6a826t56" path="res://assets/creature/centipede/legsegment1.png" id="3_skaq3"]
 [ext_resource type="Texture2D" uid="uid://b50oxf5sw1y3o" path="res://assets/creature/centipede/legsegment2.png" id="4_hgxlw"]
 [ext_resource type="Texture2D" uid="uid://cm4kqe5de1a62" path="res://assets/creature/centipede/joint.png" id="5_4kpbl"]

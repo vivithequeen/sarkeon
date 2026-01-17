@@ -1,7 +1,8 @@
 using Godot;
 using System;
 using System.Security.Principal;
-
+using Godot.Collections;
+using System.Collections;
 public partial class BaseSensors : Node2D
 {
 	[Export]
@@ -32,21 +33,43 @@ public partial class BaseSensors : Node2D
 
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	Array<Array<Variant>> SeenObjects;
+	public Array<Array<Variant>> SearchWithEyes()
 	{
-		EyeStep();
+		if(eyeIndex == 0)
+		{
+			SeenObjects.Clear();
+		}
+		
+		
+		SeenObjects.Add(EyeStep());
+
+		if(eyeIndex >= eyeIndexTotalSteps)
+		{
+			return SeenObjects;
+		}
+		
+		return null;
 	}
 
-	public void EyeStep()
+	public Array<Variant> EyeStep()
 	{
 		if(eyeIndex >= eyeIndexTotalSteps)
 		{
 			eyeIndex = 0;
 		}
-		GD.Print(eye.Rotation);
-		eye.Rotation = Mathf.DegToRad(eyeIndexStep * eyeIndex) + headBase.Rotation;
+
+		 		
+		eye.Rotation = Mathf.DegToRad(eyeIndexStep * eyeIndex);
 		eyeIndex+=1;
 
+		if (eye.IsColliding())
+		{
+			return new Array<Variant>{eye.GetCollider(),eyeIndex*eyeIndex};
+		}
+		return null;
+
+		
+		
 	}
 }
