@@ -22,7 +22,7 @@ ImGuiInfo="*res://ImGui/ImGuiLogic.cs"
 
 [display]
 
-window/stretch/mode="viewport"
+window/stretch/mode="canvas_items"
 
 [dotnet]
 

@@ -5,7 +5,6 @@ public partial class BodySegmentBase : Node2D
 {
 	public void InitSegment(Vector2 InitPosition)
 	{
-		GD.Print("I HAVE BEEN BORN");
 		GlobalPosition = InitPosition;
 	}
 

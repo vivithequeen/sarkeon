@@ -70,7 +70,7 @@ public partial class BaseSensors : Node2D
 		{
 			return new Dictionary<string, Variant> {
 				{"collider", eye.GetCollider()}, 
-				{"rotation", eye.Rotation}, 
+				{"rotation", eyeIndexStep * eyeIndex}, 
 				{"collectionPoint", eye.GetCollisionPoint()}, 
 				{"globalPosition", GlobalPosition},
 			};

@@ -18,7 +18,6 @@ baseCreatureAttricutes = NodePath("../CreatureBase")
 script = ExtResource("2_6u6ia")
 ColorIndex = 0.15
 ColorPallete = ExtResource("3_6rh8c")
-metadata/_custom_type_script = "uid://bkt0b4re2kl2w"
 
 [node name="BaseSensors" parent="." node_paths=PackedStringArray("baseCreatureAttricutes", "headBase") instance=ExtResource("4_6u6ia")]
 baseCreatureAttricutes = NodePath("../CreatureBase")
