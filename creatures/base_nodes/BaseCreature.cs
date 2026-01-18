@@ -9,6 +9,7 @@ public partial class BaseCreature : Node2D
 	[Export] public BaseSensors baseSensors;
 
 	[Export] public BaseCritter baseCritter;
+	public Vector2 TargetPos = new Vector2(0,0);
 	public override void _Ready()
 	{
 	}
@@ -21,7 +22,7 @@ public partial class BaseCreature : Node2D
 			Array<Dictionary<string, Variant>> SeenObjects = baseSensors.SearchWithEyes();
 			if (SeenObjects != null)
 			{
-				baseCritter.UpdateCritterSenses(SeenObjects);
+				TargetPos = baseCritter.UpdateCritterSenses(SeenObjects);
 			}
 		}
 	}

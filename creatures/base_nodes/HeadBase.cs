@@ -9,7 +9,7 @@ public partial class HeadBase : Node2D
 	System.Collections.Generic.List<BodySegmentBase> BodySegments = new List<BodySegmentBase>();
 
 
-	[Export] public Node2D GoalPositionDirection;
+	[Export] public Node2D GoalPositionBase;
 	[Export]
 
 	BaseCreatureAttricutes baseCreatureAttricutes;
@@ -85,7 +85,8 @@ public partial class HeadBase : Node2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _PhysicsProcess(double delta)
 	{
-		TargetPosition = GoalPositionDirection.GlobalPosition;
+		TargetPosition = ((BaseCreature)GetParent()).TargetPos;
+		GoalPositionBase.GlobalPosition = TargetPosition;
 		//TODO CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE
 		GetParent<Node2D>().GlobalPosition = GetParent<Node2D>().GlobalPosition.MoveToward(TargetPosition, 300 * (float)delta);
 		GetParent<Node2D>().LookAt(TargetPosition);
