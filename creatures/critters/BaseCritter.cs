@@ -2,13 +2,14 @@ using Godot;
 using System;
 using Godot.Collections;
 using ImGuiNET;
+using System.Linq;
 
 
 [GlobalClass]
 public partial class BaseCritter : Node
 {
 	// Called when the node enters the scene tree for the first time.
-	public Vector2 GoalPosition;
+	[Export] public Node2D GoalPositionBase;	
 	public enum CritterGoals {
 		Hunting,
 		DesperateHunting,
@@ -31,13 +32,45 @@ public partial class BaseCritter : Node
 	{
 		//should move in the direction of 5 degress that has the least amount of stuff if there is nothing else it wants
 		
-		float[] weightedSightValues = new float[180/5];
+		float[] weightedSightValues = new float[(180/5) + 1];
 
 		foreach(Dictionary<string, Variant> OneDegreeInformation in SightInformation)
 		{
-			float distance = ((Vector2)OneDegreeInformation["globalPosition"]).DistanceTo((Vector2)OneDegreeInformation["collectionPoint"]);
+			float distance = ((Node2D)GetParent()).GlobalPosition.DistanceTo((Vector2)OneDegreeInformation["collectionPoint"]);
+			weightedSightValues[(int)((float)OneDegreeInformation["rotation"] / 5)] =  distance / 700.0f; //TODO: magic number replace at some point with sight range value :pf: 
+			
 		}
+
+
+		int mostFavorableRotation = GetIndexOfLowestValue(weightedSightValues);
+
+
+		GoalPositionBase.Rotation = Mathf.DegToRad(mostFavorableRotation);
 	}
+
+
+	public static int GetIndexOfLowestValue(float[] arr)
+{
+    if (arr == null || arr.Length == 0)
+    {
+        throw new ArgumentException("Array cannot be null or empty.", nameof(arr));
+    }
+
+    float minValue = arr[0];
+    int minIndex = 0;
+
+    for (int i = 1; i < arr.Length; i++)
+    {
+        if (arr[i] < minValue)
+        {
+            minValue = arr[i];
+            minIndex = i;
+        }
+    }
+
+    return minIndex;
+}
+
 	public override void _Process(double delta)
 	{
 		ImGui.Begin($"{GetParent().Name}'s Critter");

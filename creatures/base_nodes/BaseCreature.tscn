@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://cj1mkah8bsvbx"]
+[gd_scene load_steps=8 format=3 uid="uid://cj1mkah8bsvbx"]
 
 [ext_resource type="Script" uid="uid://1youudw0kbrh" path="res://creatures/base_nodes/BaseCreature.cs" id="1_6rh8c"]
 [ext_resource type="PackedScene" uid="uid://bcj406anqndhv" path="res://creatures/base_nodes/HeadBase.tscn" id="1_rnmbi"]
@@ -6,12 +6,15 @@
 [ext_resource type="Texture2D" uid="uid://crpilfmy17kqk" path="res://assets/creature/palletes/gray-orange-gradiant.png" id="3_6rh8c"]
 [ext_resource type="PackedScene" uid="uid://do6ncdxqsu1aj" path="res://creatures/base_nodes/BaseSensors.tscn" id="4_6u6ia"]
 [ext_resource type="Script" uid="uid://byhi03m4i3all" path="res://creatures/critters/BaseCritter.cs" id="6_17ob1"]
+[ext_resource type="Texture2D" uid="uid://37rti2u2jvdt" path="res://scene/icon.svg" id="6_l816c"]
 
-[node name="BaseCreature" type="Node2D" node_paths=PackedStringArray("baseSensors")]
+[node name="BaseCreature" type="Node2D" node_paths=PackedStringArray("baseSensors", "baseCritter")]
 script = ExtResource("1_6rh8c")
 baseSensors = NodePath("BaseSensors")
+baseCritter = NodePath("BaseCritter")
 
-[node name="HeadBase" parent="." node_paths=PackedStringArray("baseCreatureAttricutes") instance=ExtResource("1_rnmbi")]
+[node name="HeadBase" parent="." node_paths=PackedStringArray("GoalPositionDirection", "baseCreatureAttricutes") instance=ExtResource("1_rnmbi")]
+GoalPositionDirection = NodePath("../GoalPositionBase/GoalPositionDirection")
 baseCreatureAttricutes = NodePath("../CreatureBase")
 
 [node name="CreatureBase" type="Node" parent="."]
@@ -23,8 +26,15 @@ ColorPallete = ExtResource("3_6rh8c")
 baseCreatureAttricutes = NodePath("../CreatureBase")
 headBase = NodePath("../HeadBase")
 
-[node name="GoalPosition" type="Node2D" parent="."]
+[node name="GoalPositionBase" type="Node2D" parent="."]
 
-[node name="BaseCritter" type="Node" parent="."]
+[node name="GoalPositionDirection" type="Node2D" parent="GoalPositionBase"]
+position = Vector2(288, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="GoalPositionBase/GoalPositionDirection"]
+texture = ExtResource("6_l816c")
+
+[node name="BaseCritter" type="Node" parent="." node_paths=PackedStringArray("GoalPositionBase")]
 script = ExtResource("6_17ob1")
+GoalPositionBase = NodePath("../GoalPositionBase")
 metadata/_custom_type_script = "uid://byhi03m4i3all"

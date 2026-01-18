@@ -8,7 +8,7 @@ public partial class BaseCreature : Node2D
 
 	[Export] public BaseSensors baseSensors;
 
-	
+	[Export] public BaseCritter baseCritter;
 	public override void _Ready()
 	{
 	}
@@ -21,7 +21,7 @@ public partial class BaseCreature : Node2D
 			Array<Dictionary<string, Variant>> SeenObjects = baseSensors.SearchWithEyes();
 			if (SeenObjects != null)
 			{
-				GD.Print(SeenObjects);
+				baseCritter.UpdateCritterSenses(SeenObjects);
 			}
 		}
 	}
