@@ -794,6 +794,7 @@ sources/1 = SubResource("TileSetAtlasSource_m7iq7")
 [node name="Player" parent="." instance=ExtResource("1_n3rwc")]
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
+zoom = Vector2(0.34, 0.34)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Player/Camera2D"]
 

@@ -53,7 +53,8 @@ public partial class Sand : TileMapLayer
 			chunk_position = p_position;
 			cell_particle_offset = p_position * chunk_size;
 			particles = new Dictionary<string, NB_particle>{};
-			list_update = new List<NB_particle>{};
+			list_visual_update = new List<NB_particle>{};
+			list_phisics_update = new List<NB_particle>{};
 			
 			temp_air =  new NB_particle(NB_type.GAS, false, new List<Vector2I> {});
 			temp_air.empty = true;
@@ -62,7 +63,6 @@ public partial class Sand : TileMapLayer
 				for (int X = 0; X < chunk_size.X; X++)
 				{
 					particles[fakeVecToString(X,Y)] = temp_air;
-					particle_lock[fakeVecToString(X,Y)] = false;
 				}
 			}
 
@@ -72,9 +72,8 @@ public partial class Sand : TileMapLayer
 		public Vector2I cell_particle_offset;
 		public Vector2I chunk_size;
 		public Dictionary<string, NB_particle> particles;
-		public Dictionary<string, bool> particle_lock;
-		public List<NB_particle> list_update;
-		public bool list_clear = false;
+		public List<NB_particle> list_visual_update;
+		public List<NB_particle> list_phisics_update;
 		public void particleAdd(NB_particle p_particle)
 		{
 			
@@ -90,17 +89,18 @@ public partial class Sand : TileMapLayer
 		}
 		private void updateParticlenAdd(NB_particle p_particle)
 		{
-			if (list_clear)
-			{
-				list_clear = false;
-				list_update.Clear();
-			}
-			list_update.Add(p_particle);
+			//TODO optimise memory of this (aka cutdown on doubles)
+			list_phisics_update.Add(p_particle);
+			list_visual_update.Add(p_particle);
 		}
 		public List<NB_particle> getUpdatedParticles()
 		{
-			list_clear = true;
-			return list_update;
+			return list_phisics_update;
+		}
+		public List<NB_particle> getUpdatedParticles_visual()
+		{
+			//gives out variable, and expects the script to clear it
+			return list_visual_update;
 		}
 		public bool getParticleSafe(Vector2I p_particle_position)
 		{
@@ -141,17 +141,16 @@ public partial class Sand : TileMapLayer
 			]
 		));
 	}
-	
-	//Ready
 	public override void _Ready()
 	{
 		// chunks.Add(fakeVecToString(0,0), new NB_chunk(new Vector2I(0,0), chunk_size));
 		// chunks_update_list.Add(new Vector2I(0,0));
 		//TODO add so you can add multiple particles aka particlesAdd
 		particleCellPlace(createParticle(new Vector2I(0,0), "Sand"));
-		particleCellPlace(createParticle(new Vector2I(5,0), "Sand"));
-		particleCellPlace(createParticle(new Vector2I(10,0), "Sand"));
-		particleCellPlace(createParticle(new Vector2I(20,0), "Sand"));
+		// particleCellPlace(createParticle(new Vector2I(5,0), "Sand"));
+		// particleCellPlace(createParticle(new Vector2I(10,0), "Sand"));
+		// particleCellPlace(createParticle(new Vector2I(20,0), "Sand"));
+		visualiser();
 	}
 	double timer = 0;
 	public override void _Process(double delta)
@@ -159,27 +158,36 @@ public partial class Sand : TileMapLayer
 		timer += delta;
 		if (timer > 1)
 		{
+			timer = 0;
 			simulationStep();
 			visualiser();
 		}
 	}
 	public void simulationStep()
 	{
+		GD.Print("1-", chunks_update_list.Count);
 		for (int chunk_iter = 0; chunk_iter < chunks_update_list.Count; chunk_iter++)
 		{
 			NB_chunk temp_chunk = chunks[vecToString(chunks_update_list[chunk_iter])];
+
 			List<NB_particle> particle_list = temp_chunk.getUpdatedParticles();
-			for (int particle_iter = 0; particle_iter < chunks_update_list.Count; particle_iter++)
+			int static_count = particle_list.Count;
+			GD.Print("2-", static_count);
+			foreach (NB_particle item in particle_list)
+			{
+				GD.Print("3-", item.particle_position);
+			}
+			for (int particle_iter = 0; particle_iter < static_count; particle_iter++)
 			{
 				NB_particle particle = particle_list[particle_iter];
 				foreach (Vector2I check_offset in particle.checking_pos)
 				{
-					// GD.Print(check_offset);
 					if (check_pixel(check_offset, particle, temp_chunk)) {
 						break;
 					}
 				}
 			}
+			particle_list.RemoveRange(0, static_count);
 		}
 	}
 	private bool check_pixel(Vector2I check_offset, NB_particle p_particle, NB_chunk p_current_chunk)
@@ -224,10 +232,12 @@ public partial class Sand : TileMapLayer
 	{
 		foreach (Vector2I chunk_update_coord in chunks_update_list)
 		{
-			foreach (NB_particle particle in chunks[vecToString(chunk_update_coord)].getUpdatedParticles())
+			List<NB_particle> particle_update_list = chunks[vecToString(chunk_update_coord)].getUpdatedParticles_visual();
+			foreach (NB_particle particle in particle_update_list)
 			{
 				SetCell(particle.particle_position, 0, particle.color);
 			}
+			particle_update_list.Clear();
 		}
 	}
 	private NB_particle createParticle(Vector2I p_positio, string type)
