@@ -38,42 +38,81 @@ public partial class Sand : TileMapLayer
 			particle_position = p_position;
 			return this;
 		}
+		public NB_particle clone()
+		{
+			NB_particle temp = new NB_particle(type, solid, checking_pos);
+			temp.empty = empty;
+			return temp;
+		}
 	}
 	class NB_chunk
 	{
-		public NB_chunk(Vector2I p_position, Vector2I chunk_size)
+		public NB_chunk(Vector2I p_position, Vector2I p_chunk_size)
 		{
+			chunk_size = p_chunk_size;
 			chunk_position = p_position;
-			particle_position = p_position * chunk_size;
+			cell_particle_offset = p_position * chunk_size;
 			particles = new Dictionary<string, NB_particle>{};
-			update_list = new List<NB_particle>{};
-			NB_particle temp_air =  new NB_particle(NB_type.GAS, false, new List<Vector2I> {});
+			list_update = new List<NB_particle>{};
+			
+			temp_air =  new NB_particle(NB_type.GAS, false, new List<Vector2I> {});
 			temp_air.empty = true;
 			for (int Y = 0; Y < chunk_size.Y; Y++)
 			{
 				for (int X = 0; X < chunk_size.X; X++)
 				{
 					particles[fakeVecToString(X,Y)] = temp_air;
+					particle_lock[fakeVecToString(X,Y)] = false;
 				}
 			}
+
 		}
+		private NB_particle temp_air;
 		public Vector2I chunk_position;
-		public Vector2I particle_position;
+		public Vector2I cell_particle_offset;
+		public Vector2I chunk_size;
 		public Dictionary<string, NB_particle> particles;
-		public List<NB_particle> update_list;
+		public Dictionary<string, bool> particle_lock;
+		public List<NB_particle> list_update;
+		public bool list_clear = false;
 		public void particleAdd(NB_particle p_particle)
 		{
+			
 			particles[vecToString(p_particle.particle_position)] = p_particle;
-			update_list.Add(p_particle);
+			updateParticlenAdd(p_particle);
+			
+		}
+		public void particleRemove(Vector2I p_particle_position)
+		{
+			NB_particle new_air = temp_air.clone().pos(p_particle_position);
+			particles[vecToString(p_particle_position - cell_particle_offset)] = new_air;
+			updateParticlenAdd(new_air);
+		}
+		private void updateParticlenAdd(NB_particle p_particle)
+		{
+			if (list_clear)
+			{
+				list_clear = false;
+				list_update.Clear();
+			}
+			list_update.Add(p_particle);
 		}
 		public List<NB_particle> getUpdatedParticles()
 		{
-			return update_list;
+			list_clear = true;
+			return list_update;
 		}
-		public NB_particle getParticle(Vector2I p_check_position)
+		public bool getParticleSafe(Vector2I p_particle_position)
 		{
-			// GD.Print(p_check_position, particle_position);
-			return particles[vecToString(p_check_position - particle_position)];
+			return 
+				p_particle_position.X < chunk_size.X &&
+				p_particle_position.X > cell_particle_offset.X &&
+				p_particle_position.Y < chunk_size.Y &&
+				p_particle_position.Y > cell_particle_offset.Y;
+		}
+		public NB_particle getParticle(Vector2I p_particle_position)
+		{
+			return particles[vecToString(p_particle_position - cell_particle_offset)];
 		}
 		public string fakeVecToString(int X, int Y) => X + "," + Y;
 		public string vecToString(Vector2I p_vec) => p_vec.X + "," + p_vec.Y;
@@ -112,58 +151,57 @@ public partial class Sand : TileMapLayer
 		particleCellPlace(createParticle(new Vector2I(0,0), "Sand"));
 		particleCellPlace(createParticle(new Vector2I(5,0), "Sand"));
 		particleCellPlace(createParticle(new Vector2I(10,0), "Sand"));
+		particleCellPlace(createParticle(new Vector2I(20,0), "Sand"));
 	}
+	double timer = 0;
 	public override void _Process(double delta)
 	{
-		simulationStep();
-		visualiser();
+		timer += delta;
+		if (timer > 1)
+		{
+			simulationStep();
+			visualiser();
+		}
 	}
 	public void simulationStep()
 	{
-		foreach (Vector2I chunk_update_coord in chunks_update_list)
+		for (int chunk_iter = 0; chunk_iter < chunks_update_list.Count; chunk_iter++)
 		{
-			foreach (NB_particle particle in chunks[vecToString(chunk_update_coord)].getUpdatedParticles())
+			NB_chunk temp_chunk = chunks[vecToString(chunks_update_list[chunk_iter])];
+			List<NB_particle> particle_list = temp_chunk.getUpdatedParticles();
+			for (int particle_iter = 0; particle_iter < chunks_update_list.Count; particle_iter++)
 			{
+				NB_particle particle = particle_list[particle_iter];
 				foreach (Vector2I check_offset in particle.checking_pos)
 				{
-					if (check_pixel(check_offset, particle)) {
+					// GD.Print(check_offset);
+					if (check_pixel(check_offset, particle, temp_chunk)) {
 						break;
 					}
 				}
 			}
 		}
 	}
-	private bool check_pixel(Vector2I check_offset, NB_particle p_particle)
+	private bool check_pixel(Vector2I check_offset, NB_particle p_particle, NB_chunk p_current_chunk)
 	{
 		Vector2I check_position = p_particle.particle_position + check_offset;
-		NB_chunk indexed_chunk = vecToChunk(check_position);
-		NB_particle returned_particle =  indexed_chunk.getParticle(check_position);
-		if (p_particle.type == NB_type.FALLING)
+		NB_particle returned_particle;
+		NB_chunk returned_chunk = p_current_chunk;
+		if (p_current_chunk.getParticleSafe(check_position))
+		{	
+			returned_particle = p_current_chunk.getParticle(check_position);
+		} else
 		{
-			if (
-				returned_particle.type == NB_type.LIQUID ||
-				returned_particle.type == NB_type.GAS ||
-				returned_particle.type == NB_type.PLASMA
-			)
-			{
-				
-			}
+			return false;
+			// returned_particle
 		}
-		else if (p_particle.type == NB_type.LIQUID)
+		if (p_particle.type > returned_particle.type)
 		{
-			if (
-				returned_particle.type == NB_type.GAS ||
-				returned_particle.type == NB_type.PLASMA
-			)
+			if (returned_particle.empty)
 			{
-				
-			}
-		}
-		else if (p_particle.type == NB_type.GAS)
-		{
-			if (returned_particle.type == NB_type.PLASMA)
-			{
-				
+				returned_chunk.particleRemove(p_particle.particle_position);
+				p_particle.particle_position = check_position;
+				returned_chunk.particleAdd(p_particle);
 			}
 		}
 		return false;
@@ -194,7 +232,8 @@ public partial class Sand : TileMapLayer
 	}
 	private NB_particle createParticle(Vector2I p_positio, string type)
 	{
-		NB_particle return_particle = particle_list[type].pos(p_positio);
+		NB_particle return_particle = particle_list[type].clone().pos(p_positio);
+		//TODO coloring script goes here
 		return_particle.color = new Vector2I(14,0);
 		return return_particle;
 	}
