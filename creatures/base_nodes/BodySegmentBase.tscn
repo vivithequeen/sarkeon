@@ -1,0 +1,83 @@
+[gd_scene load_steps=10 format=3 uid="uid://upxdswdj6xxv"]
+
+[ext_resource type="PackedScene" uid="uid://bn10yjmn086db" path="res://creatures/base_nodes/BaseLeg.tscn" id="1_a6mud"]
+[ext_resource type="Script" uid="uid://dcjagmo48jnr5" path="res://creatures/base_nodes/BodySegmentBase.cs" id="1_jyrl0"]
+[ext_resource type="Texture2D" uid="uid://dxniswfywmatp" path="res://assets/creature/centipede/bodysegment1.png" id="2_jyrl0"]
+[ext_resource type="Texture2D" uid="uid://0nxc871r2tns" path="res://assets/creature/centipede/joint3.png" id="5_ivb0o"]
+
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_y4yyk"]
+resource_local_to_scene = true
+target_nodepath = NodePath("Target")
+joint_one_bone_idx = 0
+joint_one_bone2d_node = NodePath("BaseLeg")
+joint_two_bone_idx = 1
+joint_two_bone2d_node = NodePath("BaseLeg/Bone2D")
+
+[sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_xi8p8"]
+resource_local_to_scene = true
+enabled = true
+modification_count = 1
+modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_y4yyk")
+
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_il7l4"]
+resource_local_to_scene = true
+target_nodepath = NodePath("Target")
+flip_bend_direction = true
+joint_one_bone_idx = 0
+joint_one_bone2d_node = NodePath("BaseLeg")
+joint_two_bone_idx = 1
+joint_two_bone2d_node = NodePath("BaseLeg/Bone2D")
+
+[sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_ivb0o"]
+resource_local_to_scene = true
+enabled = true
+modification_count = 1
+modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_il7l4")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8tmcm"]
+
+[node name="BodySegmentBase" type="Node2D"]
+script = ExtResource("1_jyrl0")
+
+[node name="joint2" type="TextureRect" parent="."]
+offset_left = 20.0
+offset_top = -24.0
+offset_right = 44.0
+scale = Vector2(0.76, 0.76)
+texture = ExtResource("5_ivb0o")
+
+[node name="joint3" type="TextureRect" parent="."]
+offset_left = 20.999998
+offset_top = 3.999999
+offset_right = 45.0
+offset_bottom = 28.0
+scale = Vector2(0.76, 0.76)
+texture = ExtResource("5_ivb0o")
+
+[node name="BaseLeg" parent="." instance=ExtResource("1_a6mud")]
+position = Vector2(29, 17)
+rotation = 1.5707964
+scale = Vector2(1.6, 1.6)
+modification_stack = SubResource("SkeletonModificationStack2D_xi8p8")
+
+[node name="BaseLeg2" parent="." instance=ExtResource("1_a6mud")]
+position = Vector2(29, -17)
+rotation = 4.712389
+scale = Vector2(1.6, 1.6)
+modification_stack = SubResource("SkeletonModificationStack2D_ivb0o")
+
+[node name="joint" type="TextureRect" parent="."]
+offset_left = -9.0
+offset_top = -12.0
+offset_right = 15.0
+offset_bottom = 12.0
+texture = ExtResource("5_ivb0o")
+
+[node name="body" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_8tmcm")
+offset_left = 64.0
+offset_top = -26.0
+offset_right = 116.0
+offset_bottom = 38.0
+rotation = 1.5707964
+texture = ExtResource("2_jyrl0")

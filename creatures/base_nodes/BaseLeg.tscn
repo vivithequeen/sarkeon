@@ -1,0 +1,81 @@
+[gd_scene load_steps=8 format=3 uid="uid://bn10yjmn086db"]
+
+[ext_resource type="Script" uid="uid://0kbab2yq2v4v" path="res://creatures/base_nodes/BaseLeg.cs" id="1_fwvm8"]
+[ext_resource type="Texture2D" uid="uid://37rti2u2jvdt" path="res://scene/icon.svg" id="2_x6ijj"]
+[ext_resource type="Texture2D" uid="uid://dogoo6a826t56" path="res://assets/creature/centipede/legsegment1.png" id="3_skaq3"]
+[ext_resource type="Texture2D" uid="uid://b50oxf5sw1y3o" path="res://assets/creature/centipede/legsegment2.png" id="4_hgxlw"]
+[ext_resource type="Texture2D" uid="uid://cm4kqe5de1a62" path="res://assets/creature/centipede/joint.png" id="5_4kpbl"]
+
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_fwvm8"]
+resource_local_to_scene = true
+target_nodepath = NodePath("Target")
+flip_bend_direction = true
+joint_one_bone_idx = 0
+joint_one_bone2d_node = NodePath("BaseLeg")
+joint_two_bone_idx = 1
+joint_two_bone2d_node = NodePath("BaseLeg/Bone2D")
+
+[sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_x6ijj"]
+resource_local_to_scene = true
+enabled = true
+modification_count = 1
+modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_fwvm8")
+
+[node name="BaseLeg" type="Skeleton2D"]
+scale = Vector2(1.4, 1.4)
+modification_stack = SubResource("SkeletonModificationStack2D_x6ijj")
+script = ExtResource("1_fwvm8")
+
+[node name="Target" type="Node2D" parent="."]
+position = Vector2(216, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Target"]
+visible = false
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_x6ijj")
+
+[node name="BaseLeg" type="Bone2D" parent="."]
+scale = Vector2(0.9999807, 0.9999807)
+rest = Transform2D(0.43343303, 0.9011596, -0.9011596, 0.43343303, 0, 0)
+auto_calculate_length_and_angle = false
+length = 64.0
+bone_angle = 0.0
+editor_settings/show_bone_gizmo = false
+metadata/_local_pose_override_enabled_ = true
+
+[node name="joint" type="TextureRect" parent="BaseLeg"]
+offset_left = 59.001137
+offset_top = -5.0000963
+offset_right = 69.001144
+offset_bottom = 4.9999037
+texture = ExtResource("5_4kpbl")
+
+[node name="Bone2D" type="Bone2D" parent="BaseLeg"]
+position = Vector2(64.001236, 0)
+scale = Vector2(0.99995947, 0.99995947)
+rest = Transform2D(-0.01913753, -0.9997712, 0.9997712, -0.01913753, 64.001236, 0)
+auto_calculate_length_and_angle = false
+length = 64.0
+bone_angle = 0.0
+editor_settings/show_bone_gizmo = false
+metadata/_local_pose_override_enabled_ = true
+
+[node name="leg2" type="TextureRect" parent="BaseLeg/Bone2D"]
+offset_left = 0.28573513
+offset_top = -5.0002995
+offset_right = 64.285736
+offset_bottom = 4.9997005
+texture = ExtResource("3_skaq3")
+
+[node name="leg1" type="TextureRect" parent="BaseLeg"]
+offset_top = -5.0
+offset_right = 64.0
+offset_bottom = 5.0
+texture = ExtResource("4_hgxlw")
+
+[node name="WallChecker" type="RayCast2D" parent="."]
+position = Vector2(0, -5.9604645e-08)
+target_position = Vector2(130, 0)
+
+[node name="ResetPosition" type="Node2D" parent="."]
+position = Vector2(80, 0)
