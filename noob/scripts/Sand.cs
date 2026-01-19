@@ -27,7 +27,7 @@ public partial class Sand : TileMapLayer
 			solid = p_solid;
 			checking_pos = p_checking_pos;
 		}
-		public bool empty;
+		public bool empty = false;
 		public NB_type type;
 		public bool solid;
 		public Vector2I particle_position;
@@ -95,6 +95,7 @@ public partial class Sand : TileMapLayer
 		}
 		public List<NB_particle> getUpdatedParticles()
 		{
+			//TODO add script that checks if there were no updates in chunks then it disables the chunk
 			return list_phisics_update;
 		}
 		public List<NB_particle> getUpdatedParticles_visual()
@@ -105,9 +106,9 @@ public partial class Sand : TileMapLayer
 		public bool getParticleSafe(Vector2I p_particle_position)
 		{
 			return 
-				p_particle_position.X < chunk_size.X &&
+				p_particle_position.X < cell_particle_offset.X + chunk_size.X &&
 				p_particle_position.X > cell_particle_offset.X &&
-				p_particle_position.Y < chunk_size.Y &&
+				p_particle_position.Y < cell_particle_offset.Y + chunk_size.Y &&
 				p_particle_position.Y > cell_particle_offset.Y;
 		}
 		public NB_particle getParticle(Vector2I p_particle_position)
@@ -119,7 +120,7 @@ public partial class Sand : TileMapLayer
 	}
 	//Variables
 	Dictionary<String, NB_particle> particle_list;
-	Vector2I chunk_size = new Vector2I(100,100);
+	Vector2I chunk_size = new Vector2I(10,10);
 	Dictionary<String, NB_chunk> chunks;
 	List<Vector2I> chunks_update_list;
 	//Init sands
@@ -129,15 +130,20 @@ public partial class Sand : TileMapLayer
 		particle_list = new Dictionary<String, NB_particle>{};
 		chunks = new Dictionary<String, NB_chunk>{};
 		//init list
-		chunks_update_list = new List<Vector2I>{new Vector2I (0,0)};
+		chunks_update_list = new List<Vector2I>{};
 		//init all sand data
-		particle_list.Add("Sand", new NB_particle(
+		particle_list.Add("Stone", new NB_particle(
 			NB_type.SOLID,
+			true,
+			[]
+		));
+		particle_list.Add("Sand", new NB_particle(
+			NB_type.FALLING,
 			true,
 			[
 				new Vector2I(0,1),
-				new Vector2I(1,1),
-				new Vector2I(-1,1),
+				// new Vector2I(1,1),
+				// new Vector2I(-1,1),
 			]
 		));
 	}
@@ -146,7 +152,21 @@ public partial class Sand : TileMapLayer
 		// chunks.Add(fakeVecToString(0,0), new NB_chunk(new Vector2I(0,0), chunk_size));
 		// chunks_update_list.Add(new Vector2I(0,0));
 		//TODO add so you can add multiple particles aka particlesAdd
-		particleCellPlace(createParticle(new Vector2I(0,0), "Sand"));
+		// particleCellPlace(createParticle(new Vector2I(15,2), "Sand"));
+		particleCellPlace(createParticle(new Vector2I(10,2), "Sand"));
+		// particleCellPlace(createParticle(new Vector2I(4,2), "Sand"));
+		// particleCellPlace(createParticle(new Vector2I(4,3), "Sand"));
+		// particleCellPlace(createParticle(new Vector2I(5,3), "Sand"));
+		// particleCellPlace(createParticle(new Vector2I(4,4), "Sand"));
+		// particleCellPlace(createParticle(new Vector2I(4,5), "Sand"));
+		particleCellPlace(createParticle(new Vector2I(1,10), "Stone"));
+		particleCellPlace(createParticle(new Vector2I(2,10), "Stone"));
+		particleCellPlace(createParticle(new Vector2I(3,10), "Stone"));
+		particleCellPlace(createParticle(new Vector2I(4,10), "Stone"));
+		particleCellPlace(createParticle(new Vector2I(5,10), "Stone"));
+		particleCellPlace(createParticle(new Vector2I(6,10), "Stone"));
+		particleCellPlace(createParticle(new Vector2I(7,10), "Stone"));
+		particleCellPlace(createParticle(new Vector2I(8,10), "Stone"));
 		// particleCellPlace(createParticle(new Vector2I(5,0), "Sand"));
 		// particleCellPlace(createParticle(new Vector2I(10,0), "Sand"));
 		// particleCellPlace(createParticle(new Vector2I(20,0), "Sand"));
@@ -156,7 +176,7 @@ public partial class Sand : TileMapLayer
 	public override void _Process(double delta)
 	{
 		timer += delta;
-		if (timer > 1)
+		if (timer > 0.1)
 		{
 			timer = 0;
 			simulationStep();
@@ -172,14 +192,15 @@ public partial class Sand : TileMapLayer
 
 			List<NB_particle> particle_list = temp_chunk.getUpdatedParticles();
 			int static_count = particle_list.Count;
-			GD.Print("2-", static_count);
+			GD.Print("--",chunk_iter,"-2-", static_count);
 			foreach (NB_particle item in particle_list)
 			{
-				GD.Print("3-", item.particle_position);
+				GD.Print("--",chunk_iter,"-2-", static_count,"-3-", item.particle_position);
 			}
 			for (int particle_iter = 0; particle_iter < static_count; particle_iter++)
 			{
 				NB_particle particle = particle_list[particle_iter];
+				// GD.Print("4-", particle.particle_position);
 				foreach (Vector2I check_offset in particle.checking_pos)
 				{
 					if (check_pixel(check_offset, particle, temp_chunk)) {
@@ -200,17 +221,27 @@ public partial class Sand : TileMapLayer
 			returned_particle = p_current_chunk.getParticle(check_position);
 		} else
 		{
-			return false;
-			// returned_particle
+			returned_chunk = vecToChunk(check_position);
+			returned_particle = returned_chunk.getParticle(check_position);
 		}
+		// GD.Print(p_particle.type," ", returned_particle.type, check_position);
 		if (p_particle.type > returned_particle.type)
 		{
 			if (returned_particle.empty)
 			{
-				returned_chunk.particleRemove(p_particle.particle_position);
+				// use p_current_chunk for moving first particle
+				p_current_chunk.particleRemove(p_particle.particle_position);
 				p_particle.particle_position = check_position;
 				returned_chunk.particleAdd(p_particle);
+			} else
+			{
+				
+				// p_current_chunk.particleAdd(returned_particle);
+				// returned_particle.particle_position = p_particle.particle_position;
+				// returned_chunk.particleAdd(p_particle);
+				// p_particle.particle_position = check_position;
 			}
+			return true;
 		}
 		return false;
 	} 
@@ -235,6 +266,7 @@ public partial class Sand : TileMapLayer
 			List<NB_particle> particle_update_list = chunks[vecToString(chunk_update_coord)].getUpdatedParticles_visual();
 			foreach (NB_particle particle in particle_update_list)
 			{
+				//TODO make so type affects the color drawn
 				SetCell(particle.particle_position, 0, particle.color);
 			}
 			particle_update_list.Clear();
