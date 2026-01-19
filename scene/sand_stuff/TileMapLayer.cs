@@ -33,7 +33,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 	// List<int> moving_id;
 		// Use this for initing ;-;
 		// moving_id = new List<int>();
-	Vector2I particle_sim_size = new Vector2I(200,500);
+	Vector2I particle_sim_size = new Vector2I(500,500);
 	int particle_sim_abs_size;
 	NB_cell[] particles;
 	bool[] particles_locked_cell;
@@ -71,7 +71,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 		{
 			for (int x = 0; x < particle_sim_size.X; x++)
 			{
-				if (random_sand.RandiRange(0, 1000) == 0)
+				if (random_sand.RandiRange(0, 40) == 0)
 				{
 					NB_cell temp_cell = new NB_cell(
 					new Vector2(0,0),
@@ -101,7 +101,7 @@ public partial class TileMapLayer : Godot.TileMapLayer
 		foreach (var index_of_cell in particles_buffer_updated_index)
 		{
 			particles_locked_cell[index_of_cell] = false;
-			particlesUpdateVisual(index_of_cell, 1);
+			particlesUpdateVisual(index_of_cell, 0);
 		}
 		
 		particles_buffer_updated_index.Clear();
