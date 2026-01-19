@@ -34,38 +34,51 @@ public partial class BaseCritter : Node
 	public Vector2 UpdateCritterSenses(Array<Dictionary<string, Variant>> SightInformation)
 	{
 		//should move in the direction of 5 degress that has the least amount of stuff if there is nothing else it wants
+		UpdateDebugWeightLabels();
+
 
 		float[] weightedSightValues = new float[(180 / 5) + 1];
+		// Initialize all directions as "safe" (high weight = far away = no obstacle)
+		for(int i = 0; i < weightedSightValues.Length; i++)
+		{
+			weightedSightValues[i] = float.MaxValue;
+		}
 
 		foreach (Dictionary<string, Variant> OneDegreeInformation in SightInformation)
 		{
 			int index = (int)((float)OneDegreeInformation["rotation"] / 5);
-			float distance = ((Node2D)GetParent()).GlobalPosition.DistanceTo((Vector2)OneDegreeInformation["collectionPoint"]);
-			float weight = distance / 700.0f;
-			weightedSightValues[index] = distance / 700.0f; //TODO: magic number replace at some point with sight range value :pf: 
-			UpdateDebugWeight(index, weight, (float)OneDegreeInformation["rotation"]);
+			if(index >= 0 && index < weightedSightValues.Length)
+			{
+				float distance = ((Node2D)GetParent()).GlobalPosition.DistanceTo((Vector2)OneDegreeInformation["collectionPoint"]);
+				float weight = distance / 700.0f;
+				weightedSightValues[index] = weight; //TODO: magic number replace at some point with sight range value :pf: 
+				UpdateDebugWeightValues(index, weight, (float)OneDegreeInformation["rotation"]);
+			}
 		}
 
-
-		int mostFavorableRotation = GetIndexOfLowestValue(weightedSightValues);
-
-
-		Vector2 direction = new(100, 0);
-		direction = direction.Rotated(Mathf.DegToRad(mostFavorableRotation * 5) + ((Node2D)GetParent()).GlobalRotation);
+		// Find direction with HIGHEST weight (furthest from obstacles = safest)
+		int mostFavorableIndex = GetIndexOfHighestValue(weightedSightValues);
+		float mostFavorableRotation = mostFavorableIndex * 5 + Mathf.RadToDeg(((Node2D)GetParent()).GlobalRotation);
+		Vector2 direction = new(200, 0);
+		direction = direction.Rotated(Mathf.DegToRad(mostFavorableRotation));
 		direction += ((Node2D)GetParent()).GlobalPosition;
 		return direction;
 	}
 
-	public void UpdateDebugWeight(int index, float value, float rotation)
+	public void UpdateDebugWeightValues(int index, float value, float rotation)
 	{
 		DebugWeightLabels[index].Text = value.ToString();
-		Vector2 Pos = new(20,0);
-		Pos = Pos.Rotated(Mathf.DegToRad(rotation));
-		DebugWeightLabels[index].GlobalPosition = Pos /*+ ((Node2D)GetParent()).GlobalPosition*/;
-			
 	}
 
-	public void UpdateDebug
+	public void UpdateDebugWeightLabels()
+	{
+		for(int i = 0; i < DebugWeightLabels.Count; i++)
+		{
+			Vector2 Pos = new(150f,0);
+			Pos = Pos.Rotated(Mathf.DegToRad(i * (180.0f / 37)));
+			DebugWeightLabels[i].GlobalPosition = Pos + ((Node2D)GetParent()).GlobalPosition;
+		}
+	}
 
 	public void InitDebugWeights()
 	{
@@ -77,7 +90,27 @@ public partial class BaseCritter : Node
 		}
 	}
 
+	public static int GetIndexOfHighestValue(float[] arr)
+	{
+		if (arr == null || arr.Length == 0)
+		{
+			throw new ArgumentException("Array cannot be null or empty.", nameof(arr));
+		}
 
+		float maxValue = arr[0];
+		int maxIndex = 0;
+
+		for (int i = 1; i < arr.Length; i++)
+		{
+			if (arr[i] > maxValue)
+			{
+				maxValue = arr[i];
+				maxIndex = i;
+			}
+		}
+
+		return maxIndex;
+	}
 	public static int GetIndexOfLowestValue(float[] arr)
 	{
 		if (arr == null || arr.Length == 0)
@@ -99,7 +132,7 @@ public partial class BaseCritter : Node
 
 		return minIndex;
 	}
-    public override void _EnterTree()
+    public override void _Ready()
     {
         InitDebugWeights();
     }

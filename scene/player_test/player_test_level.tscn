@@ -13,8 +13,8 @@ size = Vector2(1816, 104)
 [node name="PlayerTestLevel" type="Node2D"]
 
 [node name="Bg1" type="Sprite2D" parent="."]
-position = Vector2(400, 312)
-scale = Vector2(2, 2)
+position = Vector2(400, 316)
+scale = Vector2(2, 1.984375)
 texture = ExtResource("1_uf1rh")
 
 [node name="Camera2D" type="Camera2D" parent="."]

@@ -19,7 +19,7 @@ public partial class BaseSensors : Node2D
 
 	public int eyeIndex = 0;
 	public float eyeIndexStep;
-	public int eyeIndexTotalSteps = 240; // frames to completion
+	public int eyeIndexTotalSteps = 30; // frames to completion
 
 	RayCast2D eye;
 	
@@ -62,22 +62,19 @@ public partial class BaseSensors : Node2D
 			eyeIndex = 0;
 		}
 
-		 		
-		eye.Rotation = Mathf.DegToRad(eyeIndexStep * eyeIndex);
+		float currentRotation = eyeIndexStep * eyeIndex;
+		eye.Rotation = Mathf.DegToRad(currentRotation);
 		eyeIndex+=1;
 
 		if (eye.IsColliding())
 		{
 			return new Dictionary<string, Variant> {
 				{"collider", eye.GetCollider()}, 
-				{"rotation", eyeIndexStep * eyeIndex}, 
+				{"rotation", Mathf.RadToDeg(eye.GlobalRotation)}, 
 				{"collectionPoint", eye.GetCollisionPoint()}, 
 				{"globalPosition", GlobalPosition},
 			};
 		}
 		return null;
-
-		
-		
 	}
 }
