@@ -9,6 +9,8 @@ public partial class BaseCreature : Node2D
 	[Export] public BaseSensors baseSensors;
 
 	[Export] public BaseCritter baseCritter;
+
+	[Export] public NavigationSystem navigationSystem;
 	public Vector2 TargetPos = new Vector2(0,0);
 	public override void _Ready()
 	{
@@ -17,13 +19,6 @@ public partial class BaseCreature : Node2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		if (baseSensors != null)
-		{
-			Array<Dictionary<string, Variant>> SeenObjects = baseSensors.SearchWithEyes();
-			if (SeenObjects != null)
-			{
-				TargetPos = baseCritter.UpdateCritterSenses(SeenObjects);
-			}
-		}
+		TargetPos = (navigationSystem.GetPath(GlobalPosition, GetGlobalMousePosition()))[1];
 	}
 }

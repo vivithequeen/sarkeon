@@ -6,7 +6,7 @@ public partial class NavigationSystem : Node
 	
 	[Export] Godot.TileMapLayer Sand;
 	[Export] Godot.TileMapLayer Path;
-
+	
 	AStarGrid2D astar = new();
 	public override void _Ready()
 	{
@@ -39,6 +39,10 @@ public partial class NavigationSystem : Node
 		{
 			Path.SetCell(Cell, 0, Vector2I.Zero);
 		}
+	}
+	public Array<Vector2I> GetPath(Vector2 StartPos, Vector2 FinalPos)
+	{
+		return astar.GetIdPath((Vector2I)StartPos, (Vector2I)FinalPos);
 	}
 
 }
