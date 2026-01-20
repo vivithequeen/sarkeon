@@ -15,15 +15,13 @@ public partial class NavigationSystem : Node
 	}
     public override void _Process(double delta)
     {
-		Vector2 FinalPos = GetParent<Node2D>().GetGlobalMousePosition();
-        ShowPath(FinalPos);
 
     }
 
 	public void InitAstarGrid()
 	{
 		astar.Region = new(0,0,1000,1000);
-		astar.CellSize = new(4,4);
+		astar.CellSize = new(1,1);
 		astar.Update();
 		foreach(Vector2I Cell in Sand.GetUsedCells())
 		{
@@ -31,18 +29,10 @@ public partial class NavigationSystem : Node
 		}
 	}
 	
-	public void ShowPath(Vector2 FinalPos)
-	{
-		Array<Vector2I> PathTaken = astar.GetIdPath(new Vector2I(30,30), (Vector2I)FinalPos);
-		Path.Clear();
-		foreach(Vector2I Cell in PathTaken)
-		{
-			Path.SetCell(Cell, 0, Vector2I.Zero);
-		}
-	}
+
 	public Array<Vector2I> GetPath(Vector2 StartPos, Vector2 FinalPos)
 	{
-		return astar.GetIdPath(new Vector2I(30,30), (Vector2I)FinalPos);
+		return astar.GetIdPath((Vector2I)StartPos, (Vector2I)FinalPos);
 	}
 
 }

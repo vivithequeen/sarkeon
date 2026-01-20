@@ -24,6 +24,7 @@ NB_rand="*res://globals/NB_Rand.cs"
 [display]
 
 window/stretch/mode="canvas_items"
+window/vsync/vsync_mode=0
 
 [dotnet]
 

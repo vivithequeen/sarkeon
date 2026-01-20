@@ -85,6 +85,7 @@ public partial class HeadBase : Node2D
 	public override void _PhysicsProcess(double delta)
 	{
 		TargetPosition = ((BaseCreature)GetParent()).TargetPos;
+		
 		//TargetPosition = GetGlobalMousePosition();
 		GoalPositionBase.GlobalPosition = ((BaseCreature)GetParent()).TargetPos;
 		//TODO CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE
