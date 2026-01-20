@@ -76,10 +76,9 @@ public partial class Sand : TileMapLayer
 		public List<NB_particle> list_phisics_update;
 		public void particleAdd(NB_particle p_particle)
 		{
-			
-			particles[vecToString(p_particle.particle_position)] = p_particle;
+			// GD.Print(particles[vecToString(p_particle.particle_position - cell_particle_offset)], p_particle);
+			particles[vecToString(p_particle.particle_position - cell_particle_offset)] = p_particle;
 			updateParticlenAdd(p_particle);
-			
 		}
 		public void particleRemove(Vector2I p_particle_position)
 		{
@@ -185,24 +184,26 @@ public partial class Sand : TileMapLayer
 	}
 	public void simulationStep()
 	{
-		GD.Print("1-", chunks_update_list.Count);
+		// GD.Print("1-", chunks_update_list.Count);
 		for (int chunk_iter = 0; chunk_iter < chunks_update_list.Count; chunk_iter++)
 		{
 			NB_chunk temp_chunk = chunks[vecToString(chunks_update_list[chunk_iter])];
 
 			List<NB_particle> particle_list = temp_chunk.getUpdatedParticles();
 			int static_count = particle_list.Count;
-			GD.Print("--",chunk_iter,"-2-", static_count);
-			foreach (NB_particle item in particle_list)
+			// GD.Print("--",chunk_iter,"-2-", static_count);
+			// foreach (NB_particle item in particle_list)
+			// {
+			// 	GD.Print("--",chunk_iter,"-2-", static_count,"-3-", item.particle_position);
+			// }
+			for (int particle_iter = 0; particle_iter < Math.Min(static_count, 2)  ; particle_iter++)
 			{
-				GD.Print("--",chunk_iter,"-2-", static_count,"-3-", item.particle_position);
-			}
-			for (int particle_iter = 0; particle_iter < static_count; particle_iter++)
-			{
+				GD.Print(static_count);
 				NB_particle particle = particle_list[particle_iter];
-				// GD.Print("4-", particle.particle_position);
-				foreach (Vector2I check_offset in particle.checking_pos)
+				// GD.Print("4-", particle.checking_pos.Count);
+				for (int check_offset_iter = 0; check_offset_iter < particle.checking_pos.Count; check_offset_iter++)
 				{
+					Vector2I check_offset = particle.checking_pos[check_offset_iter];
 					if (check_pixel(check_offset, particle, temp_chunk)) {
 						break;
 					}
@@ -232,15 +233,17 @@ public partial class Sand : TileMapLayer
 				// use p_current_chunk for moving first particle
 				p_current_chunk.particleRemove(p_particle.particle_position);
 				p_particle.particle_position = check_position;
+				// GD.Print(returned_chunk);
 				returned_chunk.particleAdd(p_particle);
-			} else
-			{
+			} 
+			// else
+			// {
 				
-				// p_current_chunk.particleAdd(returned_particle);
-				// returned_particle.particle_position = p_particle.particle_position;
-				// returned_chunk.particleAdd(p_particle);
-				// p_particle.particle_position = check_position;
-			}
+			// 	p_current_chunk.particleAdd(returned_particle);
+			// 	returned_particle.particle_position = p_particle.particle_position;
+			// 	returned_chunk.particleAdd(p_particle);
+			// 	p_particle.particle_position = check_position;
+			// }
 			return true;
 		}
 		return false;
