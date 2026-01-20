@@ -288,6 +288,6 @@ public partial class Sand : TileMapLayer
 		detected_chunk.particleAdd(p_particle);
 	}
 	//Stringies ;PP
-    public string fakeVecToString(int X, int Y) => X + "," + Y;
-    public string vecToString(Vector2I p_vec) => p_vec.X + "," + p_vec.Y;
+	public string fakeVecToString(int X, int Y) => X + "," + Y;
+	public string vecToString(Vector2I p_vec) => p_vec.X + "," + p_vec.Y;
 }
