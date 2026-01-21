@@ -74,8 +74,8 @@ offset_bottom = 5.0
 texture = ExtResource("4_hgxlw")
 
 [node name="WallChecker" type="RayCast2D" parent="."]
-position = Vector2(0, -5.9604645e-08)
 target_position = Vector2(130, 0)
+collision_mask = 3
 
 [node name="ResetPosition" type="Node2D" parent="."]
 position = Vector2(80, 0)
