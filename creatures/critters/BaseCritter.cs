@@ -23,6 +23,9 @@ public partial class BaseCritter : Node
 		{"hunger" , 0.7f},
 	};
 
+
+	private Array<Vector2I> _currentCritterNavigationPath;
+	
 	/* ok ok this is how the brain should work:
 
 
@@ -45,9 +48,28 @@ public partial class BaseCritter : Node
 		}
 		return bestObject;
 	}
+
 	public void UpdateCritterNavigation(Array<Vector2I> NavPositions)
 	{
+		_currentCritterNavigationPath = NavPositions;
+	}
 
+	public int GetNextCritterNavigationPointIndex(Vector2 position, int currentIndex)
+	{
+		if(currentIndex + 1 == _currentCritterNavigationPath.Count)
+		{
+			return currentIndex;
+		}
+
+		if((position/4).DistanceTo(_currentCritterNavigationPath[currentIndex]) < (position / 4).DistanceTo(_currentCritterNavigationPath[currentIndex + 1])){
+			return currentIndex+1;
+		}
+
+		return currentIndex;
+	}
+	public Vector2I GetCurrenCritterNavigationPoint(int index)
+	{
+		return  _currentCritterNavigationPath[index];
 	}
 
 
