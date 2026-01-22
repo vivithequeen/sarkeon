@@ -5,7 +5,6 @@ public partial class NavigationSystem : Node
 {
 	
 	[Export] Godot.TileMapLayer Sand;
-	[Export] Godot.TileMapLayer Path;
 	
 	AStarGrid2D astar = new();
 	public override void _Ready()

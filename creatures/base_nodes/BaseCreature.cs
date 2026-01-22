@@ -14,34 +14,41 @@ public partial class BaseCreature : Node2D
 	[Export] public NavigationSystem navigationSystem;
 	public Vector2 TargetPos = new Vector2(0, 0);
 
+
+	float UpdatePathTimer = 0;
+	int PathIndex = 0;
 	public Line2D navLine = new();
 	public override void _Ready()
 	{
 		GetParent().CallDeferred(Node.MethodName.AddChild, navLine);
+		Array<Vector2I> Path = navigationSystem.GetPath(GlobalPosition / 4, GetGlobalMousePosition() / 4);
 
-		
+		baseCritter.UpdateCritterNavigation(Path);
+
 	}
-	
+
 	// Called every frame. 'delta' is the elapsed time since the previo	us frame.
 	public override void _Process(double delta)
 	{
-		navLine.ClearPoints();
+		UpdatePathTimer += (float)delta;
 
-		Array<Vector2I> Path = navigationSystem.GetPath(GlobalPosition / 4, GetGlobalMousePosition() / 4);
-		baseCritter.UpdateCritterNavigation(Path);
-
-		if (Path.Count > 1)
+		if (UpdatePathTimer > 1.0)
 		{
-			if (Path[1].X * Path[1].Y > 0)
+			UpdatePathTimer = 0;
+			Array<Vector2I> Path = navigationSystem.GetPath(GlobalPosition / 4, GetGlobalMousePosition() / 4);
+			PathIndex = 0;
+			if (Path.Count != 0)
 			{
-				TargetPos = Path[1] * 4;
-				GD.Print(baseCritter.GetNextCritterNavigationPointIndex(GlobalPosition,0));
-				foreach (Vector2I pos in Path)
-				{
-					navLine.AddPoint(pos * 4);
-				}
-			} // TODO: update
+				baseCritter.UpdateCritterNavigation(Path);
+			}
 		}
+
+		//every 3rd frame
+		PathIndex = baseCritter.GetNextCritterNavigationPointIndex(GlobalPosition, PathIndex);
+		TargetPos = baseCritter.GetCurrentCritterNavigationPoint(PathIndex) * 4;
+		GD.Print(PathIndex);
+		//end every 3rd frame
+
 
 	}
 }

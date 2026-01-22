@@ -25,7 +25,7 @@ public partial class BaseCritter : Node
 
 
 	private Array<Vector2I> _currentCritterNavigationPath;
-	
+
 	/* ok ok this is how the brain should work:
 
 
@@ -35,12 +35,13 @@ public partial class BaseCritter : Node
 
 
 	public Node2D GetBestTargetObject(Array<Node2D> SeenObjects)
-	{	
+	{
 		Node2D bestObject = SeenObjects[0];
 		float bestObjectWeight = (float)SeenObjects[0].Get("weight");
 
-		foreach(Node2D obj in SeenObjects){
-			if((float)obj.Get("weight") > bestObjectWeight)
+		foreach (Node2D obj in SeenObjects)
+		{
+			if ((float)obj.Get("weight") > bestObjectWeight)
 			{
 				bestObject = obj;
 				bestObjectWeight = (float)obj.Get("weight");
@@ -56,27 +57,41 @@ public partial class BaseCritter : Node
 
 	public int GetNextCritterNavigationPointIndex(Vector2 position, int currentIndex)
 	{
-		if(currentIndex + 1 == _currentCritterNavigationPath.Count)
+		if(_currentCritterNavigationPath != null)
+		{
+			return -1;
+		}
+		if (currentIndex + 1 > _currentCritterNavigationPath.Count)
 		{
 			return currentIndex;
 		}
 
-		if((position/4).DistanceTo(_currentCritterNavigationPath[currentIndex]) < (position / 4).DistanceTo(_currentCritterNavigationPath[currentIndex + 1])){
-			return currentIndex+1;
+		if ((position / 4).DistanceTo(_currentCritterNavigationPath[currentIndex]) > (position / 4).DistanceTo(_currentCritterNavigationPath[currentIndex - 1]))
+		{
+			return currentIndex + 1;
 		}
 
 		return currentIndex;
 	}
-	public Vector2I GetCurrenCritterNavigationPoint(int index)
+	public Vector2I GetCurrentCritterNavigationPoint(int index)
 	{
-		return  _currentCritterNavigationPath[index];
+		if(_currentCritterNavigationPath != null)
+		{
+			return new Vector2I(-1,-1);
+		}
+		if (index > _currentCritterNavigationPath.Count)
+		{
+			return _currentCritterNavigationPath[index];
+		}
+		return _currentCritterNavigationPath[0]; // TODO: add better error handeling
+
 	}
 
 
-    public override void _Ready()
-    {
-        
-    }
+	public override void _Ready()
+	{
+
+	}
 
 	public override void _Process(double delta)
 	{
