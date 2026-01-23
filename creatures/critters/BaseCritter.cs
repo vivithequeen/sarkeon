@@ -55,36 +55,25 @@ public partial class BaseCritter : Node
 		_currentCritterNavigationPath = NavPositions;
 	}
 
-	public int GetNextCritterNavigationPointIndex(Vector2 position, int currentIndex)
+	public void GetNextCritterNavigationPointIndex(Vector2 position)
 	{
-		if(_currentCritterNavigationPath != null)
+		if(_currentCritterNavigationPath.Count == 0)
 		{
-			return -1;
+			return;
 		}
-		if (currentIndex + 1 > _currentCritterNavigationPath.Count)
+		if (position.DistanceTo(_currentCritterNavigationPath[0]) < 1)
 		{
-			return currentIndex;
-		}
-
-		if ((position / 4).DistanceTo(_currentCritterNavigationPath[currentIndex]) > (position / 4).DistanceTo(_currentCritterNavigationPath[currentIndex - 1]))
-		{
-			return currentIndex + 1;
+			_currentCritterNavigationPath.RemoveAt(0);
 		}
 
-		return currentIndex;
 	}
 	public Vector2I GetCurrentCritterNavigationPoint(int index)
 	{
-		if(_currentCritterNavigationPath != null)
+		if(_currentCritterNavigationPath.Count == 0)
 		{
 			return new Vector2I(-1,-1);
 		}
-		if (index > _currentCritterNavigationPath.Count)
-		{
-			return _currentCritterNavigationPath[index];
-		}
-		return _currentCritterNavigationPath[0]; // TODO: add better error handeling
-
+		return _currentCritterNavigationPath[index];
 	}
 
 

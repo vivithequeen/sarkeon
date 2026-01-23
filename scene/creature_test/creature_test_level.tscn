@@ -816,5 +816,5 @@ shape = SubResource("WorldBoundaryShape2D_g3wdb")
 Sand = NodePath("../Sand")
 
 [node name="BaseCreature" parent="." node_paths=PackedStringArray("navigationSystem") instance=ExtResource("4_dqwnp")]
-position = Vector2(28, 50)
+position = Vector2(350, 155)
 navigationSystem = NodePath("../NavigationSystem")

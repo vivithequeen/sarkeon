@@ -12,18 +12,19 @@ public partial class BaseCreature : Node2D
 	[Export] public BaseCritter baseCritter;
 
 	[Export] public NavigationSystem navigationSystem;
-	public Vector2 TargetPos = new Vector2(0, 0);
+	public Vector2 TargetPos = new Vector2(4, 4);
 
 
 	float UpdatePathTimer = 0;
-	int PathIndex = 0;
+
 	public Line2D navLine = new();
 	public override void _Ready()
 	{
 		GetParent().CallDeferred(Node.MethodName.AddChild, navLine);
-		Array<Vector2I> Path = navigationSystem.GetPath(GlobalPosition / 4, GetGlobalMousePosition() / 4);
-
+		Array<Vector2I> Path = navigationSystem.GetPath(GlobalPosition / 4, new Vector2I(100,100));
+		GD.Print(Path);
 		baseCritter.UpdateCritterNavigation(Path);
+		
 
 	}
 
@@ -32,11 +33,12 @@ public partial class BaseCreature : Node2D
 	{
 		UpdatePathTimer += (float)delta;
 
-		if (UpdatePathTimer > 1.0)
+		if (UpdatePathTimer > 0.5)
 		{
 			UpdatePathTimer = 0;
 			Array<Vector2I> Path = navigationSystem.GetPath(GlobalPosition / 4, GetGlobalMousePosition() / 4);
-			PathIndex = 0;
+
+			GD.Print(GlobalPosition, GetGlobalMousePosition());
 			if (Path.Count != 0)
 			{
 				baseCritter.UpdateCritterNavigation(Path);
@@ -44,9 +46,14 @@ public partial class BaseCreature : Node2D
 		}
 
 		//every 3rd frame
-		PathIndex = baseCritter.GetNextCritterNavigationPointIndex(GlobalPosition, PathIndex);
-		TargetPos = baseCritter.GetCurrentCritterNavigationPoint(PathIndex) * 4;
-		GD.Print(PathIndex);
+		baseCritter.GetNextCritterNavigationPointIndex(GlobalPosition / 4);
+
+		TargetPos = baseCritter.GetCurrentCritterNavigationPoint(0) * 4;
+		if(TargetPos.X == -4)
+		{
+			TargetPos = GlobalPosition;
+		}
+		//GD.Print(PathIndex);
 		//end every 3rd frame
 
 
