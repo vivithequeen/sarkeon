@@ -121,6 +121,7 @@ public partial class Sand : TileMapLayer
 		public string fakeVecToString(int X, int Y) => X + "," + Y;
 		public string vecToString(Vector2I p_vec) => p_vec.X + "," + p_vec.Y;
 	}
+	RandomNumberGenerator random_color;
 	//Variables
 	Dictionary<String, NB_particle> particle_list;
 	Vector2I chunk_size = new Vector2I(10,10);
@@ -149,32 +150,33 @@ public partial class Sand : TileMapLayer
 				new Vector2I(-1,1),
 			]
 		));
+		// Init random numbers
+		random_color = new RandomNumberGenerator();
+		random_color.Seed = 100;
 	}
 	public override void _Ready()
 	{
 		// chunks.Add(fakeVecToString(0,0), new NB_chunk(new Vector2I(0,0), chunk_size));
 		// chunks_update_list.Add(new Vector2I(0,0));
 		//TODO add so you can add multiple particles aka particlesAdd
-		// particleCellPlace(createParticle(new Vector2I(15,2), "Sand"));
-		particleCellPlace(createParticle(new Vector2I(5,2), "Sand"));
-		// particleCellPlace(createParticle(new Vector2I(4,2), "Sand"));
-		// particleCellPlace(createParticle(new Vector2I(4,3), "Sand"));
-		// particleCellPlace(createParticle(new Vector2I(5,3), "Sand"));
-		// particleCellPlace(createParticle(new Vector2I(4,4), "Sand"));
-		// particleCellPlace(createParticle(new Vector2I(4,5), "Sand"));
-		particleCellPlace(createParticle(new Vector2I(1,10), "Stone"));
-		particleCellPlace(createParticle(new Vector2I(2,10), "Stone"));
-		particleCellPlace(createParticle(new Vector2I(3,10), "Stone"));
-		particleCellPlace(createParticle(new Vector2I(4,10), "Stone"));
-		particleCellPlace(createParticle(new Vector2I(5,10), "Stone"));
-		particleCellPlace(createParticle(new Vector2I(6,10), "Stone"));
-		particleCellPlace(createParticle(new Vector2I(7,10), "Stone"));
-		particleCellPlace(createParticle(new Vector2I(8,10), "Stone"));
-		// particleCellPlace(createParticle(new Vector2I(5,0), "Sand"));
-		// particleCellPlace(createParticle(new Vector2I(10,0), "Sand"));
-		// particleCellPlace(createParticle(new Vector2I(20,0), "Sand"));
+		for (float x = -40; x < 80; x += 0.5f)
+		{
+			int x_offset = (int)Math.Floor((
+					Math.Sin(x/10f) +
+					Math.Sin(x/5f+5)
+				)*5);
+			particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset), "Stone"));
+			particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset+1), "Stone"));
+			particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset+2), "Stone"));
+		}
+		for (int y = 0; y < 10; y++)
+		{
+			for (int x = 0; x < 10; x++)
+			{
+				particleCellPlace(createParticle(new Vector2I(x*2 -10,y*2-30), "Sand"));
+			}
+		}
 		visualiser();
-		drawChunks();
 	}
 	List<MeshInstance2D> debug_chunks = [];
 	public void drawChunks()
@@ -189,8 +191,22 @@ public partial class Sand : TileMapLayer
 			MeshInstance2D squre_outline = new MeshInstance2D();
 			QuadMesh temp = new QuadMesh();
 			temp.Size = chunk_size;
+			squre_outline.Modulate = new Color(0.5f, 0, 0);
 			squre_outline.Mesh = temp;
-			squre_outline.GlobalPosition = chunk.cell_particle_offset + chunk_size/2;
+			squre_outline.GlobalPosition = chunk.cell_particle_offset + chunk_size/2  + Vector2.One / 2f;
+			squre_outline.ZIndex = -2;
+			AddChild(squre_outline);
+			debug_chunks.Add(squre_outline);
+			// GD.Print(chunk.cell_particle_offset);
+		}
+		foreach (Vector2I chunk_iter in chunks_update_list)
+		{
+			MeshInstance2D squre_outline = new MeshInstance2D();
+			QuadMesh temp = new QuadMesh();
+			temp.Size = chunk_size;
+			squre_outline.Modulate = new Color(0, 0.5f, 0);
+			squre_outline.Mesh = temp;
+			squre_outline.GlobalPosition = chunks[vecToString(chunk_iter)].cell_particle_offset + chunk_size/2 + Vector2.One / 2f;
 			squre_outline.ZIndex = -1;
 			AddChild(squre_outline);
 			debug_chunks.Add(squre_outline);
@@ -201,23 +217,25 @@ public partial class Sand : TileMapLayer
 	public override void _Process(double delta)
 	{
 		timer += delta;
-		if (timer > 1)
+		if (timer > 0.1f)
 		{
 			timer = 0;
 			simulationStep();
 			visualiser();
+			drawChunks();
 		}
 	}
 	public void simulationStep()
 	{
 		List<Vector2I> chunks_update_list_dub = [.. chunks_update_list];
+		chunks_update_list.Clear();
 		// GD.Print("1-", chunks_update_list_dub.Count);
 		foreach (Vector2I chunk in chunks_update_list_dub.Distinct())
 		{
 			NB_chunk temp_chunk = chunks[vecToString(chunk)];
 			List<NB_particle> particle_list = temp_chunk.getUpdatedParticles();
 			int static_count = particle_list.Count;
-			GD.Print(static_count);
+			// GD.Print(static_count);
 			for (int particle_iter = 0; particle_iter < static_count  ; particle_iter++)
 			{
 				NB_particle particle = particle_list[particle_iter];
@@ -231,49 +249,6 @@ public partial class Sand : TileMapLayer
 			}
 			particle_list.RemoveRange(0, static_count);
 		}
-		// for (int chunk_iter = 0; chunk_iter < chunks_update_list.Distinct().Count(); chunk_iter++)
-		// {
-		// 	NB_chunk temp_chunk = chunks[vecToString(chunks_update_list.Distinct()[chunk_iter])];
-
-		// 	List<NB_particle> particle_list = temp_chunk.getUpdatedParticles();
-		// 	int static_count = particle_list.Count;
-		// 	// GD.Print("--",chunk_iter,"-2-", static_count);
-		// 	// foreach (NB_particle item in particle_list)
-		// 	// {
-		// 	// 	GD.Print("--",chunk_iter,"-2-", static_count,"-3-", item.particle_position);
-		// 	// }
-		// 	// foreach (NB_particle a in particle_list)
-		// 	// {
-		// 	// 	GD.Print(a.particle_position);
-		// 	// }
-		// 	GD.Print(static_count);
-		// 	for (int particle_iter = 0; particle_iter < static_count  ; particle_iter++)
-		// 	{
-		// 		// GD.Print(particle_iter);
-		// 		NB_particle particle = particle_list[0];
-		// 		// GD.Print(particle_list.Count);
-		// 		// GD.Print("4-", particle.checking_pos.Count);
-		// 		// if (particle.checking_pos.Count > 0)
-		// 		// {
-		// 		// 	Vector2I check_offset = particle.checking_pos[0];
-		// 		// 	if (check_pixel(check_offset, particle, temp_chunk)) {
-		// 		// 		break;
-		// 		// 	}
-		// 		// }
-		// 		for (int check_offset_iter = 0; check_offset_iter < particle.checking_pos.Count; check_offset_iter++)
-		// 		{
-		// 			Vector2I check_offset = particle.checking_pos[check_offset_iter];
-		// 			if (check_pixel(check_offset, particle, temp_chunk)) {
-		// 				break;
-		// 			}
-		// 		}
-		// 	}
-		// 	// foreach (NB_particle a in particle_list)
-		// 	// {
-		// 	// 	GD.Print(a.particle_position);
-		// 	// }
-		// 	particle_list.RemoveRange(0, static_count);
-		// }
 	}
 	private bool check_pixel(Vector2I check_offset, NB_particle p_particle, NB_chunk p_current_chunk)
 	{
@@ -293,17 +268,14 @@ public partial class Sand : TileMapLayer
 		{
 			if (returned_particle.empty)
 			{
-				// GD.Print(p_current_chunk.get);
 				// use p_current_chunk for moving first particle
 				p_current_chunk.particleRemove(p_particle.particle_position);
-				GD.Print(p_particle.particle_position,check_position);
 				p_particle.particle_position = check_position;
-				// GD.Print(p_particle.particle_position,check_position);
-				// returned_chunk.particles[vecToString(p_particle.particle_position - returned_chunk.cell_particle_offset)] = p_particle;
-				// // returned_chunk.updateParticlenAdd(p_particle);
-				// returned_chunk.list_phisics_update.Add(p_particle);
-				// returned_chunk.list_visual_update.Add(p_particle);
+				
+				chunks_update_list.Add(p_current_chunk.chunk_position);
 				returned_chunk.particleAdd(p_particle);
+				chunks_update_list.Add(returned_chunk.chunk_position);
+				
 			} 
 			// else
 			// {
@@ -340,7 +312,13 @@ public partial class Sand : TileMapLayer
 			foreach (NB_particle particle in particle_update_list)
 			{
 				//TODO make so type affects the color drawn
-				SetCell(particle.particle_position, 0, particle.color);
+				if (particle.empty)
+				{
+					SetCell(particle.particle_position, -1);
+				} else
+				{
+					SetCell(particle.particle_position, 0, particle.color);
+				}
 			}
 			particle_update_list.Clear();
 		}
@@ -349,7 +327,18 @@ public partial class Sand : TileMapLayer
 	{
 		NB_particle return_particle = particle_list[type].clone().pos(p_positio);
 		//TODO coloring script goes here
-		return_particle.color = new Vector2I(14,0);
+		switch (type)
+		{
+			case "Sand":
+				return_particle.color = new Vector2I(14,random_color.RandiRange(0,4));
+				break;
+			case "Stone":
+				return_particle.color = new Vector2I(9 + random_color.RandiRange(0,3),15);
+				break;
+			default:
+				return_particle.color = new Vector2I(0,0);
+				break;
+		}
 		return return_particle;
 	}
 	private void particleCellPlace(NB_particle p_particle)
