@@ -2,6 +2,7 @@ using Godot;
 using System;
 using Godot.Collections;
 using System.IO;
+using System.Linq;
 public partial class BaseCreature : Node2D
 {
 	// Called when the node enters the scene tree for the first time.
@@ -21,9 +22,11 @@ public partial class BaseCreature : Node2D
 	public override void _Ready()
 	{
 		GetParent().CallDeferred(Node.MethodName.AddChild, navLine);
+		navLine.DefaultColor = new Color("00ffff6b");
+		navLine.JointMode = Line2D.LineJointMode.Round;
 		Array<Vector2I> Path = navigationSystem.GetPath(GlobalPosition / 4, new Vector2I(100,100));
 		GD.Print(Path);
-		baseCritter.UpdateCritterNavigation(Path);
+		baseCritter.SetCurrentCritterNavigationPath(Path);
 		
 
 	}
@@ -35,18 +38,30 @@ public partial class BaseCreature : Node2D
 
 		if (UpdatePathTimer > 0.5)
 		{
+			navLine.ClearPoints();
 			UpdatePathTimer = 0;
 			Array<Vector2I> Path = navigationSystem.GetPath(GlobalPosition / 4, GetGlobalMousePosition() / 4);
 
 			GD.Print(GlobalPosition, GetGlobalMousePosition());
 			if (Path.Count != 0)
 			{
-				baseCritter.UpdateCritterNavigation(Path);
+				baseCritter.SetCurrentCritterNavigationPath(Path);
 			}
+
+
+			Array<Vector2I> tempPath = baseCritter.GetCurrentCritterNavigationPath();
+			foreach(Vector2 p in tempPath)
+			{
+				navLine.AddPoint(p * 4);
+			}
+
 		}
 
 		//every 3rd frame
-		baseCritter.GetNextCritterNavigationPointIndex(GlobalPosition / 4);
+		if(baseCritter.UpdateCritterNavigationPath(GlobalPosition / 4))
+		{
+			navLine.RemovePoint(0);
+		}
 
 		TargetPos = baseCritter.GetCurrentCritterNavigationPoint(0) * 4;
 		if(TargetPos.X == -4)

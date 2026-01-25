@@ -50,21 +50,24 @@ public partial class BaseCritter : Node
 		return bestObject;
 	}
 
-	public void UpdateCritterNavigation(Array<Vector2I> NavPositions)
+	public void SetCurrentCritterNavigationPath(Array<Vector2I> NavPositions)
 	{
 		_currentCritterNavigationPath = NavPositions;
 	}
 
-	public void GetNextCritterNavigationPointIndex(Vector2 position)
+	public bool UpdateCritterNavigationPath(Vector2 position)
 	{
+		//returns true if the navigation was updated returns false otherwise
 		if(_currentCritterNavigationPath.Count == 0)
 		{
-			return;
+			return false;
 		}
 		if (position.DistanceTo(_currentCritterNavigationPath[0]) < 1)
 		{
 			_currentCritterNavigationPath.RemoveAt(0);
+			return true;
 		}
+		return false;
 
 	}
 	public Vector2I GetCurrentCritterNavigationPoint(int index)
@@ -75,17 +78,21 @@ public partial class BaseCritter : Node
 		}
 		return _currentCritterNavigationPath[index];
 	}
-
-
-	public override void _Ready()
+	public Godot.Collections.Array<Vector2I> GetCurrentCritterNavigationPath()
 	{
-
+		return _currentCritterNavigationPath;
 	}
 
+	public void ShowCritterInfo()
+	{
+		ImGui.Begin($"{GetParent().Name}'s Critter");
+
+		ImGui.Text($"Current Path: {_currentCritterNavigationPath}");
+
+		ImGui.End();
+	}
 	public override void _Process(double delta)
 	{
-
-		ImGui.Begin($"{GetParent().Name}'s Critter");
-		ImGui.End();
+		ShowCritterInfo();
 	}
 }
