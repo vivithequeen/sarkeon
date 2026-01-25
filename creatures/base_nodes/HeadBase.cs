@@ -88,9 +88,11 @@ public partial class HeadBase : Node2D
 		
 		//TargetPosition = GetGlobalMousePosition();
 		GoalPositionBase.GlobalPosition = ((BaseCreature)GetParent()).TargetPos;
-		//TODO CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE
+		//TODO: CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE CHANGE
 		GetParent<Node2D>().GlobalPosition = GetParent<Node2D>().GlobalPosition.MoveToward(TargetPosition, 300 * (float)delta);
-		GetParent<Node2D>().LookAt(TargetPosition);
+
+		float AngleToTarget = (TargetPosition - GlobalPosition).Normalized().Angle();
+		GetParent<Node2D>().GlobalRotation = Mathf.LerpAngle(GetParent<Node2D>().GlobalRotation, AngleToTarget, (float)delta); //TODO: make smooth 
 		for(int i = 0; i < AmountOfSegments; i++)
 		{
 			if(i == 0)
