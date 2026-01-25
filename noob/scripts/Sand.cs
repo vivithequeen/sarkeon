@@ -29,6 +29,7 @@ public partial class Sand : TileMapLayer
 			solid = p_solid;
 			checking_pos = p_checking_pos;
 		}
+		public bool flip = false;
 		public bool empty = false;
 		public NB_type type;
 		public bool solid;
@@ -39,6 +40,10 @@ public partial class Sand : TileMapLayer
 		{
 			particle_position = p_position;
 			return this;
+		}
+		public List<Vector2I> getPositions()
+		{
+			return checking_pos;
 		}
 		public NB_particle clone()
 		{
@@ -96,9 +101,6 @@ public partial class Sand : TileMapLayer
 		}
 		public List<NB_particle> getUpdatedParticles()
 		{
-			//TODO add script that checks if there were no updates in chunks then it disables the chunk
-			// List<NB_particle> newList = new List<NB_particle>(list_phisics_update);
-			// list_phisics_update.Clear();
 			return list_phisics_update;
 		}
 		public List<NB_particle> getUpdatedParticles_visual()
@@ -124,9 +126,10 @@ public partial class Sand : TileMapLayer
 	RandomNumberGenerator random_color;
 	//Variables
 	Dictionary<String, NB_particle> particle_list;
-	Vector2I chunk_size = new Vector2I(10,10);
+	Vector2I chunk_size = new Vector2I(100,100);
 	Dictionary<String, NB_chunk> chunks;
 	List<Vector2I> chunks_update_list;
+	bool flip_direction = false;
 	//Init sands
 	public Sand()
 	{
@@ -147,24 +150,31 @@ public partial class Sand : TileMapLayer
 			[
 				new Vector2I(0,1),
 				new Vector2I(1,1),
-				new Vector2I(-1,1),
 			]
 		));
+		particle_list.Add("Water", new NB_particle(
+			NB_type.LIQUID,
+			true,
+			[
+				new Vector2I(0,1),
+				new Vector2I(1,1),
+				new Vector2I(1,0),
+			]
+		));
+		//TODO make it global
 		// Init random numbers
 		random_color = new RandomNumberGenerator();
 		random_color.Seed = 100;
 	}
 	public override void _Ready()
 	{
-		// chunks.Add(fakeVecToString(0,0), new NB_chunk(new Vector2I(0,0), chunk_size));
-		// chunks_update_list.Add(new Vector2I(0,0));
 		//TODO add so you can add multiple particles aka particlesAdd
-		for (float x = -40; x < 80; x += 0.5f)
+		for (float x = -200; x < 200; x += 0.5f)
 		{
 			int x_offset = (int)Math.Floor((
 					Math.Sin(x/10f) +
 					Math.Sin(x/5f+5)
-				)*5);
+				)*2);
 			particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset), "Stone"));
 			particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset+1), "Stone"));
 			particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset+2), "Stone"));
@@ -173,7 +183,7 @@ public partial class Sand : TileMapLayer
 		{
 			for (int x = 0; x < 10; x++)
 			{
-				particleCellPlace(createParticle(new Vector2I(x*2 -10,y*2-30), "Sand"));
+				particleCellPlace(createParticle(new Vector2I(x*2 -30,y*2-30), "Water"));
 			}
 		}
 		visualiser();
@@ -193,11 +203,10 @@ public partial class Sand : TileMapLayer
 			temp.Size = chunk_size;
 			squre_outline.Modulate = new Color(0.5f, 0, 0);
 			squre_outline.Mesh = temp;
-			squre_outline.GlobalPosition = chunk.cell_particle_offset + chunk_size/2  + Vector2.One / 2f;
+			squre_outline.GlobalPosition = chunk.cell_particle_offset + chunk_size/2  - Vector2.One / 1f;
 			squre_outline.ZIndex = -2;
 			AddChild(squre_outline);
 			debug_chunks.Add(squre_outline);
-			// GD.Print(chunk.cell_particle_offset);
 		}
 		foreach (Vector2I chunk_iter in chunks_update_list)
 		{
@@ -206,19 +215,22 @@ public partial class Sand : TileMapLayer
 			temp.Size = chunk_size;
 			squre_outline.Modulate = new Color(0, 0.5f, 0);
 			squre_outline.Mesh = temp;
-			squre_outline.GlobalPosition = chunks[vecToString(chunk_iter)].cell_particle_offset + chunk_size/2 + Vector2.One / 2f;
+			squre_outline.GlobalPosition = chunks[vecToString(chunk_iter)].cell_particle_offset + chunk_size/2 - Vector2.One / 1f;
 			squre_outline.ZIndex = -1;
 			AddChild(squre_outline);
 			debug_chunks.Add(squre_outline);
-			// GD.Print(chunk.cell_particle_offset);
 		}
 	}
 	double timer = 0;
 	public override void _Process(double delta)
 	{
 		timer += delta;
-		if (timer > 0.1f)
+		if (timer > 0.01f)
 		{
+			flip_direction = !flip_direction;
+			particleCellPlace(createParticle(new Vector2I(10,-40), "Sand"));
+			particleCellPlace(createParticle(new Vector2I(11,-40), "Sand"));
+			particleCellPlace(createParticle(new Vector2I(12,-40), "Sand"));
 			timer = 0;
 			simulationStep();
 			visualiser();
@@ -229,20 +241,22 @@ public partial class Sand : TileMapLayer
 	{
 		List<Vector2I> chunks_update_list_dub = [.. chunks_update_list];
 		chunks_update_list.Clear();
-		// GD.Print("1-", chunks_update_list_dub.Count);
 		foreach (Vector2I chunk in chunks_update_list_dub.Distinct())
 		{
 			NB_chunk temp_chunk = chunks[vecToString(chunk)];
 			List<NB_particle> particle_list = temp_chunk.getUpdatedParticles();
 			int static_count = particle_list.Count;
-			// GD.Print(static_count);
 			for (int particle_iter = 0; particle_iter < static_count  ; particle_iter++)
 			{
 				NB_particle particle = particle_list[particle_iter];
+				Vector2I multiplier = particle.flip? new Vector2I(-1,1): new Vector2I(1,1);
 				for (int check_offset_iter = 0; check_offset_iter < particle.checking_pos.Count; check_offset_iter++)
 				{
 					Vector2I check_offset = particle.checking_pos[check_offset_iter];
-					if (check_pixel(check_offset, particle, temp_chunk)) {
+					if (check_pixel(check_offset * multiplier, particle, temp_chunk)) {
+						break;
+					} else if (check_pixel(check_offset * (multiplier * new Vector2I(-1,1)), particle, temp_chunk)){
+						particle.flip = !particle.flip;
 						break;
 					}
 				}
@@ -263,7 +277,6 @@ public partial class Sand : TileMapLayer
 			returned_chunk = vecToChunk(check_position);
 			returned_particle = returned_chunk.getParticle(check_position);
 		}
-		// GD.Print(p_particle.type," ", returned_particle.type, check_position);
 		if (p_particle.type > returned_particle.type)
 		{
 			if (returned_particle.empty)
@@ -277,14 +290,14 @@ public partial class Sand : TileMapLayer
 				chunks_update_list.Add(returned_chunk.chunk_position);
 				
 			} 
-			// else
-			// {
+			else
+			{
 				
-			// 	p_current_chunk.particleAdd(returned_particle);
-			// 	returned_particle.particle_position = p_particle.particle_position;
-			// 	returned_chunk.particleAdd(p_particle);
-			// 	p_particle.particle_position = check_position;
-			// }
+				p_current_chunk.particleAdd(returned_particle);
+				returned_particle.particle_position = p_particle.particle_position;
+				returned_chunk.particleAdd(p_particle);
+				p_particle.particle_position = check_position;
+			}
 			return true;
 		}
 		return false;
@@ -326,6 +339,7 @@ public partial class Sand : TileMapLayer
 	private NB_particle createParticle(Vector2I p_positio, string type)
 	{
 		NB_particle return_particle = particle_list[type].clone().pos(p_positio);
+		return_particle.flip = flip_direction;
 		//TODO coloring script goes here
 		switch (type)
 		{
@@ -334,6 +348,9 @@ public partial class Sand : TileMapLayer
 				break;
 			case "Stone":
 				return_particle.color = new Vector2I(9 + random_color.RandiRange(0,3),15);
+				break;
+			case "Water":
+				return_particle.color = new Vector2I(2,8 + random_color.RandiRange(0,3));
 				break;
 			default:
 				return_particle.color = new Vector2I(0,0);
