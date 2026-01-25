@@ -19,13 +19,14 @@ public partial class NavigationSystem : Node
 
 	public void InitAstarGrid()
 	{
-		astar.Region = new(0,0,1000,1000);
+		astar.Region = new(0,0,400,400);
 		astar.CellSize = new(1,1);
 		astar.Update();
 		foreach(Vector2I Cell in Sand.GetUsedCells())
 		{
 			astar.SetPointSolid(Cell, true);
 		}
+		astar.DiagonalMode = AStarGrid2D.DiagonalModeEnum.AtLeastOneWalkable;
 	}
 	
 

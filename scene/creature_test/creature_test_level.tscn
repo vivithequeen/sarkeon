@@ -792,6 +792,7 @@ sources/1 = SubResource("TileSetAtlasSource_ynb1q")
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_g3wdb"]
 
 [node name="PlayerTestLevel" type="Node2D"]
+position = Vector2(-1, 0)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(578, 323)

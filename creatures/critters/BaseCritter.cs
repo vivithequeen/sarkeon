@@ -58,12 +58,13 @@ public partial class BaseCritter : Node
 	public bool UpdateCritterNavigationPath(Vector2 position)
 	{
 		//returns true if the navigation was updated returns false otherwise
-		if(_currentCritterNavigationPath.Count == 0)
+		if(_currentCritterNavigationPath.Count <= 0)
 		{
 			return false;
 		}
 		if (position.DistanceTo(_currentCritterNavigationPath[0]) < 1)
 		{
+
 			_currentCritterNavigationPath.RemoveAt(0);
 			return true;
 		}

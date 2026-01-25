@@ -24,10 +24,10 @@ public partial class BaseCreature : Node2D
 		GetParent().CallDeferred(Node.MethodName.AddChild, navLine);
 		navLine.DefaultColor = new Color("00ffff6b");
 		navLine.JointMode = Line2D.LineJointMode.Round;
-		Array<Vector2I> Path = navigationSystem.GetPath(GlobalPosition / 4, new Vector2I(100,100));
+		Array<Vector2I> Path = navigationSystem.GetPath(GlobalPosition / 4, new Vector2I(100, 100));
 		GD.Print(Path);
 		baseCritter.SetCurrentCritterNavigationPath(Path);
-		
+
 
 	}
 
@@ -50,7 +50,7 @@ public partial class BaseCreature : Node2D
 
 
 			Array<Vector2I> tempPath = baseCritter.GetCurrentCritterNavigationPath();
-			foreach(Vector2 p in tempPath)
+			foreach (Vector2 p in tempPath)
 			{
 				navLine.AddPoint(p * 4);
 			}
@@ -58,13 +58,16 @@ public partial class BaseCreature : Node2D
 		}
 
 		//every 3rd frame
-		if(baseCritter.UpdateCritterNavigationPath(GlobalPosition / 4))
+		if (baseCritter.UpdateCritterNavigationPath(GlobalPosition / 4))
 		{
-			navLine.RemovePoint(0);
+			if (navLine.GetPointCount() > 0)
+			{
+				navLine.RemovePoint(0);
+			}
 		}
 
 		TargetPos = baseCritter.GetCurrentCritterNavigationPoint(0) * 4;
-		if(TargetPos.X == -4)
+		if (TargetPos.X == -4)
 		{
 			TargetPos = GlobalPosition;
 		}
