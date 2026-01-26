@@ -68,14 +68,15 @@ public partial class Sand : TileMapLayer
 			{
 				for (int X = 0; X < chunk_size.X; X++)
 				{
-					temp_air =  new NB_particle(NB_type.GAS, false, new List<Vector2I> {});
+					Vector2I temp_offset = new Vector2I(X, Y);
+					NB_particle temp_air =  new NB_particle(NB_type.GAS, false, new List<Vector2I> {});
 					temp_air.empty = true;
-					particles[fakeVecToString(X,Y)] = temp_air;
+					temp_air.pos(cell_particle_offset + temp_offset);
+					particles[vecToString(temp_offset)] = temp_air;
 				}
 			}
 
 		}
-		private NB_particle temp_air;
 		public Vector2I chunk_position;
 		public Vector2I cell_particle_offset;
 		public Vector2I chunk_size;
@@ -90,9 +91,11 @@ public partial class Sand : TileMapLayer
 		}
 		public void particleRemove(Vector2I p_particle_position)
 		{
-			NB_particle new_air = temp_air.clone().pos(p_particle_position);
-			particles[vecToString(p_particle_position - cell_particle_offset)] = new_air;
-			updateParticlenAdd(new_air);
+			NB_particle temp_air =  new NB_particle(NB_type.GAS, false, new List<Vector2I> {});
+			temp_air.empty = true;
+			temp_air.pos(p_particle_position);
+			particles[vecToString(p_particle_position - cell_particle_offset)] = temp_air;
+			updateParticlenAdd(temp_air);
 		}
 		public void updateParticlenAdd(NB_particle p_particle)
 		{
@@ -272,9 +275,9 @@ public partial class Sand : TileMapLayer
 			// particleCellPlace(createParticle(new Vector2I(-11,-42), "Sand"));
 			// particleCellPlace(createParticle(new Vector2I(-12,-42), "Sand"));
 			timer = 0;
+			particle_update_cycle = particle_update_cycle + 1 % 1000000;
 			for (int i = 0; i < 4 * refresh_steps; i++)
 			{
-				particle_update_cycle = particle_update_cycle + 1 % 1000000;
 				cell_update_cycle = (cell_update_cycle + 1) % 4;
 				simulationStep();
 			}
@@ -340,15 +343,17 @@ public partial class Sand : TileMapLayer
 		if (p_particle.type > returned_particle.type)
 		{
 			//TODO optimize this
-			// for (int y = 0; y < 3; y++)
-			// {
-			// 	for (int x = 0; x < 3; x++)
-			// 	{
-			// 		if (x == y && y == 1) {continue;}
-			// 		NB_particle temp_particle = vecToChunk(p_particle.particle_position).getParticle(p_particle.particle_position);
-			// 		p_current_chunk.updatePhisicsParticleAdd(temp_particle);
-			// 	}
-			// }
+			for (int y = -1; y < 2; y++)
+			{
+				for (int x = -1; x < 2; x++)
+				{
+					if (x == y && y == 0) {continue;}
+					Vector2I updatePos = p_particle.particle_position + new Vector2I(x,y);
+					NB_chunk temp_chunk = vecToChunk(updatePos);
+					NB_particle temp_particle = temp_chunk.getParticle(updatePos);
+					temp_chunk.updatePhisicsParticleAdd(temp_particle);
+				}
+			}
 			if (returned_particle.empty)
 			{
 				// use p_current_chunk for moving first particle
