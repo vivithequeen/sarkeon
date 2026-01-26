@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Formats.Asn1;
+using System.Formats.Tar;
 using System.Linq;
 public partial class HeadBase : Node2D
 {
@@ -92,7 +93,8 @@ public partial class HeadBase : Node2D
 		GetParent<Node2D>().GlobalPosition = GetParent<Node2D>().GlobalPosition.MoveToward(TargetPosition, 300 * (float)delta);
 
 		float AngleToTarget = (TargetPosition - GlobalPosition).Normalized().Angle();
-		GetParent<Node2D>().GlobalRotation = Mathf.LerpAngle(GetParent<Node2D>().GlobalRotation, AngleToTarget, (float)delta); //TODO: make smooth 
+		//GetParent<Node2D>().GlobalRotation = Mathf.LerpAngle(GetParent<Node2D>().GlobalRotation, AngleToTarget, (float)delta); //TODO: make smooth 
+		GetParent<Node2D>().LookAt(TargetPosition);
 		for(int i = 0; i < AmountOfSegments; i++)
 		{
 			if(i == 0)

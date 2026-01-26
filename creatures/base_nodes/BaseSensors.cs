@@ -2,7 +2,6 @@ using Godot;
 using System;
 using System.Security.Principal;
 using Godot.Collections;
-using System.Collections;
 public partial class BaseSensors : Node2D
 {
 	[Export]
@@ -21,59 +20,59 @@ public partial class BaseSensors : Node2D
 	public float eyeIndexStep;
 	public int eyeIndexTotalSteps = 30; // frames to completion
 
-	RayCast2D eye;
-	
+	Array<RayCast2D> eyes;
+
 	public override void _Ready()
 	{
 
-		eye = GetNode<RayCast2D>("eye1");
-		StartDegree = (-(baseCreatureAttricutes.FieldOfView-180)/2)-90;
+		eyes.Add(GetNode<RayCast2D>("eye1"));
+		eyes.Add(GetNode<RayCast2D>("eye2"));
+		//eyes.Add(GetNode<RayCast2D>("eye3"));
+		//eyes.Add(GetNode<RayCast2D>("eye4"));
+		StartDegree = (-(baseCreatureAttricutes.FieldOfView - 180) / 2) - 90;
 
-		eyeIndexStep = baseCreatureAttricutes.FieldOfView/eyeIndexTotalSteps;
+		eyeIndexStep = baseCreatureAttricutes.FieldOfView / eyeIndexTotalSteps;
 
 	}
-
-	Array<Dictionary<string, Variant>> SeenObjects = new Array<Dictionary<string, Variant>>();
-	public Array<Dictionary<string, Variant>> SearchWithEyes()
+	Array<Node2D> SeenObjects = new Array<Node2D>();
+	public Array<Node2D> SearchWithEyes()
 	{
-		if(eyeIndex == 0)
+
+
+
+		if (eyeIndex == 0)
 		{
 			SeenObjects.Clear();
 		}
-
-		Dictionary<string, Variant> eyeResult = EyeStep();
-		if(eyeResult != null)
+		int index = 0;
+		foreach (RayCast2D eye in eyes)
 		{
-			SeenObjects.Add(eyeResult);
+			float angle = Mathf.DegToRad()
+			Node2D eyeResult;
+			if (eyeResult != null)
+			{
+				SeenObjects.Add(eyeResult);
+			}
+			index++;
 		}
 
-		if(eyeIndex >= eyeIndexTotalSteps)
+
+		if (eyeIndex >= eyeIndexTotalSteps)
 		{
 			return SeenObjects;
 		}
-		
+
 		return null;
 	}
 
-	public Dictionary<string, Variant> EyeStep()
+	public Node2D EyeResult(RayCast2D eye, float angle)
 	{
-		if(eyeIndex >= eyeIndexTotalSteps)
-		{
-			eyeIndex = 0;
-		}
+		eye.Rotation = angle;
 
-		float currentRotation = eyeIndexStep * eyeIndex;
-		eye.Rotation = Mathf.DegToRad(currentRotation);
-		eyeIndex+=1;
 
 		if (eye.IsColliding())
 		{
-			return new Dictionary<string, Variant> {
-				{"collider", eye.GetCollider()}, 
-				{"rotation", Mathf.RadToDeg(eye.GlobalRotation)}, 
-				{"collectionPoint", eye.GetCollisionPoint()}, 
-				{"globalPosition", GlobalPosition},
-			};
+			return (Node2D)eye.GetCollider();
 		}
 		return null;
 	}

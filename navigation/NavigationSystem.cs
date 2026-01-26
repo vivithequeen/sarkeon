@@ -11,7 +11,7 @@ public partial class NavigationSystem : Node
 	AStarGrid2D astar = new();
 	public override void _Ready()
 	{
-		InitAstarGrid(40, 400, 400);
+		InitAstarGrid(20, 400, 400);
 
 	}
 	public override void _Process(double delta)

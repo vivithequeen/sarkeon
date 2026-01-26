@@ -10,8 +10,7 @@ script = ExtResource("1_24h80")
 target_position = Vector2(700, 0)
 
 [node name="eye2" type="RayCast2D" parent="."]
-visible = false
-rotation = -1.5707964
+rotation = -4.712389
 target_position = Vector2(704, 0)
 
 [node name="eye3" type="RayCast2D" parent="."]
