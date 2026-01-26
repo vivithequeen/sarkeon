@@ -1,0 +1,146 @@
+[gd_scene load_steps=9 format=3 uid="uid://duori3e1ujuig"]
+
+[ext_resource type="Script" uid="uid://cw1r42b1hhotk" path="res://creatures/spider/SpiderLeg.cs" id="1_ls3ep"]
+[ext_resource type="Texture2D" uid="uid://drvxo85l6oje0" path="res://assets/creature/spider/legsegment1.png" id="2_3kq3l"]
+[ext_resource type="Texture2D" uid="uid://2m3p7x1m61e7" path="res://assets/creature/spider/legsegment2.png" id="3_dd01i"]
+[ext_resource type="Texture2D" uid="uid://bh2f1t6y765oj" path="res://assets/creature/spider/legsegment3.png" id="4_0dnhf"]
+[ext_resource type="Texture2D" uid="uid://biufthvd7kqxb" path="res://assets/creature/spider/legsegment4.png" id="5_5outg"]
+[ext_resource type="Texture2D" uid="uid://37rti2u2jvdt" path="res://scene/icon.svg" id="6_dd01i"]
+
+[sub_resource type="SkeletonModification2DCCDIK" id="SkeletonModification2DCCDIK_dd01i"]
+resource_local_to_scene = true
+target_nodepath = NodePath("Target")
+tip_nodepath = NodePath("Bone2D/Bone2D2/Bone2D2/Bone2D2/Bone2D3")
+ccdik_data_chain_length = 4
+joint_data/0/bone_index = 0
+joint_data/0/bone2d_node = NodePath("Bone2D")
+joint_data/0/rotate_from_joint = false
+joint_data/0/enable_constraint = true
+joint_data/0/constraint_angle_min = -30.0
+joint_data/0/constraint_angle_max = 240.0
+joint_data/0/constraint_angle_invert = false
+joint_data/0/constraint_in_localspace = true
+joint_data/0/editor_draw_gizmo = true
+joint_data/1/bone_index = 1
+joint_data/1/bone2d_node = NodePath("Bone2D/Bone2D2")
+joint_data/1/rotate_from_joint = false
+joint_data/1/enable_constraint = true
+joint_data/1/constraint_angle_min = 0.0
+joint_data/1/constraint_angle_max = 120.0
+joint_data/1/constraint_angle_invert = false
+joint_data/1/constraint_in_localspace = true
+joint_data/1/editor_draw_gizmo = true
+joint_data/2/bone_index = 2
+joint_data/2/bone2d_node = NodePath("Bone2D/Bone2D2/Bone2D2")
+joint_data/2/rotate_from_joint = false
+joint_data/2/enable_constraint = true
+joint_data/2/constraint_angle_min = 0.0
+joint_data/2/constraint_angle_max = 120.0
+joint_data/2/constraint_angle_invert = false
+joint_data/2/constraint_in_localspace = true
+joint_data/2/editor_draw_gizmo = true
+joint_data/3/bone_index = 3
+joint_data/3/bone2d_node = NodePath("Bone2D/Bone2D2/Bone2D2/Bone2D2")
+joint_data/3/rotate_from_joint = false
+joint_data/3/enable_constraint = true
+joint_data/3/constraint_angle_min = 0.0
+joint_data/3/constraint_angle_max = 120.0
+joint_data/3/constraint_angle_invert = false
+joint_data/3/constraint_in_localspace = true
+joint_data/3/editor_draw_gizmo = true
+
+[sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_5outg"]
+resource_local_to_scene = true
+enabled = true
+modification_count = 1
+modifications/0 = SubResource("SkeletonModification2DCCDIK_dd01i")
+
+[node name="SpiderLeg" type="Skeleton2D"]
+modification_stack = SubResource("SkeletonModificationStack2D_5outg")
+script = ExtResource("1_ls3ep")
+
+[node name="Bone2D" type="Bone2D" parent="."]
+rest = Transform2D(0.8660253, -0.5000002, 0.5000002, 0.8660253, 0, 0)
+auto_calculate_length_and_angle = false
+length = 24.0
+bone_angle = 0.0
+editor_settings/show_bone_gizmo = false
+metadata/_local_pose_override_enabled_ = true
+
+[node name="Bone2D2" type="Bone2D" parent="Bone2D"]
+position = Vector2(24, 0)
+rest = Transform2D(0.8660254, 0.5, -0.5, 0.8660254, 24, 0)
+auto_calculate_length_and_angle = false
+length = 12.0
+bone_angle = 0.0
+editor_settings/show_bone_gizmo = false
+metadata/_local_pose_override_enabled_ = true
+
+[node name="Bone2D2" type="Bone2D" parent="Bone2D/Bone2D2"]
+position = Vector2(12.000004, 0)
+scale = Vector2(0.99995136, 0.99995136)
+rest = Transform2D(0.99995136, 2.1257426e-07, -2.1257426e-07, 0.99995136, 12.00001, 0)
+auto_calculate_length_and_angle = false
+length = 12.0
+bone_angle = 0.0
+editor_settings/show_bone_gizmo = false
+metadata/_local_pose_override_enabled_ = true
+
+[node name="Bone2D2" type="Bone2D" parent="Bone2D/Bone2D2/Bone2D2"]
+position = Vector2(28.001358, 0)
+rest = Transform2D(1, 0, 0, 1, 28.001358, 0)
+auto_calculate_length_and_angle = false
+length = 12.0
+bone_angle = 0.0
+editor_settings/show_bone_gizmo = false
+metadata/_local_pose_override_enabled_ = true
+
+[node name="TextureRect4" type="TextureRect" parent="Bone2D/Bone2D2/Bone2D2/Bone2D2"]
+offset_top = -2.0000973
+offset_right = 5.000004
+offset_bottom = -1.0000973
+scale = Vector2(4, 4)
+texture = ExtResource("5_5outg")
+
+[node name="Bone2D3" type="Bone2D" parent="Bone2D/Bone2D2/Bone2D2/Bone2D2"]
+position = Vector2(24.00233, 0)
+rest = Transform2D(1, 0, 0, 1, 24.00233, 0)
+auto_calculate_length_and_angle = false
+length = 12.0
+bone_angle = 0.0
+editor_settings/show_bone_gizmo = false
+
+[node name="TextureRect3" type="TextureRect" parent="Bone2D/Bone2D2/Bone2D2"]
+offset_top = -2.0000973
+offset_right = 6.999996
+offset_bottom = -1.0000973
+scale = Vector2(4, 4)
+texture = ExtResource("4_0dnhf")
+
+[node name="TextureRect2" type="TextureRect" parent="Bone2D/Bone2D2"]
+offset_top = -2.0
+offset_right = 3.0
+offset_bottom = -1.0
+scale = Vector2(4, 4)
+texture = ExtResource("3_dd01i")
+
+[node name="TextureRect" type="TextureRect" parent="Bone2D"]
+offset_top = -2.0
+offset_right = 6.0
+offset_bottom = -1.0
+scale = Vector2(4, 4)
+texture = ExtResource("2_3kq3l")
+
+[node name="Target" type="Node2D" parent="."]
+position = Vector2(152, -12)
+
+[node name="Sprite2D" type="Sprite2D" parent="Target"]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("6_dd01i")
+
+[node name="WallChecker" type="RayCast2D" parent="."]
+target_position = Vector2(96, 0)
+collision_mask = 3
+
+[node name="ResetPosition" type="Node2D" parent="."]
+position = Vector2(96, 0)

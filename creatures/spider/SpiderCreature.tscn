@@ -1,0 +1,39 @@
+[gd_scene load_steps=8 format=3 uid="uid://co122ontulhgp"]
+
+[ext_resource type="Script" uid="uid://bt00faj6cgmcr" path="res://creatures/spider/SpiderCreature.cs" id="1_xc4e1"]
+[ext_resource type="PackedScene" uid="uid://bldam43oe1uv6" path="res://creatures/spider/SpiderHead.tscn" id="2_5nxej"]
+[ext_resource type="PackedScene" uid="uid://do6ncdxqsu1aj" path="res://creatures/base_nodes/BaseSensors.tscn" id="3_wmjjd"]
+[ext_resource type="Script" uid="uid://byhi03m4i3all" path="res://creatures/critters/BaseCritter.cs" id="4_yer1g"]
+[ext_resource type="Script" uid="uid://bkt0b4re2kl2w" path="res://creatures/resources/BaseCreatureAttricutes.cs" id="5_c2s1e"]
+[ext_resource type="Texture2D" uid="uid://crpilfmy17kqk" path="res://assets/creature/palletes/gray-orange-gradiant.png" id="6_h435b"]
+[ext_resource type="Texture2D" uid="uid://37rti2u2jvdt" path="res://scene/icon.svg" id="7_yer1g"]
+
+[node name="SpiderCreature" type="Node2D" node_paths=PackedStringArray("baseSensors", "baseCritter")]
+script = ExtResource("1_xc4e1")
+baseSensors = NodePath("BaseSensors")
+baseCritter = NodePath("BaseCritter")
+
+[node name="SpiderHead" parent="." node_paths=PackedStringArray("GoalPositionBase", "baseCreatureAttricutes") instance=ExtResource("2_5nxej")]
+GoalPositionBase = NodePath("../GoalPositionBase")
+baseCreatureAttricutes = NodePath("../BaseCreatureAttricutes")
+
+[node name="BaseSensors" parent="." node_paths=PackedStringArray("baseCreatureAttricutes", "headBase") instance=ExtResource("3_wmjjd")]
+baseCreatureAttricutes = NodePath("../BaseCreatureAttricutes")
+headBase = NodePath("../SpiderHead")
+
+[node name="BaseCritter" type="Node" parent="."]
+script = ExtResource("4_yer1g")
+metadata/_custom_type_script = "uid://byhi03m4i3all"
+
+[node name="BaseCreatureAttricutes" type="Node" parent="."]
+script = ExtResource("5_c2s1e")
+CreatureSegments = 1
+ColorPallete = ExtResource("6_h435b")
+metadata/_custom_type_script = "uid://bkt0b4re2kl2w"
+
+[node name="GoalPositionBase" type="Node2D" parent="."]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="GoalPositionBase"]
+scale = Vector2(0.255, 0.255)
+texture = ExtResource("7_yer1g")

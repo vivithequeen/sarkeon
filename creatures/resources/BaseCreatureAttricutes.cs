@@ -13,7 +13,7 @@ public partial class BaseCreatureAttricutes : Node
 	public Texture ColorPallete {get; set;}
 
 	[ExportGroup("Advanced Properties")]
-
+	
 	public float FieldOfView {get; set;} = 180.0f;
 
 }
