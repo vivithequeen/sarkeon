@@ -61,8 +61,6 @@ public partial class Sand : TileMapLayer
 			chunk_position = p_position;
 			cell_particle_offset = p_position * chunk_size;
 			particles = new Dictionary<string, NB_particle>{};
-			list_visual_update = new List<NB_particle>{};
-			list_phisics_update = new List<NB_particle>{};
 			
 			for (int Y = 0; Y < chunk_size.Y; Y++)
 			{
@@ -81,13 +79,10 @@ public partial class Sand : TileMapLayer
 		public Vector2I cell_particle_offset;
 		public Vector2I chunk_size;
 		public Dictionary<string, NB_particle> particles;
-		public List<NB_particle> list_visual_update;
-		public List<NB_particle> list_phisics_update;
 		public void particleAdd(NB_particle p_particle)
 		{
 			// GD.Print(particles[vecToString(p_particle.particle_position - cell_particle_offset)], p_particle);
 			particles[vecToString(p_particle.particle_position - cell_particle_offset)] = p_particle;
-			updateParticlenAdd(p_particle);
 		}
 		public void particleRemove(Vector2I p_particle_position)
 		{
@@ -95,31 +90,10 @@ public partial class Sand : TileMapLayer
 			temp_air.empty = true;
 			temp_air.pos(p_particle_position);
 			particles[vecToString(p_particle_position - cell_particle_offset)] = temp_air;
-			updateParticlenAdd(temp_air);
-		}
-		public void updateParticlenAdd(NB_particle p_particle)
-		{
-			//TODO optimise memory of this (aka cutdown on doubles)
-			//! Also whilst doing this take in consideration updatePhisicsParticleAdd() function
-			list_phisics_update.Add(p_particle);
-			list_visual_update.Add(p_particle);
-		}
-		public void updatePhisicsParticleAdd(NB_particle p_particle)
-		{
-			list_phisics_update.Add(p_particle);
 		}
 		public List<NB_particle> getUpdatedParticles()
 		{
-			return [.. list_phisics_update];
-		}
-		public void clearUpdateParticleList()
-		{
-			list_phisics_update.Clear();
-		}
-		public List<NB_particle> getUpdatedParticles_visual()
-		{
-			//gives out variable, and expects the script to clear it
-			return list_visual_update;
+			return [.. particles.Values];
 		}
 		public bool getParticleSafe(Vector2I p_particle_position)
 		{
@@ -139,7 +113,7 @@ public partial class Sand : TileMapLayer
 	RandomNumberGenerator random_color;
 	//Variables
 	Dictionary<String, NB_particle> particle_list;
-	Vector2I chunk_size = new Vector2I(100,100);
+	Vector2I chunk_size = new Vector2I(32,32);
 	Dictionary<String, NB_chunk> chunks;
 	List<Vector2I> chunks_update_list;
 	int particle_update_cycle = 0;
@@ -188,24 +162,6 @@ public partial class Sand : TileMapLayer
 	public override void _Ready()
 	{
 		//TODO add so you can add multiple particles aka particlesAdd
-		// for (float x = -100; x < 200; x += 1f)
-		// {
-		// 	int x_offset = (int)Math.Floor((
-		// 			Math.Sin(x/10f) +
-		// 			Math.Sin(x/5f+5)
-		// 		)*2);
-		// 	particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset), "Stone"));
-		// 	particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset+1), "Stone"));
-		// 	particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset+2), "Stone"));
-		// }
-		// particleCellPlace(createParticle(new Vector2I(8,0), "Stone"));
-		// for (int y = -1; y < 1; y++)
-		// {
-		// 	for (int x = 0; x < 1; x++)
-		// 	{
-		// 		particleCellPlace(createParticle(new Vector2I(x+8,y * 2 - 5), "Sand"));
-		// 	}
-		// }\
 		foreach (Vector2I coords in GetUsedCells())
         {
 			switch (GetCellAtlasCoords(coords))
@@ -265,15 +221,6 @@ public partial class Sand : TileMapLayer
 		if (timer > refresh_delay)
 		{
 			flip_direction = !flip_direction;
-			// particleCellPlace(createParticle(new Vector2I(-10,-40), "Sand"));
-			// particleCellPlace(createParticle(new Vector2I(-11,-40), "Sand"));
-			// particleCellPlace(createParticle(new Vector2I(-12,-40), "Sand"));
-			// particleCellPlace(createParticle(new Vector2I(-10,-41), "Sand"));
-			// particleCellPlace(createParticle(new Vector2I(-11,-41), "Sand"));
-			// particleCellPlace(createParticle(new Vector2I(-12,-41), "Sand"));
-			// particleCellPlace(createParticle(new Vector2I(-10,-42), "Sand"));
-			// particleCellPlace(createParticle(new Vector2I(-11,-42), "Sand"));
-			// particleCellPlace(createParticle(new Vector2I(-12,-42), "Sand"));
 			timer = 0;
 			particle_update_cycle = particle_update_cycle + 1 % 1000000;
 			for (int i = 0; i < 4 * refresh_steps; i++)
@@ -300,14 +247,13 @@ public partial class Sand : TileMapLayer
 				chunks_update_list.Add(chunk);
 				continue;
 			}
+			//!TODO REWRITE
 			NB_chunk temp_chunk = chunks[vecToString(chunk)];
-			IEnumerable<NB_particle> particle_list = temp_chunk.getUpdatedParticles();
-			temp_chunk.clearUpdateParticleList();
-			foreach (NB_particle particle in particle_list.Distinct())
+			List<NB_particle> temp_particles = temp_chunk.getUpdatedParticles();
+			foreach (NB_particle particle in temp_particles)
 			{
 				if (particle.particle_update_cycle == particle_update_cycle)
 				{
-					temp_chunk.updateParticlenAdd(particle);
 					continue;
 				}
 				Vector2I multiplier = particle.flip? new Vector2I(-1,1): new Vector2I(1,1);
@@ -343,17 +289,7 @@ public partial class Sand : TileMapLayer
 		if (p_particle.type > returned_particle.type)
 		{
 			//TODO optimize this
-			for (int y = -1; y < 2; y++)
-			{
-				for (int x = -1; x < 2; x++)
-				{
-					if (x == y && y == 0) {continue;}
-					Vector2I updatePos = p_particle.particle_position + new Vector2I(x,y);
-					NB_chunk temp_chunk = vecToChunk(updatePos);
-					NB_particle temp_particle = temp_chunk.getParticle(updatePos);
-					temp_chunk.updatePhisicsParticleAdd(temp_particle);
-				}
-			}
+			//!TODO Add so it trigers side cells
 			if (returned_particle.empty)
 			{
 				// use p_current_chunk for moving first particle
@@ -400,8 +336,10 @@ public partial class Sand : TileMapLayer
 	{
 		foreach (Vector2I chunk_update_coord in chunks_update_list.Distinct())
 		{
-			List<NB_particle> particle_update_list = chunks[vecToString(chunk_update_coord)].getUpdatedParticles_visual();
-			foreach (NB_particle particle in particle_update_list)
+			//!TODO rewrite
+			NB_chunk temp_chunk = chunks[vecToString(chunk_update_coord)];
+			List<NB_particle> temp_particles = temp_chunk.getUpdatedParticles();
+			foreach (NB_particle particle in temp_particles)
 			{
 				//TODO make so type affects the color drawn
 				if (particle.empty)
@@ -412,7 +350,6 @@ public partial class Sand : TileMapLayer
 					SetCell(particle.particle_position, particle.solid? 0: 1, particle.color);
 				}
 			}
-			particle_update_list.Clear();
 		}
 	}
 	private NB_particle createParticle(Vector2I p_positio, string type)
