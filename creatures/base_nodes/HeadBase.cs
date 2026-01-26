@@ -51,7 +51,7 @@ public partial class HeadBase : Node2D
 			BodySegments.Add(NewSegment);
 			
 			NewSegment.InitSegment(CurrentPosition);
-			CurrentPosition.X-=32;
+			CurrentPosition.X-=1;
 		}
 		
 		BodySegmentBase NewTail = tailBase.Instantiate<BodySegmentBase>();

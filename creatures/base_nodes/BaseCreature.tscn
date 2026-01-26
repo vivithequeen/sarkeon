@@ -19,7 +19,6 @@ baseCreatureAttricutes = NodePath("../CreatureBase")
 
 [node name="CreatureBase" type="Node" parent="."]
 script = ExtResource("2_6u6ia")
-ColorIndex = 0.15
 ColorPallete = ExtResource("3_6rh8c")
 
 [node name="BaseSensors" parent="." node_paths=PackedStringArray("baseCreatureAttricutes", "headBase") instance=ExtResource("4_6u6ia")]
@@ -27,6 +26,7 @@ baseCreatureAttricutes = NodePath("../CreatureBase")
 headBase = NodePath("../HeadBase")
 
 [node name="GoalPositionBase" type="Node2D" parent="."]
+visible = false
 
 [node name="Sprite2D" type="Sprite2D" parent="GoalPositionBase"]
 scale = Vector2(0.255, 0.255)

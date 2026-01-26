@@ -15,7 +15,7 @@ public partial class BodySegmentBase : Node2D
 		LookAt(TargetPosition);
 
 
-		if(DistanceToTarget > 64)
+		if(DistanceToTarget > 44)//TODO: MAKE THESE INHERIT AND SHIT
 		{
 			GlobalPosition = GlobalPosition.MoveToward(TargetPosition, 300 * (float)delta);
 		}

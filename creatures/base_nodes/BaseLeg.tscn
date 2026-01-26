@@ -38,12 +38,12 @@ texture = ExtResource("2_x6ijj")
 scale = Vector2(0.9999807, 0.9999807)
 rest = Transform2D(0.43343303, 0.9011596, -0.9011596, 0.43343303, 0, 0)
 auto_calculate_length_and_angle = false
-length = 64.0
+length = 56.308
 bone_angle = 0.0
-editor_settings/show_bone_gizmo = false
 metadata/_local_pose_override_enabled_ = true
 
 [node name="joint" type="TextureRect" parent="BaseLeg"]
+visible = false
 offset_left = 59.001137
 offset_top = -5.0000963
 offset_right = 69.001144
@@ -51,30 +51,31 @@ offset_bottom = 4.9999037
 texture = ExtResource("5_4kpbl")
 
 [node name="Bone2D" type="Bone2D" parent="BaseLeg"]
-position = Vector2(64.001236, 0)
+position = Vector2(32, 0)
 scale = Vector2(0.99995947, 0.99995947)
 rest = Transform2D(-0.01913753, -0.9997712, 0.9997712, -0.01913753, 64.001236, 0)
 auto_calculate_length_and_angle = false
-length = 64.0
+length = 34.0
 bone_angle = 0.0
-editor_settings/show_bone_gizmo = false
 metadata/_local_pose_override_enabled_ = true
 
 [node name="leg2" type="TextureRect" parent="BaseLeg/Bone2D"]
-offset_left = 0.28573513
-offset_top = -5.0002995
-offset_right = 64.285736
-offset_bottom = 4.9997005
+offset_left = 0.1434848
+offset_top = -1.5715613
+offset_right = 9.143485
+offset_bottom = -0.57156134
+scale = Vector2(4, 4)
 texture = ExtResource("3_skaq3")
 
 [node name="leg1" type="TextureRect" parent="BaseLeg"]
-offset_top = -5.0
-offset_right = 64.0
-offset_bottom = 5.0
+offset_top = -2.1428986
+offset_right = 8.0
+offset_bottom = -1.1428986
+scale = Vector2(4, 4)
 texture = ExtResource("4_hgxlw")
 
 [node name="WallChecker" type="RayCast2D" parent="."]
-target_position = Vector2(130, 0)
+target_position = Vector2(74.28571, 0)
 collision_mask = 3
 
 [node name="ResetPosition" type="Node2D" parent="."]
