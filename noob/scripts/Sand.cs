@@ -97,12 +97,21 @@ public partial class Sand : TileMapLayer
 		public void updateParticlenAdd(NB_particle p_particle)
 		{
 			//TODO optimise memory of this (aka cutdown on doubles)
+			//! Also whilst doing this take in consideration updatePhisicsParticleAdd() function
 			list_phisics_update.Add(p_particle);
 			list_visual_update.Add(p_particle);
 		}
+		public void updatePhisicsParticleAdd(NB_particle p_particle)
+		{
+			list_phisics_update.Add(p_particle);
+		}
 		public List<NB_particle> getUpdatedParticles()
 		{
-			return list_phisics_update;
+			return [.. list_phisics_update];
+		}
+		public void clearUpdateParticleList()
+		{
+			list_phisics_update.Clear();
 		}
 		public List<NB_particle> getUpdatedParticles_visual()
 		{
@@ -133,6 +142,10 @@ public partial class Sand : TileMapLayer
 	int particle_update_cycle = 0;
 	bool flip_direction = false;
 	int cell_update_cycle = 0;
+	[Export]
+    public float refresh_delay { get; set; } = 0.01f;
+	[Export]
+    public int refresh_steps { get; set; } = 1;
 	//Init sands
 	public Sand()
 	{
@@ -172,24 +185,41 @@ public partial class Sand : TileMapLayer
 	public override void _Ready()
 	{
 		//TODO add so you can add multiple particles aka particlesAdd
-		for (float x = -100; x < 200; x += 1f)
-		{
-			int x_offset = (int)Math.Floor((
-					Math.Sin(x/10f) +
-					Math.Sin(x/5f+5)
-				)*2);
-			particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset), "Stone"));
-			particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset+1), "Stone"));
-			particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset+2), "Stone"));
-		}
-		particleCellPlace(createParticle(new Vector2I(8,0), "Stone"));
-		for (int y = -1; y < 1; y++)
-		{
-			for (int x = 0; x < 1; x++)
+		// for (float x = -100; x < 200; x += 1f)
+		// {
+		// 	int x_offset = (int)Math.Floor((
+		// 			Math.Sin(x/10f) +
+		// 			Math.Sin(x/5f+5)
+		// 		)*2);
+		// 	particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset), "Stone"));
+		// 	particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset+1), "Stone"));
+		// 	particleCellPlace(createParticle(new Vector2I((int)Math.Floor(x),10 + x_offset+2), "Stone"));
+		// }
+		// particleCellPlace(createParticle(new Vector2I(8,0), "Stone"));
+		// for (int y = -1; y < 1; y++)
+		// {
+		// 	for (int x = 0; x < 1; x++)
+		// 	{
+		// 		particleCellPlace(createParticle(new Vector2I(x+8,y * 2 - 5), "Sand"));
+		// 	}
+		// }\
+		foreach (Vector2I coords in GetUsedCells())
+        {
+			switch (GetCellAtlasCoords(coords))
 			{
-				particleCellPlace(createParticle(new Vector2I(x+8,y * 2 - 5), "Sand"));
+				case Vector2I(0,2):
+					particleCellPlace(createParticle(coords, "Water"));
+					break;
+				case Vector2I(14,1):
+					particleCellPlace(createParticle(coords, "Sand"));
+					break;
+				case Vector2I(11,15):
+					particleCellPlace(createParticle(coords, "Stone"));
+					break;
+				default:
+					break;
 			}
-		}
+        }
 		visualiser();
 	}
 	List<MeshInstance2D> debug_chunks = [];
@@ -229,7 +259,7 @@ public partial class Sand : TileMapLayer
 	public override void _Process(double delta)
 	{
 		timer += delta;
-		if (timer > 0.01f)
+		if (timer > refresh_delay)
 		{
 			flip_direction = !flip_direction;
 			// particleCellPlace(createParticle(new Vector2I(-10,-40), "Sand"));
@@ -242,7 +272,7 @@ public partial class Sand : TileMapLayer
 			// particleCellPlace(createParticle(new Vector2I(-11,-42), "Sand"));
 			// particleCellPlace(createParticle(new Vector2I(-12,-42), "Sand"));
 			timer = 0;
-			for (int i = 0; i < 4 * 3; i++)
+			for (int i = 0; i < 4 * refresh_steps; i++)
 			{
 				particle_update_cycle = particle_update_cycle + 1 % 1000000;
 				cell_update_cycle = (cell_update_cycle + 1) % 4;
@@ -268,11 +298,10 @@ public partial class Sand : TileMapLayer
 				continue;
 			}
 			NB_chunk temp_chunk = chunks[vecToString(chunk)];
-			List<NB_particle> particle_list = temp_chunk.getUpdatedParticles();
-			int static_count = particle_list.Count;
-			for (int particle_iter = 0; particle_iter < static_count  ; particle_iter++)
+			IEnumerable<NB_particle> particle_list = temp_chunk.getUpdatedParticles();
+			temp_chunk.clearUpdateParticleList();
+			foreach (NB_particle particle in particle_list.Distinct())
 			{
-				NB_particle particle = particle_list[particle_iter];
 				if (particle.particle_update_cycle == particle_update_cycle)
 				{
 					temp_chunk.updateParticlenAdd(particle);
@@ -290,7 +319,6 @@ public partial class Sand : TileMapLayer
 					}
 				}
 			}
-			particle_list.RemoveRange(0, static_count);
 		}
 	}
 	private bool check_pixel(Vector2I check_offset, NB_particle p_particle, NB_chunk p_current_chunk)
@@ -298,6 +326,7 @@ public partial class Sand : TileMapLayer
 		Vector2I check_position = p_particle.particle_position + check_offset;
 		NB_particle returned_particle;
 		NB_chunk returned_chunk = p_current_chunk;
+		//TODO optimize this part aka make so it is calculated localy and math not bunch of if else statments and maybe cache the math
 		if (p_current_chunk.getParticleSafe(check_position))
 		{	
 			returned_particle = p_current_chunk.getParticle(check_position);
@@ -310,6 +339,16 @@ public partial class Sand : TileMapLayer
 		}
 		if (p_particle.type > returned_particle.type)
 		{
+			//TODO optimize this
+			// for (int y = 0; y < 3; y++)
+			// {
+			// 	for (int x = 0; x < 3; x++)
+			// 	{
+			// 		if (x == y && y == 1) {continue;}
+			// 		NB_particle temp_particle = vecToChunk(p_particle.particle_position).getParticle(p_particle.particle_position);
+			// 		p_current_chunk.updatePhisicsParticleAdd(temp_particle);
+			// 	}
+			// }
 			if (returned_particle.empty)
 			{
 				// use p_current_chunk for moving first particle
