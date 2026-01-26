@@ -25,7 +25,8 @@ public partial class BaseCreature : Node2D
 		navLine.DefaultColor = new Color("00ffff6b");
 		navLine.JointMode = Line2D.LineJointMode.Round;
 		Array<Vector2I> Path = navigationSystem.GetPath(GlobalPosition / 4, new Vector2I(100, 100));
-		GD.Print(Path);
+
+		
 		baseCritter.SetCurrentCritterNavigationPath(Path);
 
 
@@ -73,6 +74,12 @@ public partial class BaseCreature : Node2D
 		}
 		//GD.Print(PathIndex);
 		//end every 3rd frame
+
+		Array<Node2D> seenObjects = baseSensors.SearchWithEyes();
+		if(seenObjects != null)
+		{
+			GD.Print(seenObjects);
+		}
 
 
 	}

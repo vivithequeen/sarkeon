@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Security.Principal;
 using Godot.Collections;
+using System.IO.Pipes;
 public partial class BaseSensors : Node2D
 {
 	[Export]
@@ -20,7 +21,7 @@ public partial class BaseSensors : Node2D
 	public float eyeIndexStep;
 	public int eyeIndexTotalSteps = 30; // frames to completion
 
-	Array<RayCast2D> eyes;
+	Array<RayCast2D> eyes = new();
 
 	public override void _Ready()
 	{
@@ -31,7 +32,7 @@ public partial class BaseSensors : Node2D
 		//eyes.Add(GetNode<RayCast2D>("eye4"));
 		StartDegree = (-(baseCreatureAttricutes.FieldOfView - 180) / 2) - 90;
 
-		eyeIndexStep = baseCreatureAttricutes.FieldOfView / eyeIndexTotalSteps;
+		eyeIndexStep = (baseCreatureAttricutes.FieldOfView / eyeIndexTotalSteps) / eyes.Count;
 
 	}
 	Array<Node2D> SeenObjects = new Array<Node2D>();
@@ -43,12 +44,13 @@ public partial class BaseSensors : Node2D
 		if (eyeIndex == 0)
 		{
 			SeenObjects.Clear();
+
 		}
 		int index = 0;
 		foreach (RayCast2D eye in eyes)
 		{
-			float angle = Mathf.DegToRad()
-			Node2D eyeResult;
+			float angle = Mathf.DegToRad((eyeIndex * eyeIndexStep) + StartDegree + (index * (baseCreatureAttricutes.FieldOfView / eyes.Count)));
+			Node2D eyeResult = EyeResult(eye, angle);
 			if (eyeResult != null)
 			{
 				SeenObjects.Add(eyeResult);
@@ -56,9 +58,10 @@ public partial class BaseSensors : Node2D
 			index++;
 		}
 
-
+		eyeIndex++;
 		if (eyeIndex >= eyeIndexTotalSteps)
 		{
+			eyeIndex = 0;
 			return SeenObjects;
 		}
 
@@ -67,7 +70,7 @@ public partial class BaseSensors : Node2D
 
 	public Node2D EyeResult(RayCast2D eye, float angle)
 	{
-		eye.Rotation = angle;
+		eye.Rotation = angle + Mathf.Pi/2;
 
 
 		if (eye.IsColliding())
