@@ -1,111 +1,121 @@
 using Godot;
 using System;
-using System.IO.Pipes;
 
 public partial class BaseLeg : Skeleton2D
 {
-	RayCast2D WallChecker;
-	Node2D Target;
-	Node2D ResetPosition;
-	[Export]
-	int WallCheckerRotationIndex = 45;
-	[Export]
-	int StartWallCheckerRotation = 45;
+    RayCast2D WallChecker;
+    Node2D Target;
+    Node2D ResetPosition;
+    Node2D BackupGrabPos;
 
-	bool FirstStep = false;
-	Vector2 GrabbedBodyLocation;
-	//Node2D GrabbedBody;
+    [Export] int WallCheckerRotationIndex = 45;
+    [Export] int StartWallCheckerRotation = 45;
 
-	bool isTweening = false;
+    Vector2 GrabbedBodyLocation;
+    bool FirstStep = false;
+    bool isTweening = false;
 
-	public enum BaseLegState
-	{
-		Search,
-		Reset,
-		Grab,
-	}
+    public enum BaseLegState
+    {
+        Search,
+        Grab,
+        Reset
+    }
 
-	BaseLegState CurrentBaseLegState = BaseLegState.Search;
-	// Called when the node enters the scene tree for the first time.
+    BaseLegState CurrentState = BaseLegState.Search;
 
-	public override void _Ready()
-	{
+    public override void _Ready()
+    {
+        Target = GetNode<Node2D>("Target");
+        ResetPosition = GetNode<Node2D>("ResetPosition");
+        BackupGrabPos = GetNode<Node2D>("BackupGrabPos");
+        WallChecker = GetNode<RayCast2D>("WallChecker");
+    }
 
+    public override void _Process(double delta)
+    {
+        switch (CurrentState)
+        {
+            case BaseLegState.Search:
+                Search();
+                break;
 
-		Target = GetNode<Node2D>("Target");
-		
+            case BaseLegState.Grab:
+                Grab();
+                break;
 
-		ResetPosition = GetNode<Node2D>("ResetPosition");
+            case BaseLegState.Reset:
+                ResetLeg();
+                break;
+        }
+    }
 
-		
-		WallChecker = GetNode<RayCast2D>("WallChecker");
-		
+    void Search()
+    {
+        WallChecker.Rotation = Mathf.DegToRad(
+            FirstStep ? WallCheckerRotationIndex : StartWallCheckerRotation
+        );
 
-	}
+        if (WallChecker.IsColliding())
+        {
+            GrabbedBodyLocation = WallChecker.GetCollisionPoint();
+            FirstStep = true;
+            CurrentState = BaseLegState.Grab;
+        }
+    }
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-		
-		WallCheckerLogic(delta);
-	}
-	public void WallCheckerLogic(double delta)
-	{
+    void Grab()
+    {
+        if (isTweening) return;
 
-		if (WallChecker.IsColliding() && CurrentBaseLegState == BaseLegState.Search)
-		{
-			GrabbedBodyLocation = WallChecker.GetCollisionPoint();
+        isTweening = true;
 
-			//var collider = WallChecker.GetCollider();
-			//GrabbedBody = collider as Node2D;
+        Tween tween = GetTree().CreateTween();
+        tween.TweenProperty(
+            Target,
+            "global_position",
+            GrabbedBodyLocation,
+            0.1f
+        );
 
-			CurrentBaseLegState = BaseLegState.Grab;
-			if (!FirstStep)
-			{
-				FirstStep = true;
-			}
-			
-		}
-		if (!WallChecker.IsColliding() && CurrentBaseLegState == BaseLegState.Grab)
-		{
-			CurrentBaseLegState = BaseLegState.Reset;
-			isTweening = false;
-		}
+        tween.TweenCallback(Callable.From(() =>
+        {
+            isTweening = false;
+        }));
 
-		if (CurrentBaseLegState == BaseLegState.Grab)
-		{
-			Tween tween = GetTree().CreateTween();
+        WallChecker.GlobalRotation =
+            (GrabbedBodyLocation - GlobalPosition).Angle();
 
-			tween.TweenProperty(Target, "global_position", GrabbedBodyLocation, 0.1f);
-			WallChecker.GlobalRotation = (GrabbedBodyLocation - GlobalPosition).Angle();
-			//GrabbedBodyLocation = WallChecker.GetCollisionPoint();
-		}
+        if (!WallChecker.IsColliding())
+        {
+            CurrentState = BaseLegState.Reset;
+        }
+    }
 
-		if(CurrentBaseLegState == BaseLegState.Search)
-		{
-			WallChecker.Rotation = Mathf.DegToRad( FirstStep ? WallCheckerRotationIndex : StartWallCheckerRotation);
-		}
+    void ResetLeg()
+    {
+        if (isTweening) return;
 
-		if (CurrentBaseLegState == BaseLegState.Reset)
-		{
-			Tween tween = GetTree().CreateTween();
-			WallChecker.Rotation = Mathf.DegToRad( FirstStep ? WallCheckerRotationIndex : StartWallCheckerRotation);
-			tween.TweenProperty(Target, "global_position", ResetPosition.GlobalPosition, 0.1f);
-			tween.TweenCallback(Callable.From(() => CurrentBaseLegState = BaseLegState.Search));
+        isTweening = true;
 
-		}
+        Tween tween = GetTree().CreateTween();
+        tween.TweenProperty(
+            Target,
+            "global_position",
+            ResetPosition.GlobalPosition,
+            0.1f
+        );
 
-	}
+        tween.TweenCallback(Callable.From(() =>
+        {
+            isTweening = false;
+            CurrentState = BaseLegState.Search;
+        }));
+    }
 
-	public void Reset()
-	{
-		CurrentBaseLegState = BaseLegState.Reset;
-		WallChecker.Rotation = Mathf.DegToRad(WallCheckerRotationIndex);
-		if (WallChecker.IsColliding())
-		{
-			GrabbedBodyLocation = WallChecker.GetCollisionPoint();
-		}
-	}
-
-
+    public void ForceReset()
+    {
+        CurrentState = BaseLegState.Reset;
+        isTweening = false;
+    }
 }

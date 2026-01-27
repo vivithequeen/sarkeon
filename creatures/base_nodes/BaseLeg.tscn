@@ -24,7 +24,7 @@ modification_stack = SubResource("SkeletonModificationStack2D_hgxlw")
 script = ExtResource("1_fwvm8")
 
 [node name="Target" type="Node2D" parent="."]
-position = Vector2(60, 0.7142854)
+position = Vector2(80, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="Target"]
 scale = Vector2(0.1, 0.1)
@@ -68,11 +68,11 @@ scale = Vector2(4, 4)
 texture = ExtResource("4_hgxlw")
 
 [node name="WallChecker" type="RayCast2D" parent="."]
-target_position = Vector2(74.28571, 0)
+target_position = Vector2(85, 0)
 collision_mask = 3
 
 [node name="ResetPosition" type="Node2D" parent="."]
 position = Vector2(80, 0)
 
 [node name="BackupGrabPos" type="Node2D" parent="."]
-position = Vector2(52.857143, 0.7142857)
+position = Vector2(51.428574, 19.285713)
