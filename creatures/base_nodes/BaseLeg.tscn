@@ -6,40 +6,33 @@
 [ext_resource type="Texture2D" uid="uid://b50oxf5sw1y3o" path="res://assets/creature/centipede/legsegment2.png" id="4_hgxlw"]
 [ext_resource type="Texture2D" uid="uid://cm4kqe5de1a62" path="res://assets/creature/centipede/joint.png" id="5_4kpbl"]
 
-[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_fwvm8"]
-resource_local_to_scene = true
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_skaq3"]
 target_nodepath = NodePath("Target")
-flip_bend_direction = true
 joint_one_bone_idx = 0
 joint_one_bone2d_node = NodePath("BaseLeg")
 joint_two_bone_idx = 1
 joint_two_bone2d_node = NodePath("BaseLeg/Bone2D")
 
-[sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_x6ijj"]
-resource_local_to_scene = true
+[sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_hgxlw"]
 enabled = true
 modification_count = 1
-modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_fwvm8")
+modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_skaq3")
 
 [node name="BaseLeg" type="Skeleton2D"]
 scale = Vector2(1.4, 1.4)
-modification_stack = SubResource("SkeletonModificationStack2D_x6ijj")
+modification_stack = SubResource("SkeletonModificationStack2D_hgxlw")
 script = ExtResource("1_fwvm8")
 
 [node name="Target" type="Node2D" parent="."]
-position = Vector2(216, 0)
+position = Vector2(60, 0.7142854)
 
 [node name="Sprite2D" type="Sprite2D" parent="Target"]
-visible = false
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("2_x6ijj")
 
 [node name="BaseLeg" type="Bone2D" parent="."]
 scale = Vector2(0.9999807, 0.9999807)
 rest = Transform2D(0.43343303, 0.9011596, -0.9011596, 0.43343303, 0, 0)
-auto_calculate_length_and_angle = false
-length = 56.308
-bone_angle = 0.0
 metadata/_local_pose_override_enabled_ = true
 
 [node name="joint" type="TextureRect" parent="BaseLeg"]
@@ -56,7 +49,7 @@ scale = Vector2(0.99995947, 0.99995947)
 rest = Transform2D(-0.01913753, -0.9997712, 0.9997712, -0.01913753, 64.001236, 0)
 auto_calculate_length_and_angle = false
 length = 34.0
-bone_angle = 0.0
+bone_angle = 0.0002151597
 metadata/_local_pose_override_enabled_ = true
 
 [node name="leg2" type="TextureRect" parent="BaseLeg/Bone2D"]
@@ -80,3 +73,6 @@ collision_mask = 3
 
 [node name="ResetPosition" type="Node2D" parent="."]
 position = Vector2(80, 0)
+
+[node name="BackupGrabPos" type="Node2D" parent="."]
+position = Vector2(52.857143, 0.7142857)

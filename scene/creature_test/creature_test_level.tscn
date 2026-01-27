@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://du8jev8sr22mj" path="res://player/Player.tscn" id="1_kkdob"]
 [ext_resource type="Texture2D" uid="uid://bf1yn4xulhhf7" path="res://assets/sand/particles/MainColors.png" id="2_oefg8"]
 [ext_resource type="PackedScene" uid="uid://bby0x4i46dwc8" path="res://navigation/NavigationSystem.tscn" id="3_dqwnp"]
-[ext_resource type="PackedScene" uid="uid://co122ontulhgp" path="res://creatures/spider/SpiderCreature.tscn" id="4_dqwnp"]
+[ext_resource type="PackedScene" uid="uid://cj1mkah8bsvbx" path="res://creatures/base_nodes/BaseCreature.tscn" id="4_dqwnp"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xpi0j"]
 texture = ExtResource("2_oefg8")
@@ -815,6 +815,6 @@ shape = SubResource("WorldBoundaryShape2D_g3wdb")
 [node name="NavigationSystem" parent="." node_paths=PackedStringArray("Sand") instance=ExtResource("3_dqwnp")]
 Sand = NodePath("../Sand")
 
-[node name="SpiderCreature" parent="." node_paths=PackedStringArray("navigationSystem") instance=ExtResource("4_dqwnp")]
-position = Vector2(192, 255)
+[node name="BaseCreature" parent="." node_paths=PackedStringArray("navigationSystem") instance=ExtResource("4_dqwnp")]
+position = Vector2(312, 227)
 navigationSystem = NodePath("../NavigationSystem")
