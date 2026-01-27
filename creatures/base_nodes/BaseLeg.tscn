@@ -24,7 +24,7 @@ modification_stack = SubResource("SkeletonModificationStack2D_hgxlw")
 script = ExtResource("1_fwvm8")
 
 [node name="Target" type="Node2D" parent="."]
-position = Vector2(80, 0)
+position = Vector2(90.71429, 1.1920929e-07)
 
 [node name="Sprite2D" type="Sprite2D" parent="Target"]
 scale = Vector2(0.1, 0.1)

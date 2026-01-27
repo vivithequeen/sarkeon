@@ -1,9 +1,11 @@
-[gd_scene load_steps=9 format=4 uid="uid://dowdqq2cih1gf"]
+[gd_scene load_steps=13 format=4 uid="uid://dowdqq2cih1gf"]
 
 [ext_resource type="PackedScene" uid="uid://du8jev8sr22mj" path="res://player/Player.tscn" id="1_kkdob"]
 [ext_resource type="Texture2D" uid="uid://bf1yn4xulhhf7" path="res://assets/sand/particles/MainColors.png" id="2_oefg8"]
 [ext_resource type="PackedScene" uid="uid://bby0x4i46dwc8" path="res://navigation/NavigationSystem.tscn" id="3_dqwnp"]
-[ext_resource type="PackedScene" uid="uid://cj1mkah8bsvbx" path="res://creatures/base_nodes/BaseCreature.tscn" id="4_dqwnp"]
+[ext_resource type="Texture2D" uid="uid://bry1aynbt0246" path="res://assets/creature/centipede/head.png" id="4_dqwnp"]
+[ext_resource type="Texture2D" uid="uid://dxniswfywmatp" path="res://assets/creature/centipede/bodysegment1.png" id="5_xpi0j"]
+[ext_resource type="Texture2D" uid="uid://37rti2u2jvdt" path="res://scene/icon.svg" id="6_ynb1q"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xpi0j"]
 texture = ExtResource("2_oefg8")
@@ -791,6 +793,12 @@ sources/1 = SubResource("TileSetAtlasSource_ynb1q")
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_g3wdb"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xpi0j"]
+size = Vector2(48, 28)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jc5xn"]
+size = Vector2(167, 20)
+
 [node name="PlayerTestLevel" type="Node2D"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -815,6 +823,56 @@ shape = SubResource("WorldBoundaryShape2D_g3wdb")
 [node name="NavigationSystem" parent="." node_paths=PackedStringArray("Sand") instance=ExtResource("3_dqwnp")]
 Sand = NodePath("../Sand")
 
-[node name="BaseCreature" parent="." node_paths=PackedStringArray("navigationSystem") instance=ExtResource("4_dqwnp")]
-position = Vector2(312, 227)
-navigationSystem = NodePath("../NavigationSystem")
+[node name="RigidBody2D2" type="RigidBody2D" parent="."]
+position = Vector2(397, 123)
+rotation = 1.6629488
+collision_layer = 3
+collision_mask = 3
+
+[node name="PinJoint2D2" type="PinJoint2D" parent="RigidBody2D2"]
+position = Vector2(32, 0)
+node_a = NodePath("..")
+node_b = NodePath("../RigidBody2D")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D2"]
+position = Vector2(12, 0)
+shape = SubResource("RectangleShape2D_xpi0j")
+
+[node name="head" type="TextureRect" parent="RigidBody2D2"]
+offset_left = 36.0
+offset_top = -18.0
+offset_right = 45.0
+offset_bottom = -6.0
+rotation = 1.5707964
+scale = Vector2(4, 4)
+texture = ExtResource("5_xpi0j")
+
+[node name="RigidBody2D" type="RigidBody2D" parent="RigidBody2D2"]
+position = Vector2(32, 0)
+rotation = -0.6245371
+collision_layer = 3
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D2/RigidBody2D"]
+position = Vector2(16, 0)
+shape = SubResource("RectangleShape2D_xpi0j")
+
+[node name="head" type="TextureRect" parent="RigidBody2D2/RigidBody2D"]
+offset_left = 88.0
+offset_top = -22.0
+offset_right = 99.0
+rotation = 1.5707964
+scale = Vector2(4, 4)
+texture = ExtResource("4_dqwnp")
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="."]
+position = Vector2(299, 232)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D2"]
+position = Vector2(-73.5, 0)
+shape = SubResource("RectangleShape2D_jc5xn")
+
+[node name="Sprite2D" type="Sprite2D" parent="StaticBody2D2"]
+position = Vector2(-67.99999, 0)
+scale = Vector2(1.555, 0.15)
+texture = ExtResource("6_ynb1q")

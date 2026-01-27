@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cj1mkah8bsvbx"]
+[gd_scene load_steps=9 format=3 uid="uid://cj1mkah8bsvbx"]
 
 [ext_resource type="Script" uid="uid://1youudw0kbrh" path="res://creatures/base_nodes/BaseCreature.cs" id="1_6rh8c"]
 [ext_resource type="PackedScene" uid="uid://bcj406anqndhv" path="res://creatures/base_nodes/HeadBase.tscn" id="1_rnmbi"]
@@ -8,7 +8,11 @@
 [ext_resource type="Script" uid="uid://byhi03m4i3all" path="res://creatures/critters/BaseCritter.cs" id="6_17ob1"]
 [ext_resource type="Texture2D" uid="uid://37rti2u2jvdt" path="res://scene/icon.svg" id="6_l816c"]
 
-[node name="BaseCreature" type="Node2D" node_paths=PackedStringArray("baseSensors", "baseCritter")]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l816c"]
+size = Vector2(40, 28)
+
+[node name="BaseCreature" type="RigidBody2D" node_paths=PackedStringArray("baseSensors", "baseCritter")]
+collision_layer = 3
 script = ExtResource("1_6rh8c")
 baseSensors = NodePath("BaseSensors")
 baseCritter = NodePath("BaseCritter")
@@ -35,3 +39,7 @@ texture = ExtResource("6_l816c")
 [node name="BaseCritter" type="Node" parent="."]
 script = ExtResource("6_17ob1")
 metadata/_custom_type_script = "uid://byhi03m4i3all"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(20, 0)
+shape = SubResource("RectangleShape2D_l816c")
