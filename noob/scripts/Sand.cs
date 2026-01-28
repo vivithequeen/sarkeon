@@ -93,7 +93,7 @@ public partial class Sand : TileMapLayer
 		}
 		public List<NB_particle> getUpdatedParticles()
 		{
-			return [.. particles.Values];
+			return [.. particles.Values.Reverse()];
 		}
 		public bool getParticleSafe(Vector2I p_particle_position)
 		{
@@ -141,7 +141,9 @@ public partial class Sand : TileMapLayer
 			NB_type.FALLING,
 			true,
 			[
+				new Vector2I(0,2),
 				new Vector2I(0,1),
+				new Vector2I(2,1),
 				new Vector2I(1,1),
 			]
 		));
@@ -149,8 +151,11 @@ public partial class Sand : TileMapLayer
 			NB_type.LIQUID,
 			false,
 			[
+				new Vector2I(0,2),
 				new Vector2I(0,1),
+				new Vector2I(2,1),
 				new Vector2I(1,1),
+				new Vector2I(2,0),
 				new Vector2I(1,0),
 			]
 		));
@@ -194,7 +199,7 @@ public partial class Sand : TileMapLayer
 			MeshInstance2D squre_outline = new MeshInstance2D();
 			QuadMesh temp = new QuadMesh();
 			temp.Size = chunk_size;
-			squre_outline.Modulate = new Color(0.5f, 0, 0);
+			squre_outline.Modulate = new Color(0.5f + random_color.RandfRange(-0.2f,0.2f), 0, 0);
 			squre_outline.Mesh = temp;
 			squre_outline.GlobalPosition = chunk.cell_particle_offset + chunk_size/2 + new Vector2(0,-0.25f);
 			squre_outline.ZIndex = -2;
@@ -206,7 +211,7 @@ public partial class Sand : TileMapLayer
 			MeshInstance2D squre_outline = new MeshInstance2D();
 			QuadMesh temp = new QuadMesh();
 			temp.Size = chunk_size;
-			squre_outline.Modulate = new Color(0, 0.5f, 0);
+			squre_outline.Modulate = new Color(0, 0.5f + random_color.RandfRange(-0.2f,0.2f), 0);
 			squre_outline.Mesh = temp;
 			squre_outline.GlobalPosition = chunks[vecToString(chunk_iter)].cell_particle_offset + chunk_size/2 + new Vector2(0,-0.25f);
 			squre_outline.ZIndex = -1;
@@ -229,7 +234,7 @@ public partial class Sand : TileMapLayer
 				simulationStep();
 			}
 			visualiser();
-			drawChunks();
+			// drawChunks();
 		}
 	}
 	public void simulationStep()
@@ -286,10 +291,64 @@ public partial class Sand : TileMapLayer
 			// GD.Print(returned_particle.type);
 			// return false;
 		}
+		//TODO optimize also fix precision error where x == 0 or y == 0
+		int temp_num_x = check_position.X % chunk_size.X;
+		temp_num_x = temp_num_x < 0 ? chunk_size.X + temp_num_x : temp_num_x;
+		int temp_num_y = check_position.Y % chunk_size.Y;
+		temp_num_y = temp_num_y < 0 ? chunk_size.Y + temp_num_y : temp_num_y;
+		List<Vector2I> to_add = new List<Vector2I>{};
+		if (temp_num_x == 0)
+		{
+			if (temp_num_y == 0)
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, -1));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
+			}else if (temp_num_y == chunk_size.Y - 1)
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 1));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
+			}else
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
+			}
+		}else if (temp_num_x == chunk_size.X - 1)
+		{
+			if (temp_num_y == 0)
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, -1));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
+			}else if (temp_num_y == chunk_size.Y - 1)
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 1));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
+			}else
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
+			}
+		} else
+		{
+			if (temp_num_y == 0)
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
+			}else if (temp_num_y == chunk_size.Y - 1)
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
+			}
+		}
+		foreach (Vector2I iter_value in to_add)
+		{
+			if (chunks.ContainsKey(vecToString(iter_value)))
+			{
+				chunks_update_list.Add(iter_value);
+			}
+		}
 		if (p_particle.type > returned_particle.type)
 		{
 			//TODO optimize this
-			//!TODO Add so it trigers side cells
 			if (returned_particle.empty)
 			{
 				// use p_current_chunk for moving first particle
