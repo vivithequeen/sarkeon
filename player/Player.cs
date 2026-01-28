@@ -35,6 +35,8 @@ public partial class Player : CharacterBody2D
 	public float WalkingAcceleration = 60.0f;
 	public int WalkingSpeed = 300;
 	public float WalkingDrag = 60.0f;
+	[Export]
+	Sand sand;
 	public Vector2 WalkingState(double delta, Vector2 velocity)
 	{
 		float direction = Input.GetAxis("left", "right");
@@ -120,6 +122,11 @@ public partial class Player : CharacterBody2D
 
 		//GD.Print(CurrentPlayerState);
 		Velocity = velocity;
+		if (sand != null)
+		{
+			sand.load_pos = (Vector2I)((GlobalPosition - sand.GlobalPosition) / (sand.chunk_size * sand.Scale));
+			GD.Print(sand.load_pos);
+		}
 		MoveAndSlide();
 	}
 }

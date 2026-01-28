@@ -113,16 +113,21 @@ public partial class Sand : TileMapLayer
 	RandomNumberGenerator random_color;
 	//Variables
 	Dictionary<String, NB_particle> particle_list;
-	Vector2I chunk_size = new Vector2I(32,32);
 	Dictionary<String, NB_chunk> chunks;
 	List<Vector2I> chunks_update_list;
 	int particle_update_cycle = 0;
 	bool flip_direction = false;
 	int cell_update_cycle = 0;
 	[Export]
+	public Vector2I chunk_size = new Vector2I(32,32);
+	[Export]
     public float refresh_delay { get; set; } = 0.01f;
 	[Export]
     public int refresh_steps { get; set; } = 1;
+	[Export]
+	public Vector2I load_pos { get; set; } = new Vector2I(0,0);
+	[Export]
+	public Vector2I load_size { get; set; } = new Vector2I(1,1);
 	//Init sands
 	public Sand()
 	{
@@ -187,6 +192,7 @@ public partial class Sand : TileMapLayer
 		visualiser();
 	}
 	List<MeshInstance2D> debug_chunks = [];
+	// very unoptimized debug code o.O
 	public void drawChunks()
 	{
 		foreach (MeshInstance2D to_delete in debug_chunks)
@@ -194,15 +200,15 @@ public partial class Sand : TileMapLayer
 			to_delete.QueueFree();
 		}
 		debug_chunks.Clear();
-		foreach (NB_chunk chunk in chunks.Values)
+		foreach (NB_chunk chunk_iter in chunks.Values)
 		{
 			MeshInstance2D squre_outline = new MeshInstance2D();
 			QuadMesh temp = new QuadMesh();
 			temp.Size = chunk_size;
 			squre_outline.Modulate = new Color(0.5f + random_color.RandfRange(-0.2f,0.2f), 0, 0);
 			squre_outline.Mesh = temp;
-			squre_outline.GlobalPosition = chunk.cell_particle_offset + chunk_size/2 + new Vector2(0,-0.25f);
-			squre_outline.ZIndex = -2;
+			squre_outline.GlobalPosition = chunk_iter.cell_particle_offset + chunk_size/2 + new Vector2(0,-0.25f);
+			squre_outline.ZIndex = -1;
 			AddChild(squre_outline);
 			debug_chunks.Add(squre_outline);
 		}
@@ -225,13 +231,27 @@ public partial class Sand : TileMapLayer
 		timer += delta;
 		if (timer > refresh_delay)
 		{
-			flip_direction = !flip_direction;
-			timer = 0;
-			particle_update_cycle = particle_update_cycle + 1 % 1000000;
-			for (int i = 0; i < 4 * refresh_steps; i++)
+			
+			//!DELETE 
+			if (true)
 			{
-				cell_update_cycle = (cell_update_cycle + 1) % 4;
-				simulationStep();
+				foreach (MeshInstance2D to_delete in debug_chunks)
+				{
+					to_delete.QueueFree();
+				}
+				debug_chunks.Clear();
+			}
+			//!
+			timer = 0;
+			for (int n = 0; n < refresh_steps; n++)
+			{
+				flip_direction = !flip_direction;
+				particle_update_cycle = particle_update_cycle + 1 % 1000000;
+				for (int i = 0; i < 4; i++)
+				{
+					cell_update_cycle = (cell_update_cycle + 1) % 4;
+					simulationStep();
+				}
 			}
 			visualiser();
 			// drawChunks();
@@ -244,6 +264,12 @@ public partial class Sand : TileMapLayer
 		// GD.Print("New update");
 		foreach (Vector2I chunk in chunks_update_list_dub.Distinct())
 		{
+			// out of update range
+			if (Math.Abs(chunk.X  - load_pos.X) > load_size.X || Math.Abs(chunk.Y  - load_pos.Y) > load_size.Y)
+			{
+				chunks_update_list.Add(chunk);
+				continue;
+			}
 			int temp_check = (chunk.X + chunk.Y * 2) % 4;
 			temp_check = temp_check < 0 ? 4 + temp_check: temp_check;
 			// GD.Print(temp_check, cell_update_cycle);
@@ -254,6 +280,22 @@ public partial class Sand : TileMapLayer
 			}
 			//!TODO REWRITE
 			NB_chunk temp_chunk = chunks[vecToString(chunk)];
+			//!DELETE
+			//Super simple debug code
+			if (true)
+			{
+				MeshInstance2D squre_outline = new MeshInstance2D();
+				QuadMesh temp = new QuadMesh();
+				temp.Size = chunk_size;
+				squre_outline.Modulate = new Color(0, 0.5f + random_color.RandfRange(-0.2f,0.2f), 0);
+				squre_outline.Mesh = temp;
+				squre_outline.GlobalPosition = temp_chunk.cell_particle_offset + chunk_size/2 + new Vector2(0,-0.25f);
+				squre_outline.ZIndex = -1;
+				AddChild(squre_outline);
+				debug_chunks.Add(squre_outline);
+			}
+			//!
+			
 			List<NB_particle> temp_particles = temp_chunk.getUpdatedParticles();
 			foreach (NB_particle particle in temp_particles)
 			{
