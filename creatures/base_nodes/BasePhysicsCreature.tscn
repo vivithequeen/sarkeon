@@ -1,0 +1,88 @@
+[gd_scene format=3 uid="uid://ce3v0sr4lqr2w"]
+
+[ext_resource type="Texture2D" uid="uid://bry1aynbt0246" path="res://assets/creature/centipede/head.png" id="1_tp3le"]
+[ext_resource type="Texture2D" uid="uid://dxniswfywmatp" path="res://assets/creature/centipede/bodysegment1.png" id="2_i4dpt"]
+[ext_resource type="PackedScene" uid="uid://bn10yjmn086db" path="res://creatures/base_nodes/BaseLeg.tscn" id="3_yh2mp"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yh2mp"]
+size = Vector2(48, 28)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i4dpt"]
+size = Vector2(32, 28)
+
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_yh2mp"]
+resource_local_to_scene = true
+target_nodepath = NodePath("Target")
+joint_one_bone_idx = 0
+joint_one_bone2d_node = NodePath("BaseLeg")
+joint_two_bone_idx = 1
+joint_two_bone2d_node = NodePath("BaseLeg/Bone2D")
+
+[sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_55bll"]
+resource_local_to_scene = true
+enabled = true
+modification_count = 1
+modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_yh2mp")
+
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_7s56d"]
+resource_local_to_scene = true
+target_nodepath = NodePath("Target")
+flip_bend_direction = true
+joint_one_bone_idx = 0
+joint_one_bone2d_node = NodePath("BaseLeg")
+joint_two_bone_idx = 1
+joint_two_bone2d_node = NodePath("BaseLeg/Bone2D")
+
+[sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_wc8uu"]
+resource_local_to_scene = true
+enabled = true
+modification_count = 1
+modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_7s56d")
+
+[node name="BasePhysicsCreature" type="RigidBody2D" unique_id=936128893]
+collision_layer = 3
+collision_mask = 3
+
+[node name="RigidBody2D" type="RigidBody2D" parent="." unique_id=1819101947]
+position = Vector2(-20, 0)
+collision_layer = 3
+collision_mask = 3
+
+[node name="TextureRect" type="TextureRect" parent="RigidBody2D" unique_id=1729291070]
+offset_left = -24.0
+offset_top = 18.0
+offset_right = -15.0
+offset_bottom = 30.0
+rotation = -1.5707964
+scale = Vector2(4, 4)
+texture = ExtResource("2_i4dpt")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D" unique_id=968947352]
+position = Vector2(4, 0)
+shape = SubResource("RectangleShape2D_yh2mp")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=798697319]
+offset_left = 88.0
+offset_top = -22.0
+offset_right = 99.0
+rotation = 1.5707964
+scale = Vector2(4, 4)
+texture = ExtResource("1_tp3le")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=17100961]
+position = Vector2(16, 0)
+shape = SubResource("RectangleShape2D_i4dpt")
+
+[node name="PinJoint2D" type="PinJoint2D" parent="." unique_id=933397775]
+node_a = NodePath("..")
+node_b = NodePath("../RigidBody2D")
+
+[node name="BaseLeg" parent="." unique_id=1806787440 instance=ExtResource("3_yh2mp")]
+position = Vector2(-14, -16)
+rotation = -1.5707964
+modification_stack = SubResource("SkeletonModificationStack2D_55bll")
+
+[node name="BaseLeg2" parent="." unique_id=1826478994 instance=ExtResource("3_yh2mp")]
+position = Vector2(-13.999998, 16.000002)
+rotation = 1.5707964
+modification_stack = SubResource("SkeletonModificationStack2D_wc8uu")
