@@ -1,7 +1,8 @@
 [gd_scene load_steps=9 format=4 uid="uid://q240hopceoi0"]
 
 [ext_resource type="Texture2D" uid="uid://bf1yn4xulhhf7" path="res://assets/sand/particles/MainColors.png" id="1_dbuvf"]
-[ext_resource type="PackedScene" uid="uid://bby0x4i46dwc8" path="res://navigation/NavigationSystem.tscn" id="3_5myva"]
+[ext_resource type="Script" uid="uid://bugdjop1h1360" path="res://noob/scripts/NB_fps.cs" id="2_5myva"]
+[ext_resource type="Script" uid="uid://dgmvrh7r65l2m" path="res://scene/sand_stuff/TileMapLayer.cs" id="2_dbuvf"]
 [ext_resource type="PackedScene" uid="uid://du8jev8sr22mj" path="res://player/Player.tscn" id="3_7m8aq"]
 [ext_resource type="PackedScene" uid="uid://cj1mkah8bsvbx" path="res://creatures/base_nodes/BaseCreature.tscn" id="4_5myva"]
 
