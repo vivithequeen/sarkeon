@@ -157,11 +157,11 @@ public partial class Sand : TileMapLayer
 			false,
 			[
 				new Vector2I(0,2),
-				new Vector2I(0,1),
 				new Vector2I(2,1),
 				new Vector2I(1,1),
 				new Vector2I(2,0),
 				new Vector2I(1,0),
+				new Vector2I(0,1),
 			]
 		));
 		//TODO make it global
@@ -232,16 +232,6 @@ public partial class Sand : TileMapLayer
 		timer += delta;
 		if (timer > refresh_delay)
 		{
-			//!DELETE 
-			if (true)
-			{
-				foreach (MeshInstance2D to_delete in debug_chunks)
-				{
-					to_delete.QueueFree();
-				}
-				debug_chunks.Clear();
-			}
-			//!
 			timer = 0;
 			for (int n = 0; n < refresh_steps; n++)
 			{
@@ -279,22 +269,6 @@ public partial class Sand : TileMapLayer
 				continue;
 			}
 			NB_chunk temp_chunk = chunks[vecToString(chunk)];
-
-			//!DELETE
-			//Super simple debug code
-			if (true)
-			{
-				MeshInstance2D squre_outline = new MeshInstance2D();
-				QuadMesh temp = new QuadMesh();
-				temp.Size = chunk_size;
-				squre_outline.Modulate = new Color(0, 0.5f + random_color.RandfRange(-0.2f,0.2f), 0);
-				squre_outline.Mesh = temp;
-				squre_outline.GlobalPosition = temp_chunk.cell_particle_offset + chunk_size/2 + new Vector2(0,-0.25f);
-				squre_outline.ZIndex = -1;
-				AddChild(squre_outline);
-				debug_chunks.Add(squre_outline);
-			}
-			//!
 
 			List<NB_particle> temp_particles = temp_chunk.getUpdatedParticles();
 			foreach (NB_particle particle in temp_particles)
@@ -341,45 +315,45 @@ public partial class Sand : TileMapLayer
 		List<Vector2I> to_add = new List<Vector2I>{};
 		if (temp_num_x == 0)
 		{
-			// if (temp_num_y == 0)
-			// {
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, -1));
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
-			// }else if (temp_num_y == chunk_size.Y - 1)
-			// {
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 1));
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
-			// }else
-			// {
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
-			// }
+			if (temp_num_y == 0)
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, -1));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
+			}else if (temp_num_y == chunk_size.Y - 1)
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 1));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
+			}else
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
+			}
 		}else if (temp_num_x == chunk_size.X - 1)
 		{
-			// if (temp_num_y == 0)
-			// {
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, -1));
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
-			// }else if (temp_num_y == chunk_size.Y - 1)
-			// {
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 1));
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
-			// }else
-			// {
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
-			// }
+			if (temp_num_y == 0)
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, -1));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
+			}else if (temp_num_y == chunk_size.Y - 1)
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 1));
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
+			}else
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
+			}
 		} else
 		{
-			// if (temp_num_y == 0)
-			// {
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
-			// }else if (temp_num_y == chunk_size.Y - 1)
-			// {
-			// 	to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
-			// }
+			if (temp_num_y == 0)
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
+			}else if (temp_num_y == chunk_size.Y - 1)
+			{
+				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
+			}
 		}
 		foreach (Vector2I iter_value in to_add)
 		{
