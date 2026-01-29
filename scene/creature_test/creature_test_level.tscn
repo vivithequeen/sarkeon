@@ -817,3 +817,5 @@ Sand = NodePath("../Sand")
 
 [node name="BasePhysicsCreature" parent="." unique_id=936128893 instance=ExtResource("4_dqwnp")]
 position = Vector2(458, 199)
+constant_force = Vector2(0, -75.93)
+constant_torque = 9.465

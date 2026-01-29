@@ -66,6 +66,10 @@ public partial class BaseLeg : Skeleton2D
 
 	void Grab()
 	{
+		RigidBody2D parent = GetParent<RigidBody2D>();
+		Vector2 impuseDirecton = (parent.GlobalPosition - GlobalPosition).Normalized();
+
+		
 		if (isTweening) return;
 
 		isTweening = true;
@@ -94,6 +98,7 @@ public partial class BaseLeg : Skeleton2D
 
 	void ResetLeg()
 	{
+
 		if (isTweening) return;
 
 		isTweening = true;
