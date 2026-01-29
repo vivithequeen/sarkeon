@@ -125,7 +125,7 @@ public partial class Player : CharacterBody2D
 		if (sand != null)
 		{
 			sand.load_pos = (Vector2I)((GlobalPosition - sand.GlobalPosition) / (sand.chunk_size * sand.Scale));
-			GD.Print(sand.load_pos);
+			// GD.Print(sand.load_pos);
 		}
 		MoveAndSlide();
 	}
