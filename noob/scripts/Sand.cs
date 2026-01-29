@@ -115,6 +115,13 @@ public partial class Sand : TileMapLayer
 	Dictionary<String, NB_particle> particle_list;
 	Dictionary<String, NB_chunk> chunks;
 	List<Vector2I> chunks_update_list;
+	//! ^^ YOU BEST BELIVE IT IS DISTINCT >:(( ^^
+	/* ^^ Use this vv
+		if (!chunks_update_list.Contains(position))
+		{
+			chunks_update_list.Add(position);
+		}
+	*/
 	int particle_update_cycle = 0;
 	bool flip_direction = false;
 	int cell_update_cycle = 0;
@@ -262,12 +269,15 @@ public partial class Sand : TileMapLayer
 		List<Vector2I> chunks_update_list_dub = [.. chunks_update_list];
 		chunks_update_list.Clear();
 		// GD.Print("New update");
-		foreach (Vector2I chunk in chunks_update_list_dub.Distinct())
+		foreach (Vector2I chunk in chunks_update_list_dub)
 		{
 			// out of update range
 			if (Math.Abs(chunk.X  - load_pos.X) > load_size.X || Math.Abs(chunk.Y  - load_pos.Y) > load_size.Y)
 			{
-				chunks_update_list.Add(chunk);
+				if (!chunks_update_list.Contains(chunk))
+				{
+					chunks_update_list.Add(chunk);
+				}
 				continue;
 			}
 			int temp_check = (chunk.X + chunk.Y * 2) % 4;
@@ -275,7 +285,10 @@ public partial class Sand : TileMapLayer
 			// GD.Print(temp_check, cell_update_cycle);
 			if (temp_check!= cell_update_cycle)
 			{
-				chunks_update_list.Add(chunk);
+				if (!chunks_update_list.Contains(chunk))
+				{
+					chunks_update_list.Add(chunk);
+				}
 				continue;
 			}
 			NB_chunk temp_chunk = chunks[vecToString(chunk)];
@@ -385,7 +398,10 @@ public partial class Sand : TileMapLayer
 		{
 			if (chunks.ContainsKey(vecToString(iter_value)))
 			{
-				chunks_update_list.Add(iter_value);
+				if (!chunks_update_list.Contains(iter_value))
+				{
+					chunks_update_list.Add(iter_value);
+				}
 			}
 		}
 		if (p_particle.type > returned_particle.type)
@@ -400,8 +416,14 @@ public partial class Sand : TileMapLayer
 
 				returned_chunk.particleAdd(p_particle);
 				// GD.Print(returned_chunk.chunk_position, p_current_chunk.chunk_position);
-				chunks_update_list.Add(p_current_chunk.chunk_position);
-				chunks_update_list.Add(returned_chunk.chunk_position);
+				if (!chunks_update_list.Contains(p_current_chunk.chunk_position))
+				{
+					chunks_update_list.Add(p_current_chunk.chunk_position);
+				}
+				if (!chunks_update_list.Contains(returned_chunk.chunk_position))
+				{
+					chunks_update_list.Add(returned_chunk.chunk_position);
+				}
 			} 	
 			else
 			{
@@ -422,8 +444,10 @@ public partial class Sand : TileMapLayer
 		//TODO optimize this code
 		Vector2I position = new Vector2I((int)Math.Floor((double)p_position.X/(double)chunk_size.X), (int)Math.Floor((double)p_position.Y/(double)chunk_size.Y));
 		string key = vecToString(position);
-		// if (chunks_update_list)
-		chunks_update_list.Add(position);
+		if (!chunks_update_list.Contains(position))
+		{
+			chunks_update_list.Add(position);
+		}
 		// GD.Print(p_position, key);
 		if (chunks.ContainsKey(key))
 		{
@@ -490,6 +514,7 @@ public partial class Sand : TileMapLayer
 		Performance.AddCustomMonitor("NB_sand/particles", Callable.From(DebugMonitor_GetParticles));
 		Performance.AddCustomMonitor("NB_sand/chunks", Callable.From(DebugMonitor_GetChunks));
 		Performance.AddCustomMonitor("NB_sand/update_chunks", Callable.From(DebugMonitor_GetUpdateChunks));
+		Performance.AddCustomMonitor("NB_sand/chunks_that_are_activly_doing_memory_leak (ts is bad)", Callable.From(DebugMonitor_GetUpdateChunksMemLeak));
 	}
 	public int DebugMonitor_GetParticles()
 	{
@@ -502,5 +527,9 @@ public partial class Sand : TileMapLayer
 	public int DebugMonitor_GetUpdateChunks()
 	{
 		return chunks_update_list.Count;
+	}
+	public int DebugMonitor_GetUpdateChunksMemLeak()
+	{
+		return chunks_update_list.Count - chunks_update_list.Distinct().Count();
 	}
 }
