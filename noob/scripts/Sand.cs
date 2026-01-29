@@ -249,6 +249,8 @@ public partial class Sand : TileMapLayer
 	}
 	public void simulationStep()
 	{
+		//!TODO just like replace all update chunk system with just simulating chunks that are around player..
+		//Aka add so it adds que to it and if chunk is out then it gets deloaded, unles it deloads faster by itself
 		List<Vector2I> chunks_update_list_dub = [.. chunks_update_list];
 		chunks_update_list.Clear();
 		// GD.Print("New update");
@@ -408,6 +410,24 @@ public partial class Sand : TileMapLayer
 			return chunks[key];	
 		}
 	}
+	//Aka dosn't add updates
+	private NB_chunk quiteVecToChunk(Vector2I p_position)
+	{
+		//TODO optimize this code
+		Vector2I position = new Vector2I((int)Math.Floor((double)p_position.X/(double)chunk_size.X), (int)Math.Floor((double)p_position.Y/(double)chunk_size.Y));
+		string key = vecToString(position);
+		// if (chunks_update_list)
+		// chunks_update_list.Add(position);
+		// GD.Print(p_position, key);
+		if (chunks.ContainsKey(key))
+		{
+			return chunks[key];
+		} else
+		{
+			chunks.Add(key, new NB_chunk(position, chunk_size));
+			return chunks[key];	
+		}
+	}
 	public void visualiser()
 	{
 		foreach (Vector2I chunk_update_coord in chunks_update_list.Distinct())
@@ -464,6 +484,7 @@ public partial class Sand : TileMapLayer
 		Performance.AddCustomMonitor("NB_sand/particles", Callable.From(DebugMonitor_GetParticles));
 		Performance.AddCustomMonitor("NB_sand/chunks", Callable.From(DebugMonitor_GetChunks));
 		Performance.AddCustomMonitor("NB_sand/update_chunks", Callable.From(DebugMonitor_GetUpdateChunks));
+		Performance.AddCustomMonitor("NB_sand/unique_update_chunks", Callable.From(DebugMonitor_GetUniqueUpdateChunks));
 	}
 	public int DebugMonitor_GetParticles()
 	{
@@ -476,5 +497,9 @@ public partial class Sand : TileMapLayer
 	public int DebugMonitor_GetUpdateChunks()
 	{
 		return chunks_update_list.Count;
+	}
+	public int DebugMonitor_GetUniqueUpdateChunks()
+	{
+		return chunks_update_list.Distinct().Count();
 	}
 }
