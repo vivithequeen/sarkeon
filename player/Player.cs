@@ -78,7 +78,7 @@ public partial class Player : CharacterBody2D
 
 
 
-	
+	private Vector2I prev_load_position = Vector2I.Zero;
 
 	public override void _PhysicsProcess(double delta)
 	{
@@ -121,9 +121,14 @@ public partial class Player : CharacterBody2D
 
 		//GD.Print(CurrentPlayerState);
 		Velocity = velocity;
+
 		if (sand != null)
 		{
-			sand.load_pos = (Vector2I)((GlobalPosition - sand.GlobalPosition) / (sand.chunk_size * sand.Scale));
+			Vector2I cached = (Vector2I)((GlobalPosition - sand.GlobalPosition) / (sand.chunk_size * sand.Scale));
+			if (prev_load_position != cached) {
+				prev_load_position = cached;
+				sand.newPos(cached);
+			}
 			// GD.Print(sand.load_pos);
 		}
 		MoveAndSlide();

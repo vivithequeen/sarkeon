@@ -55,6 +55,7 @@ public partial class Sand : TileMapLayer
 	}
 	class NB_chunk
 	{
+		//!TODO make variable that says if this chunk needs to be updated
 		public NB_chunk(Vector2I p_position, Vector2I p_chunk_size)
 		{
 			chunk_size = p_chunk_size;
@@ -111,6 +112,7 @@ public partial class Sand : TileMapLayer
 		public string vecToString(Vector2I p_vec) => p_vec.X + "," + p_vec.Y;
 	}
 	RandomNumberGenerator random_color;
+	RandomNumberGenerator random_flip;
 	//Variables
 	Dictionary<String, NB_particle> particle_list;
 	Dictionary<String, NB_chunk> chunks;
@@ -168,6 +170,9 @@ public partial class Sand : TileMapLayer
 		// Init random numbers
 		random_color = new RandomNumberGenerator();
 		random_color.Seed = 100;
+
+		random_flip = new RandomNumberGenerator();
+		random_flip.Seed = 100;
 	}
 	public override void _Ready()
 	{
@@ -213,18 +218,18 @@ public partial class Sand : TileMapLayer
 			AddChild(squre_outline);
 			debug_chunks.Add(squre_outline);
 		}
-		foreach (Vector2I chunk_iter in chunks_update_list)
-		{
-			MeshInstance2D squre_outline = new MeshInstance2D();
-			QuadMesh temp = new QuadMesh();
-			temp.Size = chunk_size;
-			squre_outline.Modulate = new Color(0, 0.5f + random_color.RandfRange(-0.2f,0.2f), 0);
-			squre_outline.Mesh = temp;
-			squre_outline.GlobalPosition = chunks[vecToString(chunk_iter)].cell_particle_offset + chunk_size/2 + new Vector2(0,-0.25f);
-			squre_outline.ZIndex = -1;
-			AddChild(squre_outline);
-			debug_chunks.Add(squre_outline);
-		}
+		// foreach (Vector2I chunk_iter in chunks_update_list)
+		// {
+		// 	MeshInstance2D squre_outline = new MeshInstance2D();
+		// 	QuadMesh temp = new QuadMesh();
+		// 	temp.Size = chunk_size;
+		// 	squre_outline.Modulate = new Color(0, 0.5f + random_color.RandfRange(-0.2f,0.2f), 0);
+		// 	squre_outline.Mesh = temp;
+		// 	squre_outline.GlobalPosition = chunks[vecToString(chunk_iter)].cell_particle_offset + chunk_size/2 + new Vector2(0,-0.25f);
+		// 	squre_outline.ZIndex = -1;
+		// 	AddChild(squre_outline);
+		// 	debug_chunks.Add(squre_outline);
+		// }
 	}
 	double timer = 0;
 	public override void _Process(double delta)
@@ -251,23 +256,14 @@ public partial class Sand : TileMapLayer
 	{
 		//!TODO just like replace all update chunk system with just simulating chunks that are around player..
 		//Aka add so it adds que to it and if chunk is out then it gets deloaded, unles it deloads faster by itself
-		List<Vector2I> chunks_update_list_dub = [.. chunks_update_list];
-		chunks_update_list.Clear();
-		// GD.Print("New update");
-		foreach (Vector2I chunk in chunks_update_list_dub.Distinct())
+		foreach (Vector2I chunk in chunks_update_list)
 		{
-			// out of update range
-			if (Math.Abs(chunk.X  - load_pos.X) > load_size.X || Math.Abs(chunk.Y  - load_pos.Y) > load_size.Y)
-			{
-				chunks_update_list.Add(chunk);
-				continue;
-			}
 			int temp_check = (chunk.X + chunk.Y * 2) % 4;
 			temp_check = temp_check < 0 ? 4 + temp_check: temp_check;
 			// GD.Print(temp_check, cell_update_cycle);
 			if (temp_check!= cell_update_cycle)
 			{
-				chunks_update_list.Add(chunk);
+				// chunks_update_list.Add(chunk);
 				continue;
 			}
 			NB_chunk temp_chunk = chunks[vecToString(chunk)];
@@ -279,7 +275,7 @@ public partial class Sand : TileMapLayer
 				{
 					continue;
 				}
-				Vector2I multiplier = flip_direction? new Vector2I(-1,1): new Vector2I(1,1);
+				Vector2I multiplier = particle.flip? new Vector2I(-1,1): new Vector2I(1,1);
 				for (int check_offset_iter = 0; check_offset_iter < particle.checking_pos.Count; check_offset_iter++)
 				{
 					Vector2I check_offset = particle.checking_pos[check_offset_iter];
@@ -289,6 +285,10 @@ public partial class Sand : TileMapLayer
 						particle.flip = !particle.flip;
 						break;
 					}
+				}
+				if (random_flip.RandiRange(0,10) == 1)
+				{
+					particle.flip = !particle.flip;
 				}
 			}
 		}
@@ -309,61 +309,6 @@ public partial class Sand : TileMapLayer
 			// GD.Print(returned_particle.type);
 			// return false;
 		}
-		//TODO optimize also fix precision error where x == 0 or y == 0
-		int temp_num_x = check_position.X % chunk_size.X;
-		temp_num_x = temp_num_x < 0 ? chunk_size.X + temp_num_x : temp_num_x;
-		int temp_num_y = check_position.Y % chunk_size.Y;
-		temp_num_y = temp_num_y < 0 ? chunk_size.Y + temp_num_y : temp_num_y;
-		List<Vector2I> to_add = new List<Vector2I>{};
-		if (temp_num_x == 0)
-		{
-			if (temp_num_y == 0)
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, -1));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
-			}else if (temp_num_y == chunk_size.Y - 1)
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 1));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
-			}else
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
-			}
-		}else if (temp_num_x == chunk_size.X - 1)
-		{
-			if (temp_num_y == 0)
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, -1));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
-			}else if (temp_num_y == chunk_size.Y - 1)
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 1));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
-			}else
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
-			}
-		} else
-		{
-			if (temp_num_y == 0)
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
-			}else if (temp_num_y == chunk_size.Y - 1)
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
-			}
-		}
-		foreach (Vector2I iter_value in to_add)
-		{
-			if (chunks.ContainsKey(vecToString(iter_value)))
-			{
-				chunks_update_list.Add(iter_value);
-			}
-		}
 		if (p_particle.type > returned_particle.type)
 		{
 			//TODO optimize this
@@ -376,8 +321,8 @@ public partial class Sand : TileMapLayer
 
 				returned_chunk.particleAdd(p_particle);
 				// GD.Print(returned_chunk.chunk_position, p_current_chunk.chunk_position);
-				chunks_update_list.Add(p_current_chunk.chunk_position);
-				chunks_update_list.Add(returned_chunk.chunk_position);
+				// chunks_update_list.Add(p_current_chunk.chunk_position);
+				// chunks_update_list.Add(returned_chunk.chunk_position);
 			} 	
 			else
 			{
@@ -398,27 +343,6 @@ public partial class Sand : TileMapLayer
 		//TODO optimize this code
 		Vector2I position = new Vector2I((int)Math.Floor((double)p_position.X/(double)chunk_size.X), (int)Math.Floor((double)p_position.Y/(double)chunk_size.Y));
 		string key = vecToString(position);
-		// if (chunks_update_list)
-		chunks_update_list.Add(position);
-		// GD.Print(p_position, key);
-		if (chunks.ContainsKey(key))
-		{
-			return chunks[key];
-		} else
-		{
-			chunks.Add(key, new NB_chunk(position, chunk_size));
-			return chunks[key];	
-		}
-	}
-	//Aka dosn't add updates
-	private NB_chunk quiteVecToChunk(Vector2I p_position)
-	{
-		//TODO optimize this code
-		Vector2I position = new Vector2I((int)Math.Floor((double)p_position.X/(double)chunk_size.X), (int)Math.Floor((double)p_position.Y/(double)chunk_size.Y));
-		string key = vecToString(position);
-		// if (chunks_update_list)
-		// chunks_update_list.Add(position);
-		// GD.Print(p_position, key);
 		if (chunks.ContainsKey(key))
 		{
 			return chunks[key];
@@ -474,6 +398,23 @@ public partial class Sand : TileMapLayer
 	{
 		NB_chunk detected_chunk = vecToChunk(p_particle.particle_position);
 		detected_chunk.particleAdd(p_particle);
+	}
+	public void newPos(Vector2I p_newPosition)
+	{
+		load_pos = p_newPosition;
+		//!TODO insert the loading script here to load chunks
+		for (int y = 0; y < load_size.Y; y++)
+		{
+			for (int x = 0; x < load_size.X; x++)
+			{	
+				Vector2I temp_vec = new Vector2I(x,y);
+				if (!chunks_update_list.Contains(temp_vec) && chunks.ContainsKey(vecToString(temp_vec)))
+				{
+					chunks_update_list.Add(temp_vec);
+					continue;
+				}
+			}
+		}
 	}
 	//Stringies ;PP
 	public string fakeVecToString(int X, int Y) => X + "," + Y;
