@@ -102,11 +102,11 @@ public partial class TileMapLayer : Godot.TileMapLayer
 			{
 				if (random_sand.RandiRange(0, 40) == 0)
 				{
-					NB_cell temp_cell = new NB_cell(
-					new Vector2(0,0),
-					NB_cell_types.SAND);
-					particles[x+y*particle_sim_size.X] = temp_cell;
-					particles_buffer_updated_index.Add(x+y*particle_sim_size.X);
+					// NB_cell temp_cell = new NB_cell(
+					// new Vector2(0,0),
+					// NB_cell_types.SAND);
+					// particles[x+y*particle_sim_size.X] = temp_cell;
+					// particles_buffer_updated_index.Add(x+y*particle_sim_size.X);
 				}
 			}
 		}
