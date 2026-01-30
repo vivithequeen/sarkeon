@@ -22,7 +22,7 @@ public partial class BaseLeg : Skeleton2D
 		Reset
 	}
 
-	BaseLegState CurrentState = BaseLegState.Search;
+	public BaseLegState CurrentState = BaseLegState.Search;
 
 	public override void _Ready()
 	{
@@ -66,6 +66,7 @@ public partial class BaseLeg : Skeleton2D
 
 	void Grab()
 	{
+
 		RigidBody2D parent = GetParent<RigidBody2D>();
 		Vector2 impuseDirecton = (parent.GlobalPosition - GlobalPosition).Normalized();
 

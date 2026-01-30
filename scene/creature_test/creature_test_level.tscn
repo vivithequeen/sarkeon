@@ -794,7 +794,7 @@ sources/1 = SubResource("TileSetAtlasSource_ynb1q")
 [node name="PlayerTestLevel" type="Node2D" unique_id=693493559]
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=112382461]
-position = Vector2(578, 323)
+position = Vector2(480, 270)
 scale = Vector2(0.9999998, 0.9999998)
 
 [node name="Player" parent="." unique_id=1011443017 instance=ExtResource("1_kkdob")]
@@ -815,7 +815,11 @@ shape = SubResource("WorldBoundaryShape2D_g3wdb")
 [node name="NavigationSystem" parent="." unique_id=1510036302 node_paths=PackedStringArray("Sand") instance=ExtResource("3_dqwnp")]
 Sand = NodePath("../Sand")
 
-[node name="BasePhysicsCreature" parent="." unique_id=936128893 instance=ExtResource("4_dqwnp")]
-position = Vector2(458, 199)
+[node name="BasePhysicsCreature" parent="." unique_id=936128893 node_paths=PackedStringArray("GoalPosition") instance=ExtResource("4_dqwnp")]
+position = Vector2(108, 350)
 constant_force = Vector2(0, -75.93)
 constant_torque = 9.465
+GoalPosition = NodePath("../Node2D")
+
+[node name="Node2D" type="Node2D" parent="." unique_id=818314982]
+position = Vector2(927, 260)
