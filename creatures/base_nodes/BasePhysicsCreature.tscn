@@ -1,34 +1,33 @@
 [gd_scene format=3 uid="uid://ce3v0sr4lqr2w"]
 
 [ext_resource type="Script" uid="uid://c6qa0tkwfsklb" path="res://creatures/base_nodes/BasePhysicsCreature.cs" id="1_55bll"]
-[ext_resource type="Texture2D" uid="uid://bry1aynbt0246" path="res://assets/creature/centipede/head.png" id="1_tp3le"]
 [ext_resource type="PackedScene" uid="uid://b2c030hlqv3p8" path="res://creatures/base_nodes/BasePhysicsBodySegment.tscn" id="2_yh2mp"]
+[ext_resource type="PackedScene" uid="uid://y5cwxci4yebw" path="res://creatures/base_nodes/BasePhysicsHead.tscn" id="3_yh2mp"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_i4dpt"]
-size = Vector2(32, 28)
-
-[node name="BasePhysicsCreature" type="RigidBody2D" unique_id=936128893 node_paths=PackedStringArray("bodySegments")]
-collision_layer = 3
-collision_mask = 3
+[node name="BasePhysicsCreature" type="Node2D" unique_id=2000934431]
 script = ExtResource("1_55bll")
-bodySegments = [NodePath("BasePhysicsBodySegment")]
 
-[node name="BasePhysicsBodySegment" parent="." unique_id=1880486796 instance=ExtResource("2_yh2mp")]
+[node name="BasePhysicsBodySegment" parent="." unique_id=1880486796 node_paths=PackedStringArray("Head") instance=ExtResource("2_yh2mp")]
 position = Vector2(-14, 0)
+Head = NodePath("../BasePhysicsHead")
 
-[node name="TextureRect" type="TextureRect" parent="." unique_id=798697319]
-offset_left = 88.0
-offset_top = -22.0
-offset_right = 99.0
-rotation = 1.5707964
-scale = Vector2(4, 4)
-texture = ExtResource("1_tp3le")
+[node name="BasePhysicsBodySegment2" parent="." unique_id=1996632234 node_paths=PackedStringArray("Legs", "Head") instance=ExtResource("2_yh2mp")]
+position = Vector2(-47, 0)
+Legs = [NodePath("../BasePhysicsBodySegment/BaseLeg"), NodePath("../BasePhysicsBodySegment/BaseLeg2")]
+Head = NodePath("../BasePhysicsHead")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=17100961]
-position = Vector2(16, 0)
-shape = SubResource("RectangleShape2D_i4dpt")
-
-[node name="PinJoint2D" type="PinJoint2D" parent="." unique_id=933397775]
+[node name="PinJoint2D" type="PinJoint2D" parent="BasePhysicsBodySegment2" unique_id=1792783708]
+position = Vector2(14, 0)
 node_a = NodePath("..")
-node_b = NodePath("../BasePhysicsBodySegment")
+node_b = NodePath("../../BasePhysicsBodySegment")
+motor_enabled = true
+
+[node name="BasePhysicsHead" parent="." unique_id=1933202745 node_paths=PackedStringArray("bodySegments") instance=ExtResource("3_yh2mp")]
+position = Vector2(16, 0)
+bodySegments = [NodePath("../BasePhysicsBodySegment")]
+
+[node name="PinJoint2D" type="PinJoint2D" parent="BasePhysicsHead" unique_id=933397775]
+position = Vector2(-16, 0)
+node_a = NodePath("../../BasePhysicsBodySegment")
+node_b = NodePath("..")
 motor_enabled = true

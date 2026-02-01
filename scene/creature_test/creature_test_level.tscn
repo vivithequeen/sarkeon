@@ -821,4 +821,10 @@ rotation = 0.15471585
 GoalPosition = NodePath("../Node2D")
 
 [node name="Node2D" type="Node2D" parent="." unique_id=818314982]
-position = Vector2(927, 260)
+position = Vector2(818, 373)
+
+[node name="Label" type="Label" parent="Node2D" unique_id=149120609]
+offset_left = 1.0
+offset_right = 41.0
+offset_bottom = 23.0
+text = "goal!"

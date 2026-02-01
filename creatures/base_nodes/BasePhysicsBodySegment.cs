@@ -7,14 +7,10 @@ public partial class BasePhysicsBodySegment : RigidBody2D
 {
 	[Export] public Array<BaseLeg> Legs;
 
-	RigidBody2D ParentRigidBody;
+	[Export] public BasePhysicsHead Head;
 	[Export] public RayCast2D GroundChecker;
 
-	public override void _Ready()
-	{
-		ParentRigidBody = GetParent<RigidBody2D>();
 
-	}
 
 
 
@@ -52,9 +48,9 @@ public partial class BasePhysicsBodySegment : RigidBody2D
 		if (GroundChecker.IsColliding())
 		{
 			ApplyCentralForce(Vector2.Up * Mass * (float)ProjectSettings.GetSetting("physics/2d/default_gravity"));
-			if (ParentRigidBody is BasePhysicsCreature)
+			if (Head != null)
 			{
-				ParentRigidBody.ApplyCentralForce(Vector2.Up * Mass * (float)ProjectSettings.GetSetting("physics/2d/default_gravity"));
+				Head.ApplyCentralForce(Vector2.Up * Mass * (float)ProjectSettings.GetSetting("physics/2d/default_gravity"));
 
 			}
 		}

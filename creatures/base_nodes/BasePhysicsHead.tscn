@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://y5cwxci4yebw"]
+
+[ext_resource type="Script" uid="uid://bitha8ck3kvfw" path="res://creatures/base_nodes/BasePhysicsHead.cs" id="1_lfsc5"]
+[ext_resource type="Texture2D" uid="uid://bry1aynbt0246" path="res://assets/creature/centipede/head.png" id="1_qr7ia"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lfsc5"]
+size = Vector2(32, 28)
+
+[node name="BasePhysicsHead" type="RigidBody2D" unique_id=1933202745 node_paths=PackedStringArray("bodySegments")]
+script = ExtResource("1_lfsc5")
+bodySegments = []
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=908988473]
+offset_left = 72.0
+offset_top = -21.999996
+offset_right = 83.0
+rotation = 1.5707964
+scale = Vector2(4, 4)
+texture = ExtResource("1_qr7ia")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=980942264]
+position = Vector2(0, 3.8146973e-06)
+shape = SubResource("RectangleShape2D_lfsc5")
