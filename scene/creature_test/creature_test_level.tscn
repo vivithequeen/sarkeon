@@ -816,9 +816,8 @@ shape = SubResource("WorldBoundaryShape2D_g3wdb")
 Sand = NodePath("../Sand")
 
 [node name="BasePhysicsCreature" parent="." unique_id=936128893 node_paths=PackedStringArray("GoalPosition") instance=ExtResource("4_dqwnp")]
-position = Vector2(109, 378)
-constant_force = Vector2(0, -75.93)
-constant_torque = 9.465
+position = Vector2(113, 204)
+rotation = 0.15471585
 GoalPosition = NodePath("../Node2D")
 
 [node name="Node2D" type="Node2D" parent="." unique_id=818314982]

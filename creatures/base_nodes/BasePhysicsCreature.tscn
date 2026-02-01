@@ -10,11 +10,8 @@ size = Vector2(32, 28)
 [node name="BasePhysicsCreature" type="RigidBody2D" unique_id=936128893 node_paths=PackedStringArray("bodySegments")]
 collision_layer = 3
 collision_mask = 3
-linear_velocity = Vector2(6.39, 70.3)
-linear_damp_mode = 1
-linear_damp = 100.0
 script = ExtResource("1_55bll")
-bodySegments = []
+bodySegments = [NodePath("BasePhysicsBodySegment")]
 
 [node name="BasePhysicsBodySegment" parent="." unique_id=1880486796 instance=ExtResource("2_yh2mp")]
 position = Vector2(-14, 0)

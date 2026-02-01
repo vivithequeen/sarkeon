@@ -1,15 +1,19 @@
 using Godot;
 using Godot.Collections;
 using System;
+using System.ComponentModel;
 
 public partial class BasePhysicsBodySegment : RigidBody2D
 {
 	[Export] public Array<BaseLeg> Legs;
+
 	RigidBody2D ParentRigidBody;
+	[Export] public RayCast2D GroundChecker;
 
 	public override void _Ready()
 	{
 		ParentRigidBody = GetParent<RigidBody2D>();
+
 	}
 
 
@@ -30,7 +34,7 @@ public partial class BasePhysicsBodySegment : RigidBody2D
 	public override void _IntegrateForces(PhysicsDirectBodyState2D state)
 	{
 
-		StabilizeForce();
+
 		int amountOfLegsOnGround = GetAmountOfLegsOnGround();
 
 		if (amountOfLegsOnGround == 0)
@@ -38,9 +42,23 @@ public partial class BasePhysicsBodySegment : RigidBody2D
 			GravityScale = 1.0f;
 			return;
 		}
-		GravityScale = 0.0f;
-		// ApplyCentralForce(Vector2.Up * Mass * (float)ProjectSettings.GetSetting("physics/2d/default_gravity"));
 
+
+
+		GravityScale = 0.0f;
+		StabilizeForce();
+
+		GroundChecker.LookAt(GlobalPosition + new Vector2(1, 0));
+		if (GroundChecker.IsColliding())
+		{
+			ApplyCentralForce(Vector2.Up * Mass * (float)ProjectSettings.GetSetting("physics/2d/default_gravity"));
+			if (ParentRigidBody is BasePhysicsCreature)
+			{
+				ParentRigidBody.ApplyCentralForce(Vector2.Up * Mass * (float)ProjectSettings.GetSetting("physics/2d/default_gravity"));
+
+			}
+		}
+		// 
 	}
 
 
