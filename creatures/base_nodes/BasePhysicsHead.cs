@@ -18,8 +18,8 @@ public partial class BasePhysicsHead : RigidBody2D
 			return;
 		}
 		GravityScale = 0.0f;
-		float AngleToGoal = GlobalPosition.AngleTo(ParentRigidBody.GoalPosition.GlobalPosition);
-		StabilizeToAngleAndPosition(ParentRigidBody.GoalPosition.GlobalPosition, AngleToGoal);
+		float AngleToGoal = GlobalPosition.AngleTo(ParentRigidBody.TargetPos);
+		StabilizeToAngleAndPosition(ParentRigidBody.TargetPos, AngleToGoal);
 		ApplyCentralForce(new Vector2(1,0) * 40f);
 
 		
@@ -34,7 +34,7 @@ public partial class BasePhysicsHead : RigidBody2D
 public void StabilizeToAngleAndPosition(Vector2 targetPosition, float targetAngleRad, float strength = 50.0f)
 {
 
-    Vector2 positionDiff = (targetPosition - GlobalPosition).Normalized() * 200;
+    Vector2 positionDiff = (targetPosition - GlobalPosition).Normalized() * 700;// TODO: DONT KEEP THIS OH PLEASE DONT
     
     Vector2 forceSpring = positionDiff * strength;
     

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://duori3e1ujuig"]
+[gd_scene format=3 uid="uid://duori3e1ujuig"]
 
 [ext_resource type="Script" uid="uid://cw1r42b1hhotk" path="res://creatures/spider/SpiderLeg.cs" id="1_ls3ep"]
 [ext_resource type="Texture2D" uid="uid://drvxo85l6oje0" path="res://assets/creature/spider/legsegment1.png" id="2_3kq3l"]
@@ -28,11 +28,11 @@ enabled = true
 modification_count = 1
 modifications/0 = SubResource("SkeletonModification2DFABRIK_dd01i")
 
-[node name="SpiderLeg" type="Skeleton2D"]
+[node name="SpiderLeg" type="Skeleton2D" unique_id=1524560800]
 modification_stack = SubResource("SkeletonModificationStack2D_0dnhf")
 script = ExtResource("1_ls3ep")
 
-[node name="Bone2D" type="Bone2D" parent="."]
+[node name="Bone2D" type="Bone2D" parent="." unique_id=1580951922]
 rest = Transform2D(0.8660253, -0.5000002, 0.5000002, 0.8660253, 0, 0)
 auto_calculate_length_and_angle = false
 length = 24.0
@@ -40,7 +40,7 @@ bone_angle = 0.0
 editor_settings/show_bone_gizmo = false
 metadata/_local_pose_override_enabled_ = true
 
-[node name="Bone2D2" type="Bone2D" parent="Bone2D"]
+[node name="Bone2D2" type="Bone2D" parent="Bone2D" unique_id=1866506836]
 position = Vector2(24, 0)
 rest = Transform2D(0.8660254, 0.5, -0.5, 0.8660254, 24, 0)
 auto_calculate_length_and_angle = false
@@ -49,7 +49,7 @@ bone_angle = 0.0
 editor_settings/show_bone_gizmo = false
 metadata/_local_pose_override_enabled_ = true
 
-[node name="Bone2D2" type="Bone2D" parent="Bone2D/Bone2D2"]
+[node name="Bone2D2" type="Bone2D" parent="Bone2D/Bone2D2" unique_id=1667893413]
 position = Vector2(12.000004, 0)
 scale = Vector2(0.99995136, 0.99995136)
 rest = Transform2D(0.99995136, 2.1257426e-07, -2.1257426e-07, 0.99995136, 12.00001, 0)
@@ -59,7 +59,7 @@ bone_angle = 0.0
 editor_settings/show_bone_gizmo = false
 metadata/_local_pose_override_enabled_ = true
 
-[node name="Bone2D2" type="Bone2D" parent="Bone2D/Bone2D2/Bone2D2"]
+[node name="Bone2D2" type="Bone2D" parent="Bone2D/Bone2D2/Bone2D2" unique_id=32366837]
 position = Vector2(28.001358, 0)
 rest = Transform2D(1, 0, 0, 1, 28.001358, 0)
 auto_calculate_length_and_angle = false
@@ -68,14 +68,14 @@ bone_angle = 0.0
 editor_settings/show_bone_gizmo = false
 metadata/_local_pose_override_enabled_ = true
 
-[node name="TextureRect4" type="TextureRect" parent="Bone2D/Bone2D2/Bone2D2/Bone2D2"]
+[node name="TextureRect4" type="TextureRect" parent="Bone2D/Bone2D2/Bone2D2/Bone2D2" unique_id=205531456]
 offset_top = -2.0000973
 offset_right = 5.000004
 offset_bottom = -1.0000973
 scale = Vector2(4, 4)
 texture = ExtResource("5_5outg")
 
-[node name="Bone2D3" type="Bone2D" parent="Bone2D/Bone2D2/Bone2D2/Bone2D2"]
+[node name="Bone2D3" type="Bone2D" parent="Bone2D/Bone2D2/Bone2D2/Bone2D2" unique_id=377910716]
 position = Vector2(24.00233, 0)
 rest = Transform2D(1, 0, 0, 1, 24.00233, 0)
 auto_calculate_length_and_angle = false
@@ -83,37 +83,37 @@ length = 12.0
 bone_angle = 0.0
 editor_settings/show_bone_gizmo = false
 
-[node name="TextureRect3" type="TextureRect" parent="Bone2D/Bone2D2/Bone2D2"]
+[node name="TextureRect3" type="TextureRect" parent="Bone2D/Bone2D2/Bone2D2" unique_id=1993949452]
 offset_top = -2.0000973
 offset_right = 6.999996
 offset_bottom = -1.0000973
 scale = Vector2(4, 4)
 texture = ExtResource("4_0dnhf")
 
-[node name="TextureRect2" type="TextureRect" parent="Bone2D/Bone2D2"]
+[node name="TextureRect2" type="TextureRect" parent="Bone2D/Bone2D2" unique_id=570681490]
 offset_top = -2.0
 offset_right = 3.0
 offset_bottom = -1.0
 scale = Vector2(4, 4)
 texture = ExtResource("3_dd01i")
 
-[node name="TextureRect" type="TextureRect" parent="Bone2D"]
+[node name="TextureRect" type="TextureRect" parent="Bone2D" unique_id=1869657826]
 offset_top = -2.0
 offset_right = 6.0
 offset_bottom = -1.0
 scale = Vector2(4, 4)
 texture = ExtResource("2_3kq3l")
 
-[node name="Target" type="Node2D" parent="."]
+[node name="Target" type="Node2D" parent="." unique_id=464808596]
 position = Vector2(53, -9)
 
-[node name="Sprite2D" type="Sprite2D" parent="Target"]
+[node name="Sprite2D" type="Sprite2D" parent="Target" unique_id=340783509]
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("6_dd01i")
 
-[node name="WallChecker" type="RayCast2D" parent="."]
+[node name="WallChecker" type="RayCast2D" parent="." unique_id=1782169090]
 target_position = Vector2(60, 0)
-collision_mask = 3
+collision_mask = 8
 
-[node name="ResetPosition" type="Node2D" parent="."]
+[node name="ResetPosition" type="Node2D" parent="." unique_id=616136020]
 position = Vector2(96, 0)

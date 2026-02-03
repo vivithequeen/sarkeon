@@ -29,6 +29,7 @@ script = ExtResource("1_fwvm8")
 position = Vector2(90.71429, 1.1920929e-07)
 
 [node name="Sprite2D" type="Sprite2D" parent="Target" unique_id=952025352]
+visible = false
 scale = Vector2(0.1, 0.1)
 texture = ExtResource("2_x6ijj")
 
@@ -51,7 +52,7 @@ scale = Vector2(0.99995947, 0.99995947)
 rest = Transform2D(-0.01913753, -0.9997712, 0.9997712, -0.01913753, 64.001236, 0)
 auto_calculate_length_and_angle = false
 length = 34.0
-bone_angle = 0.00021515969
+bone_angle = 0.00021515967
 metadata/_local_pose_override_enabled_ = true
 
 [node name="leg2" type="TextureRect" parent="BaseLeg/Bone2D" unique_id=904744521]
@@ -73,7 +74,7 @@ metadata/_edit_use_anchors_ = true
 
 [node name="WallChecker" type="RayCast2D" parent="." unique_id=463934242]
 target_position = Vector2(67.85714, 0)
-collision_mask = 3
+collision_mask = 8
 
 [node name="ResetPosition" type="Node2D" parent="." unique_id=324166043]
 position = Vector2(80, 0)
