@@ -122,8 +122,8 @@ public partial class Sand : TileMapLayer
 	bool flip_direction = false;
 	int cell_update_cycle = 0;
 	int cell_update_cycle_iter = 0;
-	List<int> cell_update_cycle_array = new List<int>{0,1,2,3,1,0,3,2};
-	int cell_update_cycle_array_len = 8;
+	List<int> cell_update_cycle_array = new List<int>{0,2,1,3};
+	int cell_update_cycle_array_len = 4;
 	[Export]
 	public Vector2I chunk_size = new Vector2I(32,32);
 	[Export]
@@ -291,7 +291,7 @@ public partial class Sand : TileMapLayer
 						break;
 					}
 				}
-				if (random_flip.RandiRange(0,10) == 1)
+				if (random_flip.RandiRange(0,4) == 1)
 				{
 					particle.flip = !particle.flip;
 				}
@@ -331,8 +331,6 @@ public partial class Sand : TileMapLayer
 			} 	
 			else
 			{
-				Vector2I third_checkin_position
-				if (returned_particle.particle_position )
 				returned_particle.particle_update_cycle = particle_update_cycle;
 				p_particle.particle_update_cycle = particle_update_cycle;
 
