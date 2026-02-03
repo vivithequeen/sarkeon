@@ -94,6 +94,7 @@ public partial class Sand : TileMapLayer
 		}
 		public List<NB_particle> getUpdatedParticles()
 		{
+			// return [.. particles.Values];
 			return [.. particles.Values.Reverse()];
 		}
 		public bool getParticleSafe(Vector2I p_particle_position)
@@ -120,6 +121,9 @@ public partial class Sand : TileMapLayer
 	int particle_update_cycle = 0;
 	bool flip_direction = false;
 	int cell_update_cycle = 0;
+	int cell_update_cycle_iter = 0;
+	List<int> cell_update_cycle_array = new List<int>{0,1,2,3,1,0,3,2};
+	int cell_update_cycle_array_len = 8;
 	[Export]
 	public Vector2I chunk_size = new Vector2I(32,32);
 	[Export]
@@ -156,7 +160,7 @@ public partial class Sand : TileMapLayer
 		));
 		particle_list.Add("Water", new NB_particle(
 			NB_type.LIQUID,
-			false,
+			true,
 			[
 				new Vector2I(0,2),
 				new Vector2I(2,1),
@@ -244,7 +248,8 @@ public partial class Sand : TileMapLayer
 				particle_update_cycle = particle_update_cycle + 1 % 1000000;
 				for (int i = 0; i < 4; i++)
 				{
-					cell_update_cycle = (cell_update_cycle + 1) % 4;
+					cell_update_cycle_iter = (cell_update_cycle_iter + 1) % cell_update_cycle_array_len;
+					cell_update_cycle = cell_update_cycle_array[cell_update_cycle_iter];
 					simulationStep();
 				}
 			}
@@ -258,7 +263,7 @@ public partial class Sand : TileMapLayer
 		//Aka add so it adds que to it and if chunk is out then it gets deloaded, unles it deloads faster by itself
 		foreach (Vector2I chunk in chunks_update_list)
 		{
-			int temp_check = (chunk.X + chunk.Y * 2) % 4;
+			int temp_check = chunk.X % 2 + chunk.Y % 2 * 2;
 			temp_check = temp_check < 0 ? 4 + temp_check: temp_check;
 			// GD.Print(temp_check, cell_update_cycle);
 			if (temp_check!= cell_update_cycle)
@@ -326,6 +331,8 @@ public partial class Sand : TileMapLayer
 			} 	
 			else
 			{
+				Vector2I third_checkin_position
+				if (returned_particle.particle_position )
 				returned_particle.particle_update_cycle = particle_update_cycle;
 				p_particle.particle_update_cycle = particle_update_cycle;
 
@@ -377,6 +384,7 @@ public partial class Sand : TileMapLayer
 		NB_particle return_particle = particle_list[type].clone().pos(p_positio);
 		//TODO coloring script goes here
 		return_particle.flip = flip_direction;
+		flip_direction = !flip_direction;
 		switch (type)
 		{
 			case "Sand":
@@ -402,12 +410,13 @@ public partial class Sand : TileMapLayer
 	public void newPos(Vector2I p_newPosition)
 	{
 		load_pos = p_newPosition;
+		chunks_update_list.Clear();
 		//!TODO insert the loading script here to load chunks
-		for (int y = 0; y < load_size.Y; y++)
+		for (int y = -load_size.Y; y < load_size.Y; y++)
 		{
-			for (int x = 0; x < load_size.X; x++)
+			for (int x = -load_size.X; x < load_size.X; x++)
 			{	
-				Vector2I temp_vec = new Vector2I(x,y);
+				Vector2I temp_vec = new Vector2I(x + p_newPosition.X, y + p_newPosition.Y);
 				if (!chunks_update_list.Contains(temp_vec) && chunks.ContainsKey(vecToString(temp_vec)))
 				{
 					chunks_update_list.Add(temp_vec);
