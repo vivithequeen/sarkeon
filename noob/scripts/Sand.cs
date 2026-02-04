@@ -256,16 +256,10 @@ public partial class Sand : TileMapLayer
 		// GD.Print("New update");
 		foreach (Vector2I chunk in chunks_update_list_dub.Distinct())
 		{
-			// out of update range
-			if (Math.Abs(chunk.X  - load_pos.X) > load_size.X || Math.Abs(chunk.Y  - load_pos.Y) > load_size.Y)
-			{
-				chunks_update_list.Add(chunk);
-				continue;
-			}
-			int temp_check = (chunk.X + chunk.Y * 2) % 4;
+			int temp_check = chunk.X % 2 + chunk.Y % 2 * 2;
 			temp_check = temp_check < 0 ? 4 + temp_check: temp_check;
 			// GD.Print(temp_check, cell_update_cycle);
-			if (temp_check!= cell_update_cycle)
+			if (temp_check != cell_update_cycle)
 			{
 				chunks_update_list.Add(chunk);
 				continue;
@@ -309,61 +303,61 @@ public partial class Sand : TileMapLayer
 			// GD.Print(returned_particle.type);
 			// return false;
 		}
-		//TODO optimize also fix precision error where x == 0 or y == 0
-		int temp_num_x = check_position.X % chunk_size.X;
-		temp_num_x = temp_num_x < 0 ? chunk_size.X + temp_num_x : temp_num_x;
-		int temp_num_y = check_position.Y % chunk_size.Y;
-		temp_num_y = temp_num_y < 0 ? chunk_size.Y + temp_num_y : temp_num_y;
-		List<Vector2I> to_add = new List<Vector2I>{};
-		if (temp_num_x == 0)
-		{
-			if (temp_num_y == 0)
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, -1));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
-			}else if (temp_num_y == chunk_size.Y - 1)
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 1));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
-			}else
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
-			}
-		}else if (temp_num_x == chunk_size.X - 1)
-		{
-			if (temp_num_y == 0)
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, -1));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
-			}else if (temp_num_y == chunk_size.Y - 1)
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 1));
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
-			}else
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
-			}
-		} else
-		{
-			if (temp_num_y == 0)
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
-			}else if (temp_num_y == chunk_size.Y - 1)
-			{
-				to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
-			}
-		}
-		foreach (Vector2I iter_value in to_add)
-		{
-			if (chunks.ContainsKey(vecToString(iter_value)))
-			{
-				chunks_update_list.Add(iter_value);
-			}
-		}
+		// TODO optimize also fix precision error where x == 0 or y == 0
+		// int temp_num_x = check_position.X % chunk_size.X;
+		// temp_num_x = temp_num_x < 0 ? chunk_size.X + temp_num_x : temp_num_x;
+		// int temp_num_y = check_position.Y % chunk_size.Y;
+		// temp_num_y = temp_num_y < 0 ? chunk_size.Y + temp_num_y : temp_num_y;
+		// List<Vector2I> to_add = new List<Vector2I>{};
+		// if (temp_num_x == 0)
+		// {
+		// 	if (temp_num_y == 0)
+		// 	{
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, -1));
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
+		// 	}else if (temp_num_y == chunk_size.Y - 1)
+		// 	{
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 1));
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
+		// 	}else
+		// 	{
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(-1, 0));
+		// 	}
+		// }else if (temp_num_x == chunk_size.X - 1)
+		// {
+		// 	if (temp_num_y == 0)
+		// 	{
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, -1));
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
+		// 	}else if (temp_num_y == chunk_size.Y - 1)
+		// 	{
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 1));
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
+		// 	}else
+		// 	{
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(1, 0));
+		// 	}
+		// } else
+		// {
+		// 	if (temp_num_y == 0)
+		// 	{
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, -1));
+		// 	}else if (temp_num_y == chunk_size.Y - 1)
+		// 	{
+		// 		to_add.Add(p_current_chunk.chunk_position + new Vector2I(0, 1));
+		// 	}
+		// }
+		// foreach (Vector2I iter_value in to_add)
+		// {
+		// 	if (chunks.ContainsKey(vecToString(iter_value)))
+		// 	{
+		// 		chunks_update_list.Add(iter_value);
+		// 	}
+		// }
 		if (p_particle.type > returned_particle.type)
 		{
 			//TODO optimize this
@@ -472,8 +466,25 @@ public partial class Sand : TileMapLayer
 	}
 	private void particleCellPlace(NB_particle p_particle)
 	{
-		NB_chunk detected_chunk = vecToChunk(p_particle.particle_position);
+		NB_chunk detected_chunk = quiteVecToChunk(p_particle.particle_position);
 		detected_chunk.particleAdd(p_particle);
+	}
+	public void newPos(Vector2I p_newPosition)
+	{
+		load_pos = p_newPosition;
+		//!TODO insert the loading script here to load chunks
+		for (int y = 0; y < load_size.Y; y++)
+		{
+			for (int x = 0; x < load_size.X; x++)
+			{	
+				Vector2I temp_vec = new Vector2I(x,y);
+				if (!chunks_update_list.Contains(temp_vec) && chunks.ContainsKey(vecToString(temp_vec)))
+				{
+					chunks_update_list.Add(temp_vec);
+					continue;
+				}
+			}
+		}
 	}
 	//Stringies ;PP
 	public string fakeVecToString(int X, int Y) => X + "," + Y;

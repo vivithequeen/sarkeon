@@ -17,6 +17,7 @@ public partial class Player : CharacterBody2D
 	//drag
 
 	//Idle
+	public Vector2I prev_position = Vector2I.Zero;
 	public int IdleDrag = 300;
 	public Vector2 IdleState(double delta, Vector2 velocity)
 	{
@@ -76,10 +77,6 @@ public partial class Player : CharacterBody2D
 
 	public PlayerState CurrentPlayerState = PlayerState.Walking;
 
-
-
-	
-
 	public override void _PhysicsProcess(double delta)
 	{
 		Vector2 velocity = Velocity;
@@ -123,9 +120,20 @@ public partial class Player : CharacterBody2D
 		Velocity = velocity;
 		if (sand != null)
 		{
-			sand.load_pos = (Vector2I)((GlobalPosition - sand.GlobalPosition) / (sand.chunk_size * sand.Scale));
+			Vector2I next_position = (Vector2I)((GlobalPosition - sand.GlobalPosition) / (sand.chunk_size * sand.Scale));
+			if (prev_position != next_position)
+			{
+				sand.load_pos = next_position;
+				sand.newPos(next_position);
+			}
 			// GD.Print(sand.load_pos);
 		}
 		MoveAndSlide();
 	}
+    public override void _Ready()
+    {
+        Vector2I next_position = (Vector2I)((GlobalPosition - sand.GlobalPosition) / (sand.chunk_size * sand.Scale));
+		sand.load_pos = next_position;
+		sand.newPos(next_position);
+    }
 }
