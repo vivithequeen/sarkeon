@@ -111,6 +111,7 @@ public partial class Sand : TileMapLayer
 		public string vecToString(Vector2I p_vec) => p_vec.X + "," + p_vec.Y;
 	}
 	RandomNumberGenerator random_color;
+	int color_variation = 0;
 	//Variables
 	Dictionary<String, NB_particle> particle_list;
 	Dictionary<String, NB_chunk> chunks;
@@ -427,16 +428,20 @@ public partial class Sand : TileMapLayer
 		NB_particle return_particle = particle_list[type].clone().pos(p_positio);
 		//TODO coloring script goes here
 		return_particle.flip = flip_direction;
+		color_variation += random_color.RandiRange(-1,1);
 		switch (type)
 		{
 			case "Sand":
-				return_particle.color = new Vector2I(14,random_color.RandiRange(0,4));
+				color_variation = Math.Clamp(color_variation, 0, 4);
+				return_particle.color = new Vector2I(14,color_variation);
 				break;
 			case "Stone":
-				return_particle.color = new Vector2I(9 + random_color.RandiRange(0,3),15);
+				color_variation = Math.Clamp(color_variation, 0, 3);
+				return_particle.color = new Vector2I(9 + color_variation,15);
 				break;
 			case "Water":
-				return_particle.color = new Vector2I(2,8 + random_color.RandiRange(0,3));
+				color_variation = Math.Clamp(color_variation, 0, 3);
+				return_particle.color = new Vector2I(2,8 + color_variation);
 				break;
 			default:
 				return_particle.color = new Vector2I(0,0);
