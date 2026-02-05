@@ -125,6 +125,8 @@ public partial class Sand : TileMapLayer
 	[Export]
     public int refresh_steps { get; set; } = 1;
 	[Export]
+    public int loaded_chunks { get; set; } = 6*5*4+5+6+100;
+	[Export]
 	public Vector2I load_pos { get; set; } = new Vector2I(0,0);
 	[Export]
 	public Vector2I load_size { get; set; } = new Vector2I(1,1);
@@ -251,22 +253,21 @@ public partial class Sand : TileMapLayer
 	{
 		//!TODO just like replace all update chunk system with just simulating chunks that are around player..
 		//Aka add so it adds que to it and if chunk is out then it gets deloaded, unles it deloads faster by itself
-		List<Vector2I> chunks_update_list_dub = [.. chunks_update_list];
-		chunks_update_list.Clear();
 		// GD.Print("New update");
-		foreach (Vector2I chunk in chunks_update_list_dub.Distinct())
+		chunks_update_list.RemoveRange(0, Math.Max(chunks_update_list.Count() - loaded_chunks, 0));
+		foreach (Vector2I chunk in chunks_update_list.Distinct())
 		{
 			int temp_check = chunk.X % 2 + chunk.Y % 2 * 2;
 			temp_check = temp_check < 0 ? 4 + temp_check: temp_check;
 			// GD.Print(temp_check, cell_update_cycle);
 			if (temp_check != cell_update_cycle)
 			{
-				chunks_update_list.Add(chunk);
 				continue;
 			}
 			NB_chunk temp_chunk = chunks[vecToString(chunk)];
 
 			List<NB_particle> temp_particles = temp_chunk.getUpdatedParticles();
+			if (temp_particles.Count() == 0) {continue;}
 			foreach (NB_particle particle in temp_particles)
 			{
 				if (particle.particle_update_cycle == particle_update_cycle)
@@ -370,8 +371,6 @@ public partial class Sand : TileMapLayer
 
 				returned_chunk.particleAdd(p_particle);
 				// GD.Print(returned_chunk.chunk_position, p_current_chunk.chunk_position);
-				chunks_update_list.Add(p_current_chunk.chunk_position);
-				chunks_update_list.Add(returned_chunk.chunk_position);
 			} 	
 			else
 			{
@@ -393,25 +392,6 @@ public partial class Sand : TileMapLayer
 		Vector2I position = new Vector2I((int)Math.Floor((double)p_position.X/(double)chunk_size.X), (int)Math.Floor((double)p_position.Y/(double)chunk_size.Y));
 		string key = vecToString(position);
 		// if (chunks_update_list)
-		chunks_update_list.Add(position);
-		// GD.Print(p_position, key);
-		if (chunks.ContainsKey(key))
-		{
-			return chunks[key];
-		} else
-		{
-			chunks.Add(key, new NB_chunk(position, chunk_size));
-			return chunks[key];	
-		}
-	}
-	//Aka dosn't add updates
-	private NB_chunk quiteVecToChunk(Vector2I p_position)
-	{
-		//TODO optimize this code
-		Vector2I position = new Vector2I((int)Math.Floor((double)p_position.X/(double)chunk_size.X), (int)Math.Floor((double)p_position.Y/(double)chunk_size.Y));
-		string key = vecToString(position);
-		// if (chunks_update_list)
-		// chunks_update_list.Add(position);
 		// GD.Print(p_position, key);
 		if (chunks.ContainsKey(key))
 		{
@@ -466,20 +446,26 @@ public partial class Sand : TileMapLayer
 	}
 	private void particleCellPlace(NB_particle p_particle)
 	{
-		NB_chunk detected_chunk = quiteVecToChunk(p_particle.particle_position);
+		NB_chunk detected_chunk = vecToChunk(p_particle.particle_position);
 		detected_chunk.particleAdd(p_particle);
 	}
 	public void newPos(Vector2I p_newPosition)
 	{
+		// GD.Print("new pos");
 		load_pos = p_newPosition;
 		//!TODO insert the loading script here to load chunks
-		for (int y = 0; y < load_size.Y; y++)
+		for (int y = -load_size.Y; y < load_size.Y; y++)
 		{
-			for (int x = 0; x < load_size.X; x++)
+			for (int x = -load_size.X; x < load_size.X; x++)
 			{	
-				Vector2I temp_vec = new Vector2I(x,y);
-				if (!chunks_update_list.Contains(temp_vec) && chunks.ContainsKey(vecToString(temp_vec)))
+				Vector2I temp_vec = new Vector2I(x,y) + load_pos;
+				if (!chunks_update_list.Contains(temp_vec))
 				{
+					string key = vecToString(temp_vec);
+					if (!chunks.ContainsKey(key)){
+						chunks.Add(key, new NB_chunk(temp_vec, chunk_size));
+					}
+					// GD.Print("A");
 					chunks_update_list.Add(temp_vec);
 					continue;
 				}

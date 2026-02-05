@@ -123,6 +123,7 @@ public partial class Player : CharacterBody2D
 			Vector2I next_position = (Vector2I)((GlobalPosition - sand.GlobalPosition) / (sand.chunk_size * sand.Scale));
 			if (prev_position != next_position)
 			{
+				prev_position = next_position;
 				sand.load_pos = next_position;
 				sand.newPos(next_position);
 			}
