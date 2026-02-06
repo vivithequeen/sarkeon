@@ -4,9 +4,12 @@
 [ext_resource type="PackedScene" uid="uid://b2c030hlqv3p8" path="res://creatures/base_nodes/BasePhysicsBodySegment.tscn" id="2_yh2mp"]
 [ext_resource type="PackedScene" uid="uid://y5cwxci4yebw" path="res://creatures/base_nodes/BasePhysicsHead.tscn" id="3_yh2mp"]
 [ext_resource type="Script" uid="uid://byhi03m4i3all" path="res://creatures/critters/BaseCritter.cs" id="4_55bll"]
+[ext_resource type="Script" uid="uid://bkt0b4re2kl2w" path="res://creatures/resources/BaseCreatureAttricutes.cs" id="5_wc8uu"]
+[ext_resource type="Texture2D" uid="uid://crpilfmy17kqk" path="res://assets/creature/palletes/gray-orange-gradiant.png" id="6_4vxb0"]
 
-[node name="BasePhysicsCreature" type="Node2D" unique_id=2000934431 node_paths=PackedStringArray("basePhysicsHead", "baseCritter")]
+[node name="BasePhysicsCreature" type="Node2D" unique_id=2000934431 node_paths=PackedStringArray("baseCreatureAttricutes", "basePhysicsHead", "baseCritter")]
 script = ExtResource("1_55bll")
+baseCreatureAttricutes = NodePath("CreatureBase")
 basePhysicsHead = NodePath("BasePhysicsHead")
 baseCritter = NodePath("BaseCritter")
 
@@ -76,3 +79,7 @@ motor_enabled = true
 [node name="BaseCritter" type="Node" parent="." unique_id=1267898476]
 script = ExtResource("4_55bll")
 metadata/_custom_type_script = "uid://byhi03m4i3all"
+
+[node name="CreatureBase" type="Node" parent="." unique_id=1598145425]
+script = ExtResource("5_wc8uu")
+ColorPallete = ExtResource("6_4vxb0")

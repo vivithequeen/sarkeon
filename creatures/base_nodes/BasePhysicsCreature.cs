@@ -5,13 +5,22 @@ public partial class BasePhysicsCreature : Node2D
 {
 
 	[Export] public NavigationSystem navigationSystem;
-	public Vector2 TargetPos = new Vector2(4, 4);
-
-	float UpdatePathTimer = 0;
+	[Export] public BaseCreatureAttricutes baseCreatureAttricutes;
 	[Export] public BasePhysicsHead basePhysicsHead;
 	[Export] public BaseCritter baseCritter;
 
+	public Vector2 TargetPos = new Vector2(4, 4);
+
+	float UpdatePathTimer = 0;
+
+
 	public Line2D navLine = new();
+
+
+	ShaderMaterial BaseColorMaterial;
+	Shader BaseColorShader = GD.Load<Shader>("res://assets/creature/shaders/Recolor.gdshader");
+
+
 	public override void _Ready()
 	{
 		GetParent().CallDeferred(Node.MethodName.AddChild, navLine);
@@ -21,10 +30,40 @@ public partial class BasePhysicsCreature : Node2D
 
 
 		baseCritter.SetCurrentCritterNavigationPath(Path);
-
+		InitColors();
 
 	}
+	public void InitColors()
+	{
+		BaseColorMaterial = new ShaderMaterial();
+		BaseColorMaterial.Shader = BaseColorShader;
 
+		BaseColorMaterial.SetShaderParameter("currentRow", baseCreatureAttricutes.ColorIndex);
+		BaseColorMaterial.SetShaderParameter("palette", baseCreatureAttricutes.ColorPallete);
+
+
+
+
+
+
+		foreach (Node node in GetChildren())
+		{
+			if (node is TextureRect)
+			{
+
+				node.Set("material", BaseColorMaterial);
+			}
+			Godot.Collections.Array<Node> textureChildren = node.FindChildren("*", "TextureRect", true, false);
+			foreach (Node textureRect in textureChildren)
+			{
+				if (textureRect is TextureRect)
+				{
+					textureRect.Set("material", BaseColorMaterial);
+				}
+			}
+		}
+
+	}
 	public override void _Process(double delta)
 	{
 		UpdatePathTimer += (float)delta;
