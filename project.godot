@@ -8,16 +8,20 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="Sarkeon"
 run/main_scene="uid://dowdqq2cih1gf"
-config/features=PackedStringArray("4.5", "C#", "Forward Plus")
+config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 config/icon="res://scene/icon.svg"
 
 [autoload]
 
-ImGuiRoot="*res://addons/imgui-godot/data/ImGuiRoot.tscn"
+ImGuiRoot="*uid://dugmpnsxaagba"
 ImGuiInfo="*res://ImGui/ImGuiLogic.cs"
 NB_rand="*res://globals/NB_Rand.cs"
 
