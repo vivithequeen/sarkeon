@@ -1,0 +1,154 @@
+[gd_scene format=4 uid="uid://c7qf6b52tl7ce"]
+
+[ext_resource type="Shader" uid="uid://canepjvundqr4" path="res://noob/shaders/line_shader.gdshader" id="1_ejwqg"]
+[ext_resource type="Theme" uid="uid://cbm2mqiwgq108" path="res://noob/themes/main.tres" id="1_g5qpr"]
+[ext_resource type="Script" uid="uid://bfgpoml83rsto" path="res://noob/scripts/ready/play_animation.cs" id="2_4edmc"]
+[ext_resource type="Texture2D" uid="uid://cbjymuray6lxp" path="res://assets/palettes/sunfall-1x.png" id="2_se66j"]
+[ext_resource type="Material" uid="uid://b7jn55ujx7itp" path="res://noob/materials/2d/bgsand.tres" id="3_mvf65"]
+[ext_resource type="Texture2D" uid="uid://cso00r735dudy" path="res://assets/gimp/TILTE.png" id="3_se66j"]
+
+[sub_resource type="Animation" id="Animation_lvg3r"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:color:h")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_mqtce"]
+resource_name = "start"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:color:h")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xjcyo"]
+_data = {
+&"RESET": SubResource("Animation_lvg3r"),
+&"start": SubResource("Animation_mqtce")
+}
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yucc0"]
+shader = ExtResource("1_ejwqg")
+shader_parameter/colors = PackedVector4Array(1, 0.831, 0.639, 1, 1, 0.584, 0.216, 1, 0.831, 0.322, 0.067, 1, 0.706, 0.231, 0.157, 1)
+shader_parameter/speed_mul = 5.0
+shader_parameter/sizer = Vector2(0.1, 0.1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bxhha"]
+shader = ExtResource("1_ejwqg")
+shader_parameter/colors = PackedVector4Array(1, 0.831, 0.639, 1, 1, 0.584, 0.216, 1, 0.831, 0.322, 0.067, 1, 0.706, 0.231, 0.157, 1)
+shader_parameter/speed_mul = 5.0
+shader_parameter/sizer = Vector2(0.1, 0.1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7mp7o"]
+shader = ExtResource("1_ejwqg")
+shader_parameter/colors = PackedVector4Array(1, 0.831, 0.639, 1, 1, 0.584, 0.216, 1, 0.831, 0.322, 0.067, 1, 0.706, 0.231, 0.157, 1)
+shader_parameter/speed_mul = 5.0
+shader_parameter/sizer = Vector2(0.1, 0.1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0nd65"]
+shader = ExtResource("1_ejwqg")
+shader_parameter/colors = PackedVector4Array(1, 0.831, 0.639, 1, 1, 0.584, 0.216, 1, 0.831, 0.322, 0.067, 1, 0.706, 0.231, 0.157, 1)
+shader_parameter/speed_mul = 1.6
+shader_parameter/sizer = Vector2(1, 1)
+
+[node name="Main_menu" type="Control" unique_id=418851756]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_g5qpr")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1644132445]
+deterministic = true
+libraries/ = SubResource("AnimationLibrary_xjcyo")
+speed_scale = 0.1
+script = ExtResource("2_4edmc")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1268999789]
+z_index = -2
+material = ExtResource("3_mvf65")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 0, 0, 1)
+
+[node name="Sunfall1x" type="Sprite2D" parent="." unique_id=1602529988]
+position = Vector2(525, 682)
+scale = Vector2(76.9, 267.5)
+texture = ExtResource("2_se66j")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=2113077598]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Panel" type="Panel" parent="HBoxContainer" unique_id=450114154]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Panel" unique_id=1944683229]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Play" type="Button" parent="HBoxContainer/Panel/VBoxContainer" unique_id=1813144554]
+material = SubResource("ShaderMaterial_yucc0")
+layout_mode = 2
+text = "PLAY"
+
+[node name="Settings" type="Button" parent="HBoxContainer/Panel/VBoxContainer" unique_id=1859038610]
+material = SubResource("ShaderMaterial_bxhha")
+layout_mode = 2
+text = "SETTINGS"
+
+[node name="Credits" type="Button" parent="HBoxContainer/Panel/VBoxContainer" unique_id=503162049]
+material = SubResource("ShaderMaterial_bxhha")
+layout_mode = 2
+text = "CREDITS"
+
+[node name="Exit" type="Button" parent="HBoxContainer/Panel/VBoxContainer" unique_id=799197950]
+material = SubResource("ShaderMaterial_7mp7o")
+layout_mode = 2
+text = "EXIT"
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer" unique_id=494623523]
+material = SubResource("ShaderMaterial_0nd65")
+layout_mode = 2
+texture = ExtResource("3_se66j")
+expand_mode = 2
+stretch_mode = 4
