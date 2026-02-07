@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://d5hxwngkai36"]
+
+[ext_resource type="Script" uid="uid://bpsn013n72jsx" path="res://creatures/spider/SpiderTail.cs" id="1_kjcc4"]
+[ext_resource type="Texture2D" uid="uid://gwp06ae2couy" path="res://assets/creature/spider/body.png" id="2_kjcc4"]
+
+[node name="SpiderTail" type="Node2D"]
+script = ExtResource("1_kjcc4")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_top = 22.0
+offset_right = 11.0
+offset_bottom = 36.0
+rotation = -1.5707964
+scale = Vector2(4, 4)
+texture = ExtResource("2_kjcc4")

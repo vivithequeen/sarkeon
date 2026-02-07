@@ -13,11 +13,11 @@ public partial class HeadBase : Node2D
 	[Export] public Node2D GoalPositionBase;
 	[Export]
 
-	BaseCreatureAttricutes baseCreatureAttricutes;
+	public BaseCreatureAttricutes baseCreatureAttricutes;
 	int AmountOfSegments = 0;
 	Vector2 TargetPosition;
-	PackedScene bodySegmentBase = GD.Load<PackedScene>("res://creatures/base_nodes/BodySegmentBase.tscn");
-	PackedScene tailBase = GD.Load<PackedScene>("res://creatures/base_nodes/TailBase.tscn");
+	public PackedScene bodySegmentBase = GD.Load<PackedScene>("res://creatures/base_nodes/BodySegmentBase.tscn");
+	public PackedScene tailBase = GD.Load<PackedScene>("res://creatures/base_nodes/TailBase.tscn");
 	// Called when the node enters the scene tree for the first time.
 
 
@@ -26,8 +26,13 @@ public partial class HeadBase : Node2D
 	Shader BaseColorShader = GD.Load<Shader>("res://assets/creature/shaders/Recolor.gdshader");
 	public override void _Ready()
 	{
-		
-		BaseColorMaterial = new ShaderMaterial();
+		InitBodyAndColors();
+
+	}
+
+	public void InitBodyAndColors()
+	{
+				BaseColorMaterial = new ShaderMaterial();
 		BaseColorMaterial.Shader = BaseColorShader;
 
 		BaseColorMaterial.SetShaderParameter("currentRow", baseCreatureAttricutes.ColorIndex);
@@ -51,7 +56,7 @@ public partial class HeadBase : Node2D
 			BodySegments.Add(NewSegment);
 			
 			NewSegment.InitSegment(CurrentPosition);
-			CurrentPosition.X-=32;
+			CurrentPosition.X-=1;
 		}
 		
 		BodySegmentBase NewTail = tailBase.Instantiate<BodySegmentBase>();
@@ -69,6 +74,13 @@ public partial class HeadBase : Node2D
 			{
 				
 				node.Set("material", BaseColorMaterial);
+			}
+			Godot.Collections.Array<Node> textureChildren = node.FindChildren("*","TextureRect",true,false);
+			foreach(Node textureRect in textureChildren){
+				if(textureRect is TextureRect)
+				{
+					textureRect.Set("material", BaseColorMaterial);
+				}
 			}
 		}
 		foreach(Node node in BodySegments){

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cj1mkah8bsvbx"]
+[gd_scene format=3 uid="uid://cj1mkah8bsvbx"]
 
 [ext_resource type="Script" uid="uid://1youudw0kbrh" path="res://creatures/base_nodes/BaseCreature.cs" id="1_6rh8c"]
 [ext_resource type="PackedScene" uid="uid://bcj406anqndhv" path="res://creatures/base_nodes/HeadBase.tscn" id="1_rnmbi"]
@@ -8,30 +8,37 @@
 [ext_resource type="Script" uid="uid://byhi03m4i3all" path="res://creatures/critters/BaseCritter.cs" id="6_17ob1"]
 [ext_resource type="Texture2D" uid="uid://37rti2u2jvdt" path="res://scene/icon.svg" id="6_l816c"]
 
-[node name="BaseCreature" type="Node2D" node_paths=PackedStringArray("baseSensors", "baseCritter")]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l816c"]
+size = Vector2(40, 28)
+
+[node name="BaseCreature" type="Node2D" unique_id=1366114421 node_paths=PackedStringArray("baseSensors", "baseCritter")]
 script = ExtResource("1_6rh8c")
 baseSensors = NodePath("BaseSensors")
 baseCritter = NodePath("BaseCritter")
 
-[node name="HeadBase" parent="." node_paths=PackedStringArray("GoalPositionBase", "baseCreatureAttricutes") instance=ExtResource("1_rnmbi")]
+[node name="HeadBase" parent="." unique_id=1195047214 node_paths=PackedStringArray("GoalPositionBase", "baseCreatureAttricutes") instance=ExtResource("1_rnmbi")]
 GoalPositionBase = NodePath("../GoalPositionBase")
 baseCreatureAttricutes = NodePath("../CreatureBase")
 
-[node name="CreatureBase" type="Node" parent="."]
+[node name="CreatureBase" type="Node" parent="." unique_id=844141263]
 script = ExtResource("2_6u6ia")
-ColorIndex = 0.15
 ColorPallete = ExtResource("3_6rh8c")
 
-[node name="BaseSensors" parent="." node_paths=PackedStringArray("baseCreatureAttricutes", "headBase") instance=ExtResource("4_6u6ia")]
+[node name="BaseSensors" parent="." unique_id=1917709650 node_paths=PackedStringArray("baseCreatureAttricutes", "headBase") instance=ExtResource("4_6u6ia")]
 baseCreatureAttricutes = NodePath("../CreatureBase")
 headBase = NodePath("../HeadBase")
 
-[node name="GoalPositionBase" type="Node2D" parent="."]
+[node name="GoalPositionBase" type="Node2D" parent="." unique_id=2020025142]
+visible = false
 
-[node name="Sprite2D" type="Sprite2D" parent="GoalPositionBase"]
+[node name="Sprite2D" type="Sprite2D" parent="GoalPositionBase" unique_id=917001709]
 scale = Vector2(0.255, 0.255)
 texture = ExtResource("6_l816c")
 
-[node name="BaseCritter" type="Node" parent="."]
+[node name="BaseCritter" type="Node" parent="." unique_id=283229632]
 script = ExtResource("6_17ob1")
 metadata/_custom_type_script = "uid://byhi03m4i3all"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=293136387]
+position = Vector2(20, 0)
+shape = SubResource("RectangleShape2D_l816c")

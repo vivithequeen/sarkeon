@@ -78,7 +78,7 @@ public partial class BaseCreature : Node2D
 		Array<Node2D> seenObjects = baseSensors.SearchWithEyes();
 		if(seenObjects != null)
 		{
-			GD.Print(seenObjects);
+			//GD.Print(seenObjects);
 		}
 
 
