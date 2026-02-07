@@ -80,7 +80,7 @@ theme = ExtResource("1_g5qpr")
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1644132445]
 deterministic = true
 libraries/ = SubResource("AnimationLibrary_xjcyo")
-speed_scale = 0.1
+speed_scale = 0.05
 script = ExtResource("2_4edmc")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1268999789]
@@ -92,6 +92,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+rotation = 3.1415927
+pivot_offset_ratio = Vector2(0.5, 0.5)
 color = Color(1, 0, 0, 1)
 
 [node name="Sunfall1x" type="Sprite2D" parent="." unique_id=1602529988]

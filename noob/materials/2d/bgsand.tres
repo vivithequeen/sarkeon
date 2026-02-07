@@ -6,4 +6,4 @@
 shader = ExtResource("1_gy8sg")
 shader_parameter/colors = PackedVector4Array(1, 0.831, 0.639, 1, 1, 0.584, 0.216, 1, 0.831, 0.322, 0.067, 1, 0.706, 0.231, 0.157, 1)
 shader_parameter/speed_mul = -1.0
-shader_parameter/sizer = Vector2(0.385, 2.29)
+shader_parameter/sizer = Vector2(0.555, 5.89)
