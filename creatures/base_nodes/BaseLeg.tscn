@@ -52,7 +52,7 @@ scale = Vector2(0.99995947, 0.99995947)
 rest = Transform2D(-0.01913753, -0.9997712, 0.9997712, -0.01913753, 64.001236, 0)
 auto_calculate_length_and_angle = false
 length = 34.0
-bone_angle = 0.00021515967
+bone_angle = 0.00021515966
 metadata/_local_pose_override_enabled_ = true
 
 [node name="leg2" type="TextureRect" parent="BaseLeg/Bone2D" unique_id=904744521]
