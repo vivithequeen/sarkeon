@@ -816,10 +816,19 @@ joint_one_bone2d_node = NodePath("Base/leg_upper_l")
 joint_two_bone_idx = 10
 joint_two_bone2d_node = NodePath("Base/leg_upper_l/leg_lower_l")
 
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_c7p4c"]
+target_nodepath = NodePath("../../Global/IK/Right_feet_position")
+target_maximum_distance = 1000.0
+joint_one_bone_idx = 12
+joint_one_bone2d_node = NodePath("Base/leg_upper_r")
+joint_two_bone_idx = 13
+joint_two_bone2d_node = NodePath("Base/leg_upper_r/leg_lower_r")
+
 [sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_c7p4c"]
 enabled = true
-modification_count = 1
+modification_count = 2
 modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_wrj65")
+modifications/1 = SubResource("SkeletonModification2DTwoBoneIK_c7p4c")
 
 [node name="Player_test" type="Node2D" unique_id=1641828859]
 
@@ -835,7 +844,7 @@ load_size = Vector2i(5, 4)
 
 [node name="Player" type="Node2D" parent="." unique_id=481345672]
 
-[node name="Player" type="RigidBody2D" parent="Player" unique_id=69515824 node_paths=PackedStringArray("sand", "floor_raycast", "skeleton", "left_leg_ik_node", "left_leg_start_ik_bone", "left_leg_end_ik_bone", "left_leg_ik_sticker", "left_leg_raycast", "left_leg_footing_raycast", "left_leg_footing_middle_raycast", "right_leg", "right_leg_raycast")]
+[node name="Player" type="RigidBody2D" parent="Player" unique_id=69515824 node_paths=PackedStringArray("sand", "floor_raycast", "skeleton", "left_leg_ik_node", "left_leg_start_ik_bone", "left_leg_end_ik_bone", "left_leg_ik_sticker", "left_leg_raycast", "left_leg_footing_raycast", "left_leg_footing_middle_raycast", "right_leg_ik_node", "right_leg_start_ik_bone", "right_leg_end_ik_bone", "right_leg_ik_sticker", "right_leg_raycast", "right_leg_footing_raycast", "right_leg_footing_middle_raycast")]
 gravity_scale = 0.0
 linear_damp = 10.0
 script = ExtResource("3_wrj65")
@@ -845,7 +854,7 @@ standup_distance = 25.0
 standup_strenght = 200.0
 crouch_distance = 15.0
 jump_distance = 70.0
-movement_speed = 2000.0
+movement_speed = 1000.0
 movement_clamp = Vector2(100, 100)
 skeleton = NodePath("../Player position/Body")
 left_leg_ik_node = NodePath("../Global/IK/Left_feet_position")
@@ -855,8 +864,13 @@ left_leg_ik_sticker = NodePath("../Player position/visuals/Ik_stickers/Left_feet
 left_leg_raycast = NodePath("../Player position/Leg_raycast_l")
 left_leg_footing_raycast = NodePath("../Player position/Leg_footing_raycast_l")
 left_leg_footing_middle_raycast = NodePath("../Player position/Leg_footing_midle_raycast_l")
-right_leg = [NodePath("../Player position/Body/Base/leg_upper_r"), NodePath("../Player position/Body/Base/leg_upper_r/leg_lower_r"), NodePath("../Player position/Body/Base/leg_upper_r/leg_lower_r/feet_r")]
+right_leg_ik_node = NodePath("../Global/IK/Right_feet_position")
+right_leg_start_ik_bone = NodePath("../Player position/Body/Base/leg_upper_r")
+right_leg_end_ik_bone = NodePath("../Player position/Body/Base/leg_upper_r/leg_lower_r/feet_r")
+right_leg_ik_sticker = NodePath("../Player position/visuals/Ik_stickers/Right_feet_sticker")
 right_leg_raycast = NodePath("../Player position/Leg_raycast_r")
+right_leg_footing_raycast = NodePath("../Player position/Leg_footing_raycast_r")
+right_leg_footing_middle_raycast = NodePath("../Player position/Leg_footing_midle_raycast_r")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Player" unique_id=554996078]
 shape = SubResource("CircleShape2D_wblyt")
@@ -995,6 +1009,7 @@ remote_path = NodePath("../../../../../../visuals/Leg_upper_l/Leg_ower_l/Feet")
 [node name="leg_upper_r" type="Bone2D" parent="Player/Player position/Body/Base" unique_id=1394133491]
 position = Vector2(7, 1)
 rest = Transform2D(1, 0, 0, 1, 7, 1)
+metadata/_local_pose_override_enabled_ = true
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/leg_upper_r" unique_id=1145159177]
 position = Vector2(15, 16)
@@ -1003,6 +1018,7 @@ remote_path = NodePath("../../../../visuals/Leg_upper_r")
 [node name="leg_lower_r" type="Bone2D" parent="Player/Player position/Body/Base/leg_upper_r" unique_id=965490286]
 position = Vector2(0, 17)
 rest = Transform2D(1, 0, 0, 1, 0, 17)
+metadata/_local_pose_override_enabled_ = true
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/leg_upper_r/leg_lower_r" unique_id=1890980206]
 position = Vector2(14, 3)
@@ -1034,7 +1050,15 @@ target_position = Vector2(0, 30)
 position = Vector2(-7, 7)
 target_position = Vector2(0, 30)
 
-[node name="Leg_raycast_r" type="RayCast2D" parent="Player/Player position" unique_id=1774566175]
+[node name="Leg_raycast_r" type="RayCast2D" parent="Player/Player position" unique_id=1390167850]
+position = Vector2(7, 7)
+target_position = Vector2(0, 30)
+
+[node name="Leg_footing_raycast_r" type="RayCast2D" parent="Player/Player position" unique_id=557842391]
+position = Vector2(7, 7)
+target_position = Vector2(0, 30)
+
+[node name="Leg_footing_midle_raycast_r" type="RayCast2D" parent="Player/Player position" unique_id=436693557]
 position = Vector2(7, 7)
 target_position = Vector2(0, 30)
 
@@ -1047,16 +1071,17 @@ scale = Vector2(0.9999955, 0.9999955)
 polygon = PackedVector2Array(1.0001907, -19.000038, 4.000227, -16.000002, 1.0001907, -12.999966, -11.999964, -10.999941, -17.000023, -13.999977, -17.000023, -18.000025, -11.999964, -21.000061)
 
 [node name="Leg_ower_l" type="Polygon2D" parent="Player/Player position/visuals/Leg_upper_l" unique_id=2027695520]
-position = Vector2(16.000006, -16)
-scale = Vector2(0.99999386, 0.99999386)
+position = Vector2(16.000002, -16)
+scale = Vector2(0.99999374, 0.99999374)
 polygon = PackedVector2Array(-14.999908, 3.0000587, -11.999851, 5.000096, -0.99964523, 9.536743e-07, -10.999834, -5.0000925, -14.999908, -3.0000548, -15.9999275, -2.0000353, -15.9999275, 2.0000396)
 
 [node name="Feet" type="Polygon2D" parent="Player/Player position/visuals/Leg_upper_l/Leg_ower_l" unique_id=896805680]
-position = Vector2(14.000114, -8.000001)
+position = Vector2(14.000114, -8.000002)
 polygon = PackedVector2Array(-8.999645, 6.999982, -12.999722, 5.9999633, -17, 7, -16.999798, 9.00002, -12.999722, 10.000038, -8.999645, 9.000019)
 
 [node name="Leg_upper_r" type="Polygon2D" parent="Player/Player position/visuals" unique_id=1506149037]
-position = Vector2(22, 17)
+position = Vector2(21.999914, 16.999908)
+scale = Vector2(0.9999943, 0.9999943)
 polygon = PackedVector2Array(-13, -1, -15, 1, -17, -1, -18, -17, -15, -21, -12, -17)
 
 [node name="Leg_ower_r" type="Polygon2D" parent="Player/Player position/visuals/Leg_upper_r" unique_id=1413161198]
@@ -1109,12 +1134,19 @@ polygon = PackedVector2Array(0, -10, 7, -7, 10, 0, 7, 7, 0, 10, -7, 7, -10, 0, -
 position = Vector2(-8, 33)
 remote_path = NodePath("../../../../Global/IK/Left_feet_position")
 
+[node name="Right_feet_sticker" type="RemoteTransform2D" parent="Player/Player position/visuals/Ik_stickers" unique_id=944548958]
+position = Vector2(7, 35)
+remote_path = NodePath("../../../../Global/IK/Right_feet_position")
+
 [node name="Global" type="Node2D" parent="Player" unique_id=1743970678]
 
 [node name="IK" type="Node2D" parent="Player/Global" unique_id=862897047]
 
 [node name="Left_feet_position" type="Node2D" parent="Player/Global/IK" unique_id=1911439660]
 position = Vector2(-8, 33)
+
+[node name="Right_feet_position" type="Node2D" parent="Player/Global/IK" unique_id=28258168]
+position = Vector2(7, 35)
 
 [node name="RigidBody2D2" type="RigidBody2D" parent="." unique_id=62039245]
 position = Vector2(75, 22)

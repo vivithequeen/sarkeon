@@ -29,6 +29,8 @@ public partial class NB_player : RigidBody2D
 	public Vector2 movement_clamp = Vector2.One;
 	[Export]
 	public Skeleton2D skeleton;
+	[Export]
+	public float leg_moving_speed = 10f;
 	//! LEFT LEG
 	[Export]
 	public Node2D left_leg_ik_node;
@@ -44,43 +46,53 @@ public partial class NB_player : RigidBody2D
 	public RayCast2D left_leg_footing_raycast;
 	[Export]
 	public RayCast2D left_leg_footing_middle_raycast;
+	[Export]
+	public float left_leg_ground_distance_sqrd = 10f;
 	private float left_leg_timer = 0;
 	private float left_leg_ik_lenght = 0;
 	private Vector2 left_leg_prev_position = Vector2.Zero;
 	private Vector2 left_leg_goal_position = Vector2.Zero;
 	private bool left_ik_debounce = true;
+	private bool left_on_ground = false;
 	//! RIGHT LEG
 	[Export]
-	public Godot.Collections.Array<Bone2D> right_leg;
+	public Node2D right_leg_ik_node;
+	[Export]
+	public Bone2D right_leg_start_ik_bone;
+	[Export]
+	public Bone2D right_leg_end_ik_bone;
+	[Export]
+	public RemoteTransform2D right_leg_ik_sticker;
 	[Export]
 	public RayCast2D right_leg_raycast;
+	[Export]
+	public RayCast2D right_leg_footing_raycast;
+	[Export]
+	public RayCast2D right_leg_footing_middle_raycast;
+	[Export]
+	public float right_leg_ground_distance_sqrd = 10f;
 	private float right_leg_timer = 0;
+	private float right_leg_ik_lenght = 0;
 	private Vector2 right_leg_prev_position = Vector2.Zero;
+	private Vector2 right_leg_goal_position = Vector2.Zero;
+	private bool right_ik_debounce = true;
+	private bool right_on_ground = false;
 	public override void _Ready()
 	{
 		sandInit();
 		left_leg_ik_lenght = (left_leg_start_ik_bone.GlobalPosition - left_leg_end_ik_bone.GlobalPosition).LengthSquared();
+		right_leg_ik_lenght = (right_leg_start_ik_bone.GlobalPosition - right_leg_end_ik_bone.GlobalPosition).LengthSquared();
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
 		added_force = Vector2.Zero;
-		if (floor_raycast.GetCollisionPoint().DistanceTo(GlobalPosition) < 30)
-		{
-			controll_multiplier = 1f;
-		} else if (floor_raycast.GetCollisionPoint().DistanceTo(GlobalPosition) < 40)
-		{
-			controll_multiplier = 0.5f;
-		} else
-		{
-			controll_multiplier = 0f;
-		}
-		GravityScale = 1 - controll_multiplier;
-		LinearDamp = controll_multiplier * 10;
 		moveLegs((float) delta);
 		playerInput((float) delta);
 		playerEnviroment((float)delta);
 		sandUpdate();
+		GravityScale = 1 - controll_multiplier;
+		LinearDamp = controll_multiplier * 10;
 		LinearVelocity += added_force.Clamp(-movement_clamp, movement_clamp);
 	}
 	private void moveLegs(float delta)
@@ -89,29 +101,83 @@ public partial class NB_player : RigidBody2D
 		{
 			if(left_ik_debounce)
 			{
+				left_on_ground = true;
 				left_ik_debounce = false;
 				getLeftPosition();
 				left_leg_prev_position += left_leg_goal_position - GlobalPosition - left_leg_prev_position;
 				left_leg_ik_sticker.UpdatePosition = false;
+				recalculateControll();
 			}
-			left_leg_prev_position += (left_leg_goal_position - GlobalPosition - left_leg_prev_position) * delta * 20;
+			left_leg_prev_position += (left_leg_goal_position - GlobalPosition - left_leg_prev_position) * delta * leg_moving_speed;
 			if ((left_leg_goal_position - left_leg_start_ik_bone.GlobalPosition).LengthSquared() > left_leg_ik_lenght || left_leg_timer <= 0)
 			{
+				left_on_ground = false;
+				recalculateControll();
 				getLeftPosition();
 			} else {
 				left_leg_timer -= delta;
 			}
 			left_leg_ik_node.GlobalPosition = left_leg_prev_position + GlobalPosition;
+			if (!left_on_ground && left_leg_ik_node.GlobalPosition.DistanceSquaredTo(left_leg_goal_position) < left_leg_ground_distance_sqrd)
+			{
+				left_on_ground = true;
+				recalculateControll();
+			}
 		} else
 		{
 			if(!left_ik_debounce)
 			{
+				left_on_ground = false;
 				left_ik_debounce = true;
 				left_leg_ik_sticker.GlobalPosition = left_leg_ik_node.GlobalPosition;
 				left_leg_ik_sticker.UpdatePosition = true;
-
+				recalculateControll();
 			}
 		}
+		if (right_leg_raycast.IsColliding())
+		{
+			if(right_ik_debounce)
+			{
+				right_ik_debounce = false;
+				getRightPosition();
+				right_leg_prev_position += right_leg_goal_position - GlobalPosition - right_leg_prev_position;
+				right_leg_ik_sticker.UpdatePosition = false;
+			}
+			right_leg_prev_position += (right_leg_goal_position - GlobalPosition - right_leg_prev_position) * delta * leg_moving_speed;
+			if (
+			(right_leg_goal_position - right_leg_start_ik_bone.GlobalPosition).LengthSquared() > right_leg_ik_lenght 
+			|| 
+			right_leg_timer <= 0
+			)
+			{
+				right_on_ground = false;
+				recalculateControll();
+				getRightPosition();
+			} else {
+				right_leg_timer -= delta;
+			}
+			right_leg_ik_node.GlobalPosition = right_leg_prev_position + GlobalPosition;
+			if (!right_on_ground && right_leg_ik_node.GlobalPosition.DistanceSquaredTo(right_leg_goal_position) < right_leg_ground_distance_sqrd)
+			{
+				right_on_ground = true;
+				recalculateControll();
+			}
+		} else
+		{
+			if(!right_ik_debounce)
+			{
+				right_on_ground = false;
+				right_ik_debounce = true;
+				right_leg_ik_sticker.GlobalPosition = right_leg_ik_node.GlobalPosition;
+				right_leg_ik_sticker.UpdatePosition = true;
+				recalculateControll();
+			}
+		}
+	}
+	private void recalculateControll()
+	{
+		controll_multiplier = (left_on_ground ? 0.5f:0) + (right_on_ground ? 0.5f:0);
+		
 	}
 	private void getLeftPosition()
 	{
@@ -131,13 +197,37 @@ public partial class NB_player : RigidBody2D
 				{
 					left_leg_goal_position = left_leg_raycast.GetCollisionPoint();
 				}
-				//! make this a function and make it called from debounce one and add debounce in general
 			}
 		} else
 		{
 			left_leg_goal_position = left_leg_raycast.GetCollisionPoint();
 		}
 		left_leg_timer = 1f;
+	}
+	private void getRightPosition()
+	{
+		if (LinearVelocity.LengthSquared() > 100)
+		{
+			right_leg_footing_raycast.TargetPosition = LinearVelocity.Normalized() * 30;
+			if (right_leg_footing_raycast.IsColliding())
+			{
+				right_leg_goal_position = right_leg_footing_raycast.GetCollisionPoint();
+			} else
+			{
+				right_leg_footing_middle_raycast.TargetPosition = (right_leg_raycast.TargetPosition + right_leg_footing_raycast.TargetPosition).Normalized() * 30;
+				if (right_leg_footing_middle_raycast.IsColliding())
+				{
+					right_leg_goal_position = right_leg_footing_middle_raycast.GetCollisionPoint();
+				} else
+				{
+					right_leg_goal_position = right_leg_raycast.GetCollisionPoint();
+				}
+			}
+		} else
+		{
+			right_leg_goal_position = right_leg_raycast.GetCollisionPoint();
+		}
+		right_leg_timer = 1f;
 	}
 	private void playerEnviroment(float delta)
 	{
