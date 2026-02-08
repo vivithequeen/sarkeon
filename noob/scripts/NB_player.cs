@@ -27,6 +27,14 @@ public partial class NB_player : RigidBody2D
 	private Vector2 added_force;
 	[Export]
 	public Vector2 movement_clamp = Vector2.One;
+	[Export]
+	public Bone2D bone_1;
+	[Export]
+	public Bone2D bone_2;
+	[Export]
+	public Bone2D bone_3;
+	[Export]
+	public Vector2 goal_location;
 	public override void _Ready()
 	{
 		sandInit();
@@ -51,6 +59,7 @@ public partial class NB_player : RigidBody2D
 		playerEnviroment((float)delta);
 		sandUpdate();
 		LinearVelocity += added_force.Clamp(-movement_clamp, movement_clamp);
+		ik (bone_1, bone_2, bone_3, goal_location);
 	}
 	private void playerEnviroment(float delta)
 	{
@@ -94,6 +103,25 @@ public partial class NB_player : RigidBody2D
 				sand.load_pos = next_position;
 				sand.newPos(next_position);
 			}
+		}
+	}
+	private void ik(Bone2D b_1, Bone2D b_2, Bone2D b_3, Vector2 goal)
+	{
+		float b_1_size = b_2.Position.Length();
+		if (b_1_size + b_3.Position.Length() < (goal - b_1.GlobalPosition).Length())
+		{
+			b_1.LookAt(goal);
+			b_1.Rotation -= (float)Math.PI/2f;
+			b_2.LookAt(goal);			
+			b_2.Rotation -= (float)Math.PI/2f;
+		} else
+		{
+			b_2.LookAt(goal);
+			b_2.Rotation -= (float)Math.PI/2f;
+			Vector2 bone_look = b_3.GlobalPosition - b_2.GlobalPosition;
+			Vector2 goal_look = goal - b_3.GlobalPosition;
+			float error = b_3.GlobalPosition.DistanceTo(goal) * (bone_look.Dot(goal_look) > 0? 1 : -1);
+			b_1.Rotation += error / b_1_size;
 		}
 	}
 }

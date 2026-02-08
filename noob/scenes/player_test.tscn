@@ -822,8 +822,10 @@ load_size = Vector2i(5, 4)
 
 [node name="Player" type="Node2D" parent="." unique_id=481345672]
 
-[node name="Player" type="RigidBody2D" parent="Player" unique_id=69515824 node_paths=PackedStringArray("sand", "floor_raycast")]
+[node name="Player" type="RigidBody2D" parent="Player" unique_id=69515824 node_paths=PackedStringArray("sand", "floor_raycast", "bone_1", "bone_2", "bone_3")]
 gravity_scale = 0.0
+can_sleep = false
+freeze = true
 linear_damp = 10.0
 script = ExtResource("3_wrj65")
 sand = NodePath("../../Sand")
@@ -834,6 +836,10 @@ crouch_distance = 15.0
 jump_distance = 70.0
 movement_speed = 2000.0
 movement_clamp = Vector2(100, 100)
+bone_1 = NodePath("../Player position/Body/Base/leg_upper_l")
+bone_2 = NodePath("../Player position/Body/Base/leg_upper_l/leg_lower_l")
+bone_3 = NodePath("../Player position/Body/Base/leg_upper_l/leg_lower_l/feet_l")
+goal_location = Vector2(-11.9, 22.805)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Player" unique_id=554996078]
 shape = SubResource("CircleShape2D_wblyt")
@@ -1000,13 +1006,11 @@ rest = Transform2D(1, 0, 0, 1, 0, 6)
 [node name="RayCast2D" type="RayCast2D" parent="Player/Player position" unique_id=2010250498]
 target_position = Vector2(0, 80)
 
-[node name="Leg_two" type="RayCast2D" parent="Player/Player position" unique_id=1774566175]
+[node name="Leg_raycast_r2" type="RayCast2D" parent="Player/Player position" unique_id=1774566175]
 position = Vector2(7, 7)
 target_position = Vector2(0, 30)
 
-[node name="Left_leg" type="Node2D" parent="Player/Player position" unique_id=266013926]
-
-[node name="Prediction" type="RayCast2D" parent="Player/Player position/Left_leg" unique_id=367775899]
+[node name="Leg_raycast_l" type="RayCast2D" parent="Player/Player position" unique_id=367775899]
 position = Vector2(-7, 7)
 target_position = Vector2(0, 30)
 
