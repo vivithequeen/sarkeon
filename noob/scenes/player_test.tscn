@@ -822,23 +822,21 @@ load_size = Vector2i(5, 4)
 
 [node name="Player" type="Node2D" parent="." unique_id=481345672]
 
-[node name="Player" type="RigidBody2D" parent="Player" unique_id=69515824 node_paths=PackedStringArray("sand", "floor_raycast", "player_root")]
+[node name="Player" type="RigidBody2D" parent="Player" unique_id=69515824 node_paths=PackedStringArray("sand", "floor_raycast")]
 gravity_scale = 0.0
 linear_damp = 10.0
 script = ExtResource("3_wrj65")
 sand = NodePath("../../Sand")
 floor_raycast = NodePath("../Player position/RayCast2D")
-player_root = NodePath("../Player position")
 standup_distance = 30.0
 standup_strenght = 200.0
 crouch_distance = 15.0
+jump_distance = 70.0
 movement_speed = 2000.0
+movement_clamp = Vector2(100, 100)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Player" unique_id=554996078]
 shape = SubResource("CircleShape2D_wblyt")
-
-[node name="Polygon2D" type="Polygon2D" parent="Player/Player" unique_id=649057534]
-polygon = PackedVector2Array(0, -10, 7, -7, 10, 0, 7, 7, 0, 10, -7, 7, -10, 0, -7, -7)
 
 [node name="Camera2D" type="Camera2D" parent="Player/Player" unique_id=1372045990]
 zoom = Vector2(2, 2)
@@ -846,19 +844,243 @@ position_smoothing_enabled = true
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
 
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player" unique_id=44503390]
+remote_path = NodePath("../../Player position")
+update_rotation = false
+update_scale = false
+
 [node name="Player position" type="Node2D" parent="Player" unique_id=563137916]
+
+[node name="Body" type="Skeleton2D" parent="Player/Player position" unique_id=12792383]
+position = Vector2(-7, 7)
+
+[node name="Base" type="Bone2D" parent="Player/Player position/Body" unique_id=259496712]
+position = Vector2(7, -7)
+rest = Transform2D(1, 0, 0, 1, 7, -7)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base" unique_id=2035627439]
+position = Vector2(0, -1)
+remote_path = NodePath("../../../visuals/Body")
+
+[node name="body" type="Bone2D" parent="Player/Player position/Body/Base" unique_id=644612460]
+position = Vector2(0, -10)
+rest = Transform2D(1, 0, 0, 1, 0, -10)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/body" unique_id=1877108035]
+position = Vector2(0, -5)
+remote_path = NodePath("../../../../visuals/Body/Torso")
+
+[node name="torso" type="Bone2D" parent="Player/Player position/Body/Base/body" unique_id=1650443514]
+position = Vector2(0, -13)
+rest = Transform2D(1, 0, 0, 1, 0, -13)
+
+[node name="RemoteTransform2D2" type="RemoteTransform2D" parent="Player/Player position/Body/Base/body/torso" unique_id=1097469174]
+position = Vector2(0, -10)
+remote_path = NodePath("../../../../../visuals/Body/Torso/Head")
+
+[node name="head_end" type="Bone2D" parent="Player/Player position/Body/Base/body/torso" unique_id=1391735773]
+position = Vector2(0, -19)
+rest = Transform2D(1, 0, 0, 1, 0, -19)
+
+[node name="shoulder_l" type="Bone2D" parent="Player/Player position/Body/Base/body" unique_id=1754068571]
+position = Vector2(-8, -9)
+rest = Transform2D(1, 0, 0, 1, -8, -9)
+
+[node name="RemoteTransform2D2" type="RemoteTransform2D" parent="Player/Player position/Body/Base/body/shoulder_l" unique_id=905101688]
+position = Vector2(8, 4)
+remote_path = NodePath("../../../../../visuals/Body/Torso/Arm_upper_l")
+
+[node name="arm_l" type="Bone2D" parent="Player/Player position/Body/Base/body/shoulder_l" unique_id=745054760]
+position = Vector2(-13, 1)
+rest = Transform2D(1, 0, 0, 1, -13, 1)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/body/shoulder_l/arm_l" unique_id=481075047]
+position = Vector2(9, 3)
+remote_path = NodePath("../../../../../../visuals/Body/Torso/Arm_upper_l/Arm_lower_l")
+
+[node name="hand_l" type="Bone2D" parent="Player/Player position/Body/Base/body/shoulder_l/arm_l" unique_id=1505025271]
+position = Vector2(-12, 0)
+rest = Transform2D(1, 0, 0, 1, -12, 0)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/body/shoulder_l/arm_l/hand_l" unique_id=632459539]
+position = Vector2(9, 3)
+remote_path = NodePath("../../../../../../../visuals/Body/Torso/Arm_upper_l/Arm_lower_l/Hand_l")
+
+[node name="hand_end_l" type="Bone2D" parent="Player/Player position/Body/Base/body/shoulder_l/arm_l/hand_l" unique_id=1316486158]
+position = Vector2(-8, 0)
+rest = Transform2D(1, 0, 0, 1, -8, 0)
+
+[node name="shoulder_r" type="Bone2D" parent="Player/Player position/Body/Base/body" unique_id=1046601112]
+position = Vector2(8, -9)
+rest = Transform2D(1, 0, 0, 1, 8, -9)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/body/shoulder_r" unique_id=2055626188]
+position = Vector2(-8, 4)
+scale = Vector2(-1, 1)
+remote_path = NodePath("../../../../../visuals/Body/Torso/Arm_upper_r")
+
+[node name="arm_r" type="Bone2D" parent="Player/Player position/Body/Base/body/shoulder_r" unique_id=530919042]
+position = Vector2(13, 1)
+rest = Transform2D(1, 0, 0, 1, 13, 1)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/body/shoulder_r/arm_r" unique_id=1680619733]
+position = Vector2(-9, 3)
+scale = Vector2(-1, 1)
+remote_path = NodePath("../../../../../../visuals/Body/Torso/Arm_upper_r/Arm_lower_r")
+
+[node name="hand_r" type="Bone2D" parent="Player/Player position/Body/Base/body/shoulder_r/arm_r" unique_id=1299607878]
+position = Vector2(12, 0)
+rest = Transform2D(1, 0, 0, 1, 12, 0)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/body/shoulder_r/arm_r/hand_r" unique_id=610313510]
+position = Vector2(-9, 3)
+scale = Vector2(-1, 1)
+remote_path = NodePath("../../../../../../../visuals/Body/Torso/Arm_upper_r/Arm_lower_r/Hand_r")
+
+[node name="hand_end_r" type="Bone2D" parent="Player/Player position/Body/Base/body/shoulder_r/arm_r/hand_r" unique_id=296851943]
+position = Vector2(8, 0)
+rest = Transform2D(1, 0, 0, 1, 8, 0)
+
+[node name="leg_upper_l" type="Bone2D" parent="Player/Player position/Body/Base" unique_id=1792449776]
+position = Vector2(-7, 1)
+rest = Transform2D(1, 0, 0, 1, -7, 1)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/leg_upper_l" unique_id=567045677]
+position = Vector2(15, 16)
+remote_path = NodePath("../../../../visuals/Leg_upper_l")
+
+[node name="leg_lower_l" type="Bone2D" parent="Player/Player position/Body/Base/leg_upper_l" unique_id=17706774]
+position = Vector2(0, 17)
+rest = Transform2D(1, 0, 0, 1, 0, 17)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/leg_upper_l/leg_lower_l" unique_id=354072625]
+position = Vector2(14, 0)
+remote_path = NodePath("../../../../../visuals/Leg_upper_l/Leg_ower_l")
+
+[node name="feet_l" type="Bone2D" parent="Player/Player position/Body/Base/leg_upper_l/leg_lower_l" unique_id=708266402]
+position = Vector2(0, 13)
+rest = Transform2D(1, 0, 0, 1, 0, 13)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/leg_upper_l/leg_lower_l/feet_l" unique_id=93089159]
+position = Vector2(15, -8)
+remote_path = NodePath("../../../../../../visuals/Leg_upper_l/Leg_ower_l/Feet")
+
+[node name="feet_end_l" type="Bone2D" parent="Player/Player position/Body/Base/leg_upper_l/leg_lower_l/feet_l" unique_id=1359373410]
+position = Vector2(0, 6)
+rest = Transform2D(1, 0, 0, 1, 0, 6)
+
+[node name="leg_upper_r" type="Bone2D" parent="Player/Player position/Body/Base" unique_id=1394133491]
+position = Vector2(7, 1)
+rest = Transform2D(1, 0, 0, 1, 7, 1)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/leg_upper_r" unique_id=1145159177]
+position = Vector2(15, 16)
+remote_path = NodePath("../../../../visuals/Leg_upper_r")
+
+[node name="leg_lower_r" type="Bone2D" parent="Player/Player position/Body/Base/leg_upper_r" unique_id=965490286]
+position = Vector2(0, 17)
+rest = Transform2D(1, 0, 0, 1, 0, 17)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/leg_upper_r/leg_lower_r" unique_id=1890980206]
+position = Vector2(14, 3)
+remote_path = NodePath("../../../../../visuals/Leg_upper_r/Leg_ower_r")
+
+[node name="feet_r" type="Bone2D" parent="Player/Player position/Body/Base/leg_upper_r/leg_lower_r" unique_id=1811603311]
+position = Vector2(0, 13)
+rest = Transform2D(1, 0, 0, 1, 0, 13)
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/leg_upper_r/leg_lower_r/feet_r" unique_id=1752406242]
+position = Vector2(15, -8)
+remote_path = NodePath("../../../../../../visuals/Leg_upper_r/Leg_ower_r/Feet")
+
+[node name="feet_end_r" type="Bone2D" parent="Player/Player position/Body/Base/leg_upper_r/leg_lower_r/feet_r" unique_id=962147028]
+position = Vector2(0, 6)
+rest = Transform2D(1, 0, 0, 1, 0, 6)
 
 [node name="RayCast2D" type="RayCast2D" parent="Player/Player position" unique_id=2010250498]
 target_position = Vector2(0, 80)
 
+[node name="Leg_two" type="RayCast2D" parent="Player/Player position" unique_id=1774566175]
+position = Vector2(7, 7)
+target_position = Vector2(0, 30)
+
+[node name="Left_leg" type="Node2D" parent="Player/Player position" unique_id=266013926]
+
+[node name="Prediction" type="RayCast2D" parent="Player/Player position/Left_leg" unique_id=367775899]
+position = Vector2(-7, 7)
+target_position = Vector2(0, 30)
+
+[node name="visuals" type="Node2D" parent="Player/Player position" unique_id=975117283]
+
+[node name="Leg_upper_l" type="Polygon2D" parent="Player/Player position/visuals" unique_id=197287673]
+position = Vector2(8, 17)
+polygon = PackedVector2Array(-13, -1, -15, 1, -17, -1, -18, -17, -15, -21, -12, -17)
+
+[node name="Leg_ower_l" type="Polygon2D" parent="Player/Player position/visuals/Leg_upper_l" unique_id=2027695520]
+position = Vector2(-1, 1)
+polygon = PackedVector2Array(-16, -1, -15, 11, -14, 12, -13, 11, -12, -1, -14, -3)
+
+[node name="Feet" type="Polygon2D" parent="Player/Player position/visuals/Leg_upper_l/Leg_ower_l" unique_id=896805680]
+position = Vector2(1, 5)
+polygon = PackedVector2Array(-13, 7, -15, 6, -17, 7, -17, 11, -16, 13, -14, 13, -13, 11)
+
+[node name="Leg_upper_r" type="Polygon2D" parent="Player/Player position/visuals" unique_id=1506149037]
+position = Vector2(22, 17)
+polygon = PackedVector2Array(-13, -1, -15, 1, -17, -1, -18, -17, -15, -21, -12, -17)
+
+[node name="Leg_ower_r" type="Polygon2D" parent="Player/Player position/visuals/Leg_upper_r" unique_id=1413161198]
+position = Vector2(-1, 4)
+polygon = PackedVector2Array(-16, -4, -15, 8, -14, 9, -13, 8, -12, -4, -14, -6)
+
+[node name="Feet" type="Polygon2D" parent="Player/Player position/visuals/Leg_upper_r/Leg_ower_r" unique_id=770890735]
+position = Vector2(1, 2)
+polygon = PackedVector2Array(-13, 7, -15, 6, -17, 7, -17, 11, -16, 13, -14, 13, -13, 11)
+
+[node name="Body" type="Polygon2D" parent="Player/Player position/visuals" unique_id=649057534]
+position = Vector2(0, -1)
+polygon = PackedVector2Array(0, -10, 7, -7, 10, 0, 7, 7, 0, 10, -7, 7, -10, 0, -7, -7)
+
+[node name="Torso" type="Polygon2D" parent="Player/Player position/visuals/Body" unique_id=1027595488]
+position = Vector2(0, -14)
+polygon = PackedVector2Array(0, -10, 7, -7, 8, 0, 8, 9, 0, 10, -8, 9, -8, 0, -7, -7)
+
+[node name="Arm_upper_l" type="Polygon2D" parent="Player/Player position/visuals/Body/Torso" unique_id=168721612]
+polygon = PackedVector2Array(-8, 0, -21, 0, -25, -5, -7, -7)
+
+[node name="Arm_lower_l" type="Polygon2D" parent="Player/Player position/visuals/Body/Torso/Arm_upper_l" unique_id=121201533]
+position = Vector2(-12, 0)
+polygon = PackedVector2Array(-9, 1, -22, 0, -21, -5, -9, -7)
+
+[node name="Hand_l" type="Polygon2D" parent="Player/Player position/visuals/Body/Torso/Arm_upper_l/Arm_lower_l" unique_id=1943141038]
+position = Vector2(-12, 0)
+polygon = PackedVector2Array(-8, 0, -14, 1, -17, -4, -9, -7)
+
+[node name="Arm_upper_r" type="Polygon2D" parent="Player/Player position/visuals/Body/Torso" unique_id=2056709856]
+rotation = 3.1415927
+scale = Vector2(1, -1)
+polygon = PackedVector2Array(-8, 0, -21, 0, -25, -5, -16.632416, -5.9297295, -7, -7)
+
+[node name="Arm_lower_r" type="Polygon2D" parent="Player/Player position/visuals/Body/Torso/Arm_upper_r" unique_id=1291555738]
+position = Vector2(-12, 0)
+polygon = PackedVector2Array(-9, 1, -22, 0, -21, -5, -9, -7)
+
+[node name="Hand_r" type="Polygon2D" parent="Player/Player position/visuals/Body/Torso/Arm_upper_r/Arm_lower_r" unique_id=1071081691]
+position = Vector2(-12, 0)
+polygon = PackedVector2Array(-8, 0, -14, 1, -17, -4, -9, -7)
+
+[node name="Head" type="Polygon2D" parent="Player/Player position/visuals/Body/Torso" unique_id=776709290]
+position = Vector2(0, -18)
+polygon = PackedVector2Array(0, -10, 7, -7, 10, 0, 7, 7, 0, 10, -7, 7, -10, 0, -7, -7)
+
 [node name="RigidBody2D2" type="RigidBody2D" parent="." unique_id=62039245]
-position = Vector2(2, 26)
+position = Vector2(75, 22)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D2" unique_id=63430438]
 shape = SubResource("CircleShape2D_wblyt")
 
 [node name="Polygon2D" type="Polygon2D" parent="RigidBody2D2" unique_id=1297002858]
-polygon = PackedVector2Array(0, -10, 7, -7, 10, 0, 7, 7, 0, 10, -7, 7, -10, 0, -7, -7)
+position = Vector2(-1, 1)
+polygon = PackedVector2Array(-1, -52, 14, -46, 8, -27, 39, -23, 8, -19, 10, 0, 7, 39, 0, 10, -7, 39, -10, 0, -9, -16, -28, -20, -9, -27, -15, -46)
 
 [node name="RigidBody2D3" type="RigidBody2D" parent="." unique_id=1871358419]
 position = Vector2(-2, -52)
@@ -877,3 +1099,11 @@ shape = SubResource("CircleShape2D_wblyt")
 
 [node name="Polygon2D" type="Polygon2D" parent="RigidBody2D4" unique_id=1633973748]
 polygon = PackedVector2Array(0, -10, 7, -7, 10, 0, 7, 7, 0, 10, -7, 7, -10, 0, -7, -7)
+
+[node name="Polygon2D2" type="Polygon2D" parent="." unique_id=1733261616]
+position = Vector2(-108, 9)
+polygon = PackedVector2Array(-1, -52, 14, -46, 8, -27, 39, -23, 8, -19, 10, 0, 7, 39, 0, 10, -7, 39, -10, 0, -9, -16, -28, -20, -9, -27, -15, -46)
+
+[node name="Polygon2D3" type="Polygon2D" parent="." unique_id=1166013801]
+position = Vector2(-46, 92)
+polygon = PackedVector2Array(-1, -52, 14, -46, 8, -27, 39, -23, 8, -19, 10, 0, 7, 39, 0, 10, -7, 39, -10, 0, -9, -16, -28, -20, -9, -27, -15, -46)

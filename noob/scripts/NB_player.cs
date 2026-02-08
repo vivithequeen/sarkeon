@@ -12,8 +12,6 @@ public partial class NB_player : RigidBody2D
 	[Export]
 	public RayCast2D floor_raycast;
 	[Export]
-	public Node2D player_root;
-	[Export]
 	public float standup_distance = 20f;
 	[Export]
 	public float standup_strenght = 500f;
@@ -49,15 +47,10 @@ public partial class NB_player : RigidBody2D
 		}
 		GravityScale = 1 - controll_multiplier;
 		LinearDamp = controll_multiplier * 10;
-		rootUpdate();
 		playerInput((float) delta);
 		playerEnviroment((float)delta);
 		sandUpdate();
 		LinearVelocity += added_force.Clamp(-movement_clamp, movement_clamp);
-	}
-	private void rootUpdate()
-	{
-		player_root.GlobalPosition = GlobalPosition;
 	}
 	private void playerEnviroment(float delta)
 	{
