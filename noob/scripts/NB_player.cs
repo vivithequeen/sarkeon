@@ -28,16 +28,35 @@ public partial class NB_player : RigidBody2D
 	[Export]
 	public Vector2 movement_clamp = Vector2.One;
 	[Export]
-	public Bone2D bone_1;
+	public Skeleton2D skeleton;
+	//! LEFT LEG
 	[Export]
-	public Bone2D bone_2;
+	public Node2D left_leg_ik_node;
 	[Export]
-	public Bone2D bone_3;
+	public Bone2D left_leg_start_ik_bone;
 	[Export]
-	public Vector2 goal_location;
+	public Bone2D left_leg_end_ik_bone;
+	[Export]
+	public RayCast2D left_leg_raycast;
+	[Export]
+	public RayCast2D left_leg_footing_raycast;
+	[Export]
+	public RayCast2D left_leg_footing_middle_raycast;
+	private float left_leg_timer = 0;
+	private float left_leg_ik_lenght = 0;
+	private Vector2 left_leg_prev_position = Vector2.Zero;
+	private Vector2 left_leg_goal_position = Vector2.Zero;
+	//! RIGHT LEG
+	[Export]
+	public Godot.Collections.Array<Bone2D> right_leg;
+	[Export]
+	public RayCast2D right_leg_raycast;
+	private float right_leg_timer = 0;
+	private Vector2 right_leg_prev_position = Vector2.Zero;
 	public override void _Ready()
 	{
 		sandInit();
+		left_leg_ik_lenght = (left_leg_start_ik_bone.GlobalPosition - left_leg_end_ik_bone.GlobalPosition).LengthSquared();
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -55,11 +74,51 @@ public partial class NB_player : RigidBody2D
 		}
 		GravityScale = 1 - controll_multiplier;
 		LinearDamp = controll_multiplier * 10;
+		moveLegs((float) delta);
 		playerInput((float) delta);
 		playerEnviroment((float)delta);
 		sandUpdate();
 		LinearVelocity += added_force.Clamp(-movement_clamp, movement_clamp);
-		ik (bone_1, bone_2, bone_3, goal_location);
+		// ik (bone_1, bone_2, bone_3, goal_location);
+	}
+	private void moveLegs(float delta)
+	{
+		if (left_leg_raycast.IsColliding())
+		{
+			left_leg_prev_position += (left_leg_goal_position - GlobalPosition - left_leg_prev_position) * delta * 20;
+			if ((left_leg_goal_position - left_leg_start_ik_bone.GlobalPosition).LengthSquared() > left_leg_ik_lenght || left_leg_timer <= 0)
+			{
+				if (LinearVelocity.LengthSquared() > 100)
+				{
+					left_leg_footing_raycast.TargetPosition = LinearVelocity.Normalized() * 30;
+					if (left_leg_footing_raycast.IsColliding())
+					{
+						left_leg_goal_position = left_leg_footing_raycast.GetCollisionPoint();
+					} else
+					{
+						left_leg_footing_middle_raycast.TargetPosition = (left_leg_raycast.TargetPosition + left_leg_footing_raycast.TargetPosition).Normalized() * 30;
+						if (left_leg_footing_middle_raycast.IsColliding())
+						{
+							left_leg_goal_position = left_leg_footing_middle_raycast.GetCollisionPoint();
+						} else
+						{
+							left_leg_goal_position = left_leg_raycast.GetCollisionPoint();
+						}
+					}
+				} else
+				{
+					left_leg_goal_position = left_leg_raycast.GetCollisionPoint();
+				}
+				left_leg_timer = 1f;
+			} else
+			{
+				left_leg_timer -= delta;
+			}
+			left_leg_ik_node.GlobalPosition = left_leg_prev_position + GlobalPosition;
+		} else
+		{
+			
+		}
 	}
 	private void playerEnviroment(float delta)
 	{
@@ -105,7 +164,7 @@ public partial class NB_player : RigidBody2D
 			}
 		}
 	}
-	private void ik(Bone2D b_1, Bone2D b_2, Bone2D b_3, Vector2 goal)
+	private bool ik(Bone2D b_1, Bone2D b_2, Bone2D b_3, Vector2 goal)
 	{
 		float b_1_size = b_2.Position.Length();
 		if (b_1_size + b_3.Position.Length() < (goal - b_1.GlobalPosition).Length())
@@ -114,6 +173,7 @@ public partial class NB_player : RigidBody2D
 			b_1.Rotation -= (float)Math.PI/2f;
 			b_2.LookAt(goal);			
 			b_2.Rotation -= (float)Math.PI/2f;
+			return true;
 		} else
 		{
 			b_2.LookAt(goal);
@@ -122,6 +182,7 @@ public partial class NB_player : RigidBody2D
 			Vector2 goal_look = goal - b_3.GlobalPosition;
 			float error = b_3.GlobalPosition.DistanceTo(goal) * (bone_look.Dot(goal_look) > 0? 1 : -1);
 			b_1.Rotation += error / b_1_size;
+			return false;
 		}
 	}
 }
