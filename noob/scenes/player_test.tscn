@@ -806,7 +806,10 @@ physics_layer_1/collision_mask = 0
 sources/0 = SubResource("TileSetAtlasSource_c7p4c")
 sources/1 = SubResource("TileSetAtlasSource_qtwka")
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_wblyt"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_c7p4c"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wrj65"]
+radius = 5.0
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_wrj65"]
 target_nodepath = NodePath("../../Global/IK/Left_feet_position")
@@ -824,11 +827,21 @@ joint_one_bone2d_node = NodePath("Base/leg_upper_r")
 joint_two_bone_idx = 13
 joint_two_bone2d_node = NodePath("Base/leg_upper_r/leg_lower_r")
 
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_qtwka"]
+target_nodepath = NodePath("../../Head/Offset")
+joint_one_bone_idx = 1
+joint_one_bone2d_node = NodePath("Base/body")
+joint_two_bone_idx = 2
+joint_two_bone2d_node = NodePath("Base/body/torso")
+
 [sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_c7p4c"]
 enabled = true
-modification_count = 2
+modification_count = 3
 modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_wrj65")
 modifications/1 = SubResource("SkeletonModification2DTwoBoneIK_c7p4c")
+modifications/2 = SubResource("SkeletonModification2DTwoBoneIK_qtwka")
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wblyt"]
 
 [node name="Player_test" type="Node2D" unique_id=1641828859]
 
@@ -844,6 +857,23 @@ load_size = Vector2i(5, 4)
 
 [node name="Player" type="Node2D" parent="." unique_id=481345672]
 
+[node name="Head" type="RigidBody2D" parent="Player" unique_id=676089678]
+position = Vector2(0, -32.000004)
+rotation = 0.060258456
+mass = 0.01
+gravity_scale = -2.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Head" unique_id=372134990]
+shape = SubResource("CircleShape2D_c7p4c")
+
+[node name="DampedSpringJoint2D" type="DampedSpringJoint2D" parent="Player/Head" unique_id=840083374]
+node_a = NodePath("..")
+node_b = NodePath("../../Player")
+length = 1.0
+stiffness = 0.1
+
+[node name="Offset" type="Node2D" parent="Player/Head" unique_id=1497039614]
+
 [node name="Player" type="RigidBody2D" parent="Player" unique_id=69515824 node_paths=PackedStringArray("sand", "floor_raycast", "skeleton", "left_leg_ik_node", "left_leg_start_ik_bone", "left_leg_end_ik_bone", "left_leg_ik_sticker", "left_leg_raycast", "left_leg_footing_raycast", "left_leg_footing_middle_raycast", "right_leg_ik_node", "right_leg_start_ik_bone", "right_leg_end_ik_bone", "right_leg_ik_sticker", "right_leg_raycast", "right_leg_footing_raycast", "right_leg_footing_middle_raycast")]
 gravity_scale = 0.0
 linear_damp = 10.0
@@ -851,12 +881,13 @@ script = ExtResource("3_wrj65")
 sand = NodePath("../../Sand")
 floor_raycast = NodePath("../Player position/RayCast2D")
 standup_distance = 25.0
-standup_strenght = 200.0
+standup_strenght = 400.0
 crouch_distance = 15.0
-jump_distance = 70.0
-movement_speed = 1000.0
+jump_distance = 50.0
+movement_speed = 4000.0
 movement_clamp = Vector2(100, 100)
 skeleton = NodePath("../Player position/Body")
+leg_moving_speed = 20.0
 left_leg_ik_node = NodePath("../Global/IK/Left_feet_position")
 left_leg_start_ik_bone = NodePath("../Player position/Body/Base/leg_upper_l")
 left_leg_end_ik_bone = NodePath("../Player position/Body/Base/leg_upper_l/leg_lower_l/feet_l")
@@ -873,7 +904,7 @@ right_leg_footing_raycast = NodePath("../Player position/Leg_footing_raycast_r")
 right_leg_footing_middle_raycast = NodePath("../Player position/Leg_footing_midle_raycast_r")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Player" unique_id=554996078]
-shape = SubResource("CircleShape2D_wblyt")
+shape = SubResource("CircleShape2D_wrj65")
 
 [node name="Camera2D" type="Camera2D" parent="Player/Player" unique_id=1372045990]
 zoom = Vector2(2, 2)
@@ -894,6 +925,7 @@ modification_stack = SubResource("SkeletonModificationStack2D_c7p4c")
 
 [node name="Base" type="Bone2D" parent="Player/Player position/Body" unique_id=259496712]
 position = Vector2(7, -7)
+scale = Vector2(0.9999988, 0.9999988)
 rest = Transform2D(1, 0, 0, 1, 7, -7)
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base" unique_id=2035627439]
@@ -902,25 +934,31 @@ remote_path = NodePath("../../../visuals/Body")
 
 [node name="body" type="Bone2D" parent="Player/Player position/Body/Base" unique_id=644612460]
 position = Vector2(0, -10)
+rotation = 3.1415925
+scale = Vector2(0.99997693, 0.99997693)
 rest = Transform2D(1, 0, 0, 1, 0, -10)
+metadata/_local_pose_override_enabled_ = true
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/body" unique_id=1877108035]
 position = Vector2(0, -5)
 remote_path = NodePath("../../../../visuals/Body/Torso")
 
 [node name="torso" type="Bone2D" parent="Player/Player position/Body/Base/body" unique_id=1650443514]
-position = Vector2(0, -13)
+position = Vector2(0, 13)
+rotation = -3.1415925
+scale = Vector2(0.9999942, 0.9999942)
 rest = Transform2D(1, 0, 0, 1, 0, -13)
 auto_calculate_length_and_angle = false
 length = 20.0
 bone_angle = -90.0
+metadata/_local_pose_override_enabled_ = true
 
 [node name="RemoteTransform2D2" type="RemoteTransform2D" parent="Player/Player position/Body/Base/body/torso" unique_id=1097469174]
 position = Vector2(0, -10)
 remote_path = NodePath("../../../../../visuals/Body/Torso/Head")
 
 [node name="shoulder_l" type="Bone2D" parent="Player/Player position/Body/Base/body" unique_id=1754068571]
-position = Vector2(-8, -9)
+position = Vector2(-8, 9)
 rest = Transform2D(1, 0, 0, 1, -8, -9)
 
 [node name="RemoteTransform2D2" type="RemoteTransform2D" parent="Player/Player position/Body/Base/body/shoulder_l" unique_id=905101688]
@@ -947,7 +985,7 @@ position = Vector2(9, 3)
 remote_path = NodePath("../../../../../../../visuals/Body/Torso/Arm_upper_l/Arm_lower_l/Hand_l")
 
 [node name="shoulder_r" type="Bone2D" parent="Player/Player position/Body/Base/body" unique_id=1046601112]
-position = Vector2(8, -9)
+position = Vector2(8, 9)
 rest = Transform2D(1, 0, 0, 1, 8, -9)
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player/Player position/Body/Base/body/shoulder_r" unique_id=2055626188]
@@ -1065,42 +1103,47 @@ target_position = Vector2(0, 30)
 [node name="visuals" type="Node2D" parent="Player/Player position" unique_id=975117283]
 
 [node name="Leg_upper_l" type="Polygon2D" parent="Player/Player position/visuals" unique_id=197287673]
-position = Vector2(-23.46064, 15.492861)
-rotation = 1.6020361
-scale = Vector2(0.9999955, 0.9999955)
+position = Vector2(-22.999596, 15.99962)
+rotation = 1.5707966
+scale = Vector2(0.9999751, 0.9999751)
 polygon = PackedVector2Array(1.0001907, -19.000038, 4.000227, -16.000002, 1.0001907, -12.999966, -11.999964, -10.999941, -17.000023, -13.999977, -17.000023, -18.000025, -11.999964, -21.000061)
 
 [node name="Leg_ower_l" type="Polygon2D" parent="Player/Player position/visuals/Leg_upper_l" unique_id=2027695520]
 position = Vector2(16.000002, -16)
-scale = Vector2(0.99999374, 0.99999374)
-polygon = PackedVector2Array(-14.999908, 3.0000587, -11.999851, 5.000096, -0.99964523, 9.536743e-07, -10.999834, -5.0000925, -14.999908, -3.0000548, -15.9999275, -2.0000353, -15.9999275, 2.0000396)
+scale = Vector2(0.9999934, 0.9999934)
+polygon = PackedVector2Array(-14.999908, 3.0000587, -2.999857, 1.0000124, -1.9998455, 0, -2.999857, -1.0000119, -14.999908, -3.0000548, -15.9999275, -2.0000353, -15.9999275, 2.0000396)
 
 [node name="Feet" type="Polygon2D" parent="Player/Player position/visuals/Leg_upper_l/Leg_ower_l" unique_id=896805680]
-position = Vector2(14.000114, -8.000002)
-polygon = PackedVector2Array(-8.999645, 6.999982, -12.999722, 5.9999633, -17, 7, -16.999798, 9.00002, -12.999722, 10.000038, -8.999645, 9.000019)
+position = Vector2(14.000107, -8)
+scale = Vector2(0.99999994, 0.99999994)
+polygon = PackedVector2Array(-8.999645, 6.999982, -12.999722, 5.9999633, -15.999964, 5.999976, -17, 7, -16.999798, 9.00002, -15.999964, 10.000026, -12.999722, 10.000038, -8.999645, 9.000019)
 
 [node name="Leg_upper_r" type="Polygon2D" parent="Player/Player position/visuals" unique_id=1506149037]
-position = Vector2(21.999914, 16.999908)
-scale = Vector2(0.9999943, 0.9999943)
+position = Vector2(21.999605, 16.999578)
+scale = Vector2(0.999974, 0.999974)
 polygon = PackedVector2Array(-13, -1, -15, 1, -17, -1, -18, -17, -15, -21, -12, -17)
 
 [node name="Leg_ower_r" type="Polygon2D" parent="Player/Player position/visuals/Leg_upper_r" unique_id=1413161198]
-position = Vector2(-1, 4)
+position = Vector2(-1.0000019, 3.999998)
 polygon = PackedVector2Array(-16, -4, -15, 8, -14, 9, -13, 8, -12, -4, -14, -6)
 
 [node name="Feet" type="Polygon2D" parent="Player/Player position/visuals/Leg_upper_r/Leg_ower_r" unique_id=770890735]
-position = Vector2(1, 2)
-polygon = PackedVector2Array(-13, 7, -15, 6, -17, 7, -17, 11, -16, 13, -14, 13, -13, 11)
+position = Vector2(1.0000038, 2)
+polygon = PackedVector2Array(-13, 7, -15, 6, -17.000023, 7.0002975, -17.000023, 10.00033, -16.000011, 14.000372, -13.999991, 14.000372, -12.999981, 10.00033)
 
 [node name="Body" type="Polygon2D" parent="Player/Player position/visuals" unique_id=649057534]
-position = Vector2(0, -1)
+position = Vector2(0, -0.9999988)
+scale = Vector2(0.9999988, 0.9999988)
 polygon = PackedVector2Array(0, -10, 7, -7, 10, 0, 7, 7, 0, 10, -7, 7, -10, 0, -7, -7)
 
 [node name="Torso" type="Polygon2D" parent="Player/Player position/visuals/Body" unique_id=1027595488]
-position = Vector2(0, -14)
-polygon = PackedVector2Array(0, -10, 7, -7, 8, 0, 8, 9, 0, 10, -8, 9, -8, 0, -7, -7)
+position = Vector2(4.5095572, -6.8407087)
+rotation = 2.0173614
+scale = Vector2(0.999973, 0.999973)
+polygon = PackedVector2Array(0, -10, 7, -7, 7.0001917, 2.999957, 7.0001907, 11.000177, 8.000217, 18.00037, -2.265001e-06, 20.000422, -8.000221, 18.000366, -7.0001926, 11.000174, -7.0001917, 2.9999552, -7, -7)
 
 [node name="Arm_upper_l" type="Polygon2D" parent="Player/Player position/visuals/Body/Torso" unique_id=168721612]
+position = Vector2(0, 18)
 polygon = PackedVector2Array(-8, 0, -21, 0, -25, -5, -7, -7)
 
 [node name="Arm_lower_l" type="Polygon2D" parent="Player/Player position/visuals/Body/Torso/Arm_upper_l" unique_id=121201533]
@@ -1108,34 +1151,37 @@ position = Vector2(-12, 0)
 polygon = PackedVector2Array(-9, 1, -22, 0, -21, -5, -9, -7)
 
 [node name="Hand_l" type="Polygon2D" parent="Player/Player position/visuals/Body/Torso/Arm_upper_l/Arm_lower_l" unique_id=1943141038]
-position = Vector2(-12, 0)
+position = Vector2(-11.999998, 0)
 polygon = PackedVector2Array(-8, 0, -14, 1, -17, -4, -9, -7)
 
 [node name="Arm_upper_r" type="Polygon2D" parent="Player/Player position/visuals/Body/Torso" unique_id=2056709856]
+position = Vector2(9.536743e-07, 18)
 rotation = 3.1415927
 scale = Vector2(1, -1)
 polygon = PackedVector2Array(-8, 0, -21, 0, -25, -5, -16.632416, -5.9297295, -7, -7)
 
 [node name="Arm_lower_r" type="Polygon2D" parent="Player/Player position/visuals/Body/Torso/Arm_upper_r" unique_id=1291555738]
-position = Vector2(-12, 0)
+position = Vector2(-11.999998, 1.9073486e-06)
 polygon = PackedVector2Array(-9, 1, -22, 0, -21, -5, -9, -7)
 
 [node name="Hand_r" type="Polygon2D" parent="Player/Player position/visuals/Body/Torso/Arm_upper_r/Arm_lower_r" unique_id=1071081691]
-position = Vector2(-12, 0)
+position = Vector2(-12.000002, -1.9073486e-06)
 polygon = PackedVector2Array(-8, 0, -14, 1, -17, -4, -9, -7)
 
 [node name="Head" type="Polygon2D" parent="Player/Player position/visuals/Body/Torso" unique_id=776709290]
-position = Vector2(0, -18)
+position = Vector2(-9.92158, 16.750708)
+rotation = -1.4455389
+scale = Vector2(0.99999243, 0.99999243)
 polygon = PackedVector2Array(0, -10, 7, -7, 10, 0, 7, 7, 0, 10, -7, 7, -10, 0, -7, -7)
 
 [node name="Ik_stickers" type="Node2D" parent="Player/Player position/visuals" unique_id=2070584151]
 
 [node name="Left_feet_sticker" type="RemoteTransform2D" parent="Player/Player position/visuals/Ik_stickers" unique_id=234159976]
-position = Vector2(-8, 33)
+position = Vector2(-7, 38)
 remote_path = NodePath("../../../../Global/IK/Left_feet_position")
 
 [node name="Right_feet_sticker" type="RemoteTransform2D" parent="Player/Player position/visuals/Ik_stickers" unique_id=944548958]
-position = Vector2(7, 35)
+position = Vector2(7, 37)
 remote_path = NodePath("../../../../Global/IK/Right_feet_position")
 
 [node name="Global" type="Node2D" parent="Player" unique_id=1743970678]
@@ -1143,10 +1189,10 @@ remote_path = NodePath("../../../../Global/IK/Right_feet_position")
 [node name="IK" type="Node2D" parent="Player/Global" unique_id=862897047]
 
 [node name="Left_feet_position" type="Node2D" parent="Player/Global/IK" unique_id=1911439660]
-position = Vector2(-8, 33)
+position = Vector2(-7, 38)
 
 [node name="Right_feet_position" type="Node2D" parent="Player/Global/IK" unique_id=28258168]
-position = Vector2(7, 35)
+position = Vector2(7, 37)
 
 [node name="RigidBody2D2" type="RigidBody2D" parent="." unique_id=62039245]
 position = Vector2(75, 22)

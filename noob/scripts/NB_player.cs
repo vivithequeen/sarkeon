@@ -23,7 +23,7 @@ public partial class NB_player : RigidBody2D
 	public float movement_speed = 100f;
 	private bool movement_crouching = false;
 	private bool movement_jumping = false;
-	private float controll_multiplier = 1f;
+	private float controll_multiplier = 0f;
 	private Vector2 added_force;
 	[Export]
 	public Vector2 movement_clamp = Vector2.One;
@@ -115,7 +115,7 @@ public partial class NB_player : RigidBody2D
 				recalculateControll();
 				getLeftPosition();
 			} else {
-				left_leg_timer -= delta;
+				left_leg_timer -= delta  * (left_leg_timer < right_leg_timer?2:1);
 			}
 			left_leg_ik_node.GlobalPosition = left_leg_prev_position + GlobalPosition;
 			if (!left_on_ground && left_leg_ik_node.GlobalPosition.DistanceSquaredTo(left_leg_goal_position) < left_leg_ground_distance_sqrd)
@@ -127,6 +127,7 @@ public partial class NB_player : RigidBody2D
 		{
 			if(!left_ik_debounce)
 			{
+				left_leg_timer = 1.1f;
 				left_on_ground = false;
 				left_ik_debounce = true;
 				left_leg_ik_sticker.GlobalPosition = left_leg_ik_node.GlobalPosition;
@@ -154,7 +155,8 @@ public partial class NB_player : RigidBody2D
 				recalculateControll();
 				getRightPosition();
 			} else {
-				right_leg_timer -= delta;
+				right_leg_timer -= delta * (right_leg_timer < left_leg_timer?2:1);
+				
 			}
 			right_leg_ik_node.GlobalPosition = right_leg_prev_position + GlobalPosition;
 			if (!right_on_ground && right_leg_ik_node.GlobalPosition.DistanceSquaredTo(right_leg_goal_position) < right_leg_ground_distance_sqrd)
@@ -166,6 +168,7 @@ public partial class NB_player : RigidBody2D
 		{
 			if(!right_ik_debounce)
 			{
+				right_leg_timer = 1f;
 				right_on_ground = false;
 				right_ik_debounce = true;
 				right_leg_ik_sticker.GlobalPosition = right_leg_ik_node.GlobalPosition;
@@ -183,13 +186,13 @@ public partial class NB_player : RigidBody2D
 	{
 		if (LinearVelocity.LengthSquared() > 100)
 		{
-			left_leg_footing_raycast.TargetPosition = LinearVelocity.Normalized() * 30;
+			left_leg_footing_raycast.TargetPosition = LinearVelocity.Normalized() * 50;
 			if (left_leg_footing_raycast.IsColliding())
 			{
 				left_leg_goal_position = left_leg_footing_raycast.GetCollisionPoint();
 			} else
 			{
-				left_leg_footing_middle_raycast.TargetPosition = (left_leg_raycast.TargetPosition + left_leg_footing_raycast.TargetPosition).Normalized() * 30;
+				left_leg_footing_middle_raycast.TargetPosition = (left_leg_raycast.TargetPosition + left_leg_footing_raycast.TargetPosition).Normalized() * 50;
 				if (left_leg_footing_middle_raycast.IsColliding())
 				{
 					left_leg_goal_position = left_leg_footing_middle_raycast.GetCollisionPoint();
@@ -202,19 +205,19 @@ public partial class NB_player : RigidBody2D
 		{
 			left_leg_goal_position = left_leg_raycast.GetCollisionPoint();
 		}
-		left_leg_timer = 1f;
+		left_leg_timer = 1.1f;
 	}
 	private void getRightPosition()
 	{
 		if (LinearVelocity.LengthSquared() > 100)
 		{
-			right_leg_footing_raycast.TargetPosition = LinearVelocity.Normalized() * 30;
+			right_leg_footing_raycast.TargetPosition = LinearVelocity.Normalized() * 50;
 			if (right_leg_footing_raycast.IsColliding())
 			{
 				right_leg_goal_position = right_leg_footing_raycast.GetCollisionPoint();
 			} else
 			{
-				right_leg_footing_middle_raycast.TargetPosition = (right_leg_raycast.TargetPosition + right_leg_footing_raycast.TargetPosition).Normalized() * 30;
+				right_leg_footing_middle_raycast.TargetPosition = (right_leg_raycast.TargetPosition + right_leg_footing_raycast.TargetPosition).Normalized() * 50;
 				if (right_leg_footing_middle_raycast.IsColliding())
 				{
 					right_leg_goal_position = right_leg_footing_middle_raycast.GetCollisionPoint();
@@ -250,6 +253,11 @@ public partial class NB_player : RigidBody2D
 	{
 		Vector2 input = Input.GetVector("left", "right", "up", "down");
 		added_force += new Vector2(input.X, 0) * delta * movement_speed * controll_multiplier;
+		if (input.X != 0)
+		{
+			skeleton.GetModificationStack().GetModification(0).Set("flip_bend_direction", input.X < 0);
+			skeleton.GetModificationStack().GetModification(1).Set("flip_bend_direction", input.X < 0);
+		}
 		movement_crouching = input.Y > 0;
 		movement_jumping = input.Y < 0;
 	}
