@@ -37,6 +37,8 @@ public partial class NB_player : RigidBody2D
 	[Export]
 	public Bone2D left_leg_end_ik_bone;
 	[Export]
+	public RemoteTransform2D left_leg_ik_sticker;
+	[Export]
 	public RayCast2D left_leg_raycast;
 	[Export]
 	public RayCast2D left_leg_footing_raycast;
@@ -46,6 +48,7 @@ public partial class NB_player : RigidBody2D
 	private float left_leg_ik_lenght = 0;
 	private Vector2 left_leg_prev_position = Vector2.Zero;
 	private Vector2 left_leg_goal_position = Vector2.Zero;
+	private bool left_ik_debounce = true;
 	//! RIGHT LEG
 	[Export]
 	public Godot.Collections.Array<Bone2D> right_leg;
@@ -79,46 +82,62 @@ public partial class NB_player : RigidBody2D
 		playerEnviroment((float)delta);
 		sandUpdate();
 		LinearVelocity += added_force.Clamp(-movement_clamp, movement_clamp);
-		// ik (bone_1, bone_2, bone_3, goal_location);
 	}
 	private void moveLegs(float delta)
 	{
 		if (left_leg_raycast.IsColliding())
 		{
+			if(left_ik_debounce)
+			{
+				left_ik_debounce = false;
+				getLeftPosition();
+				left_leg_prev_position += left_leg_goal_position - GlobalPosition - left_leg_prev_position;
+				left_leg_ik_sticker.UpdatePosition = false;
+			}
 			left_leg_prev_position += (left_leg_goal_position - GlobalPosition - left_leg_prev_position) * delta * 20;
 			if ((left_leg_goal_position - left_leg_start_ik_bone.GlobalPosition).LengthSquared() > left_leg_ik_lenght || left_leg_timer <= 0)
 			{
-				if (LinearVelocity.LengthSquared() > 100)
-				{
-					left_leg_footing_raycast.TargetPosition = LinearVelocity.Normalized() * 30;
-					if (left_leg_footing_raycast.IsColliding())
-					{
-						left_leg_goal_position = left_leg_footing_raycast.GetCollisionPoint();
-					} else
-					{
-						left_leg_footing_middle_raycast.TargetPosition = (left_leg_raycast.TargetPosition + left_leg_footing_raycast.TargetPosition).Normalized() * 30;
-						if (left_leg_footing_middle_raycast.IsColliding())
-						{
-							left_leg_goal_position = left_leg_footing_middle_raycast.GetCollisionPoint();
-						} else
-						{
-							left_leg_goal_position = left_leg_raycast.GetCollisionPoint();
-						}
-					}
-				} else
-				{
-					left_leg_goal_position = left_leg_raycast.GetCollisionPoint();
-				}
-				left_leg_timer = 1f;
-			} else
-			{
+				getLeftPosition();
+			} else {
 				left_leg_timer -= delta;
 			}
 			left_leg_ik_node.GlobalPosition = left_leg_prev_position + GlobalPosition;
 		} else
 		{
-			
+			if(!left_ik_debounce)
+			{
+				left_ik_debounce = true;
+				left_leg_ik_sticker.GlobalPosition = left_leg_ik_node.GlobalPosition;
+				left_leg_ik_sticker.UpdatePosition = true;
+
+			}
 		}
+	}
+	private void getLeftPosition()
+	{
+		if (LinearVelocity.LengthSquared() > 100)
+		{
+			left_leg_footing_raycast.TargetPosition = LinearVelocity.Normalized() * 30;
+			if (left_leg_footing_raycast.IsColliding())
+			{
+				left_leg_goal_position = left_leg_footing_raycast.GetCollisionPoint();
+			} else
+			{
+				left_leg_footing_middle_raycast.TargetPosition = (left_leg_raycast.TargetPosition + left_leg_footing_raycast.TargetPosition).Normalized() * 30;
+				if (left_leg_footing_middle_raycast.IsColliding())
+				{
+					left_leg_goal_position = left_leg_footing_middle_raycast.GetCollisionPoint();
+				} else
+				{
+					left_leg_goal_position = left_leg_raycast.GetCollisionPoint();
+				}
+				//! make this a function and make it called from debounce one and add debounce in general
+			}
+		} else
+		{
+			left_leg_goal_position = left_leg_raycast.GetCollisionPoint();
+		}
+		left_leg_timer = 1f;
 	}
 	private void playerEnviroment(float delta)
 	{
