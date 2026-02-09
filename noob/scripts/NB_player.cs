@@ -87,6 +87,7 @@ public partial class NB_player : RigidBody2D
 	public Label inv_text;
 	public Dictionary<string, int> inventory = new Dictionary<string, int>{};
 	private float destroy_delay = 0;
+	public int hit_strength = 100;
 	public override void _Ready()
 	{
 		sandInit();
@@ -106,7 +107,7 @@ public partial class NB_player : RigidBody2D
 			if (destroy_delay <= 0)
 			{
 				destroy_delay = 0.1f;
-				Dictionary<string, int> temp = sand.digSquare((Vector2I) cursor_ik_node.GlobalPosition, 4);
+				Dictionary<string, int> temp = sand.digSquare((Vector2I) cursor_ik_node.GlobalPosition, 4, hit_strength);
 				foreach (string a in temp.Keys)
 				{
 					if (inventory.ContainsKey(a))

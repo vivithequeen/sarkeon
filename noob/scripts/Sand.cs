@@ -54,7 +54,7 @@ public partial class Sand : TileMapLayer
 		}
 		public NB_particle clone()
 		{
-			NB_particle temp = new NB_particle(type, solid, checking_pos, particle_name);
+			NB_particle temp = new NB_particle(type, solid, checking_pos, particle_name, strong);
 			temp.empty = empty;
 			return temp;
 		}
@@ -115,6 +115,20 @@ public partial class Sand : TileMapLayer
 		}
 		public string pop_pixel(Vector2I p_particle_position)
 		{
+			string temp = particles[vecToString(p_particle_position - cell_particle_offset)].particle_name;
+            NB_particle temp_air = new NB_particle(NB_type.GAS, false, new List<Vector2I> { }, "Air")
+            {
+                empty = true
+            };
+            temp_air.pos(p_particle_position);
+			particles[vecToString(p_particle_position - cell_particle_offset)] = temp_air;
+			return temp;
+		}
+		public string pop_pixel_str(Vector2I p_particle_position, int hit_strength)
+		{
+			NB_particle temp_p = particles[vecToString(p_particle_position - cell_particle_offset)];
+			GD.Print(hit_strength);
+			if (temp_p.strong > hit_strength) {return "";}
 			string temp = particles[vecToString(p_particle_position - cell_particle_offset)].particle_name;
             NB_particle temp_air = new NB_particle(NB_type.GAS, false, new List<Vector2I> { }, "Air")
             {
@@ -473,7 +487,7 @@ public partial class Sand : TileMapLayer
 		return chunks_update_list.Distinct().Count();
 	}
 	//! Public for player
-	public Dictionary<string, int> digSquare(Vector2I p_global_position, int size)
+	public Dictionary<string, int> digSquare(Vector2I p_global_position, int size, int hit_strength)
 	{
 		Dictionary<string, int> return_val = new Dictionary<string, int>{};
 		for (int x =  - size; x < size; x++)
@@ -485,13 +499,16 @@ public partial class Sand : TileMapLayer
 				string key = vecToString(position);
 				if (chunks.ContainsKey(key))
 				{
-					string temp = chunks[key].pop_pixel(position_offset);
-					if (return_val.ContainsKey(temp))
+					string temp = chunks[key].pop_pixel_str(position_offset, hit_strength);
+					if (temp != "")
 					{
-						return_val[temp] += 1;
-					} else
-					{
-						return_val[temp] = 1;
+						if (return_val.ContainsKey(temp))
+						{
+							return_val[temp] += 1;
+						} else
+						{
+							return_val[temp] = 1;
+						}
 					}
 				}
 			}
