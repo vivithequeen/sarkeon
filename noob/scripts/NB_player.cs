@@ -18,6 +18,8 @@ public partial class NB_player : RigidBody2D
 	[Export]
 	public float crouch_distance = 20f;
 	[Export]
+	public float crouch_speed_multiplier = 0.1f;
+	[Export]
 	public float jump_distance = 100f;
 	[Export]
 	public float movement_speed = 100f;
@@ -77,13 +79,28 @@ public partial class NB_player : RigidBody2D
 	private Vector2 right_leg_goal_position = Vector2.Zero;
 	private bool right_ik_debounce = true;
 	private bool right_on_ground = false;
+	//! ARMS
+	[Export]
+	public Node2D cursor_ik_node;
 	public override void _Ready()
 	{
 		sandInit();
 		left_leg_ik_lenght = (left_leg_start_ik_bone.GlobalPosition - left_leg_end_ik_bone.GlobalPosition).LengthSquared();
 		right_leg_ik_lenght = (right_leg_start_ik_bone.GlobalPosition - right_leg_end_ik_bone.GlobalPosition).LengthSquared();
 	}
-
+    public override void _Process(double delta)
+    {
+		checkCursor();
+        cursor_ik_node.GlobalPosition += ((GetGlobalMousePosition() - cursor_ik_node.GlobalPosition ) * (float)delta * 10f).Clamp(-10,10) ;
+    }
+	private void checkCursor()
+	{
+		// if (Input.IsMouseButtonPressed(MouseButton.Left))
+		// {
+			
+		// }
+	}
+	//! Physics Process
 	public override void _PhysicsProcess(double delta)
 	{
 		added_force = Vector2.Zero;
@@ -252,14 +269,15 @@ public partial class NB_player : RigidBody2D
 	private void playerInput(float delta)
 	{
 		Vector2 input = Input.GetVector("left", "right", "up", "down");
-		added_force += new Vector2(input.X, 0) * delta * movement_speed * controll_multiplier;
+		movement_crouching = input.Y > 0;
+		movement_jumping = input.Y < 0;
+		added_force += new Vector2(input.X, 0) * delta * movement_speed * controll_multiplier * (movement_crouching? crouch_speed_multiplier:1);
 		if (input.X != 0)
 		{
 			skeleton.GetModificationStack().GetModification(0).Set("flip_bend_direction", input.X < 0);
 			skeleton.GetModificationStack().GetModification(1).Set("flip_bend_direction", input.X < 0);
+			skeleton.GetModificationStack().GetModification(2).Set("flip_bend_direction", input.X < 0);
 		}
-		movement_crouching = input.Y > 0;
-		movement_jumping = input.Y < 0;
 	}
 	private void sandInit()
 	{
