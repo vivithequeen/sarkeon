@@ -90,6 +90,8 @@ public partial class NB_player : RigidBody2D
 	public int hit_strength = 100;
 	[Export]
 	public float hit_range = 10f;
+	private float place_delay = 0;
+	private float place_index = 0;
 	public override void _Ready()
 	{
 		sandInit();
@@ -125,12 +127,21 @@ public partial class NB_player : RigidBody2D
 					}
 				}
 				inv_text.Text = "Inventory:";
+				int indexer_cool = 0;
 				foreach (string a in inventory.Keys)
 				{
 					if (a == "Air") {continue;}
-					inv_text.Text += "\n" + a + ": " + inventory[a].ToString();
+					indexer_cool += 1;
+					inv_text.Text += "\n" + (indexer_cool == place_index? ">" : "") + a + ": " + inventory[a].ToString();
 				}
 			} 
+		}
+		if (Input.IsActionPressed("destroy"))
+		{
+			if (place_delay <= 0)
+			{
+				place_delay = 0.2f;
+			}
 		}
 	}
 	//! Physics Process
@@ -159,14 +170,18 @@ public partial class NB_player : RigidBody2D
 				recalculateControll();
 			}
 			left_leg_prev_position += (left_leg_goal_position - GlobalPosition - left_leg_prev_position) * delta * leg_moving_speed;
-			if ((left_leg_goal_position - left_leg_start_ik_bone.GlobalPosition).LengthSquared() > left_leg_ik_lenght || left_leg_timer <= 0)
+			if (
+				// (left_leg_goal_position - left_leg_start_ik_bone.GlobalPosition).LengthSquared() > left_leg_ik_lenght 
+				// || 
+				left_leg_timer <= 0
+				)
 			{
 				left_on_ground = false;
 				recalculateControll();
 				getLeftPosition();
 			} else {
-				left_leg_timer -= delta;
-				// left_leg_timer -= delta  * (left_leg_timer < right_leg_timer?2:1);
+				// left_leg_timer -= delta;
+				left_leg_timer -= delta  * (left_leg_timer < right_leg_timer?4:1);
 			}
 			left_leg_ik_node.GlobalPosition = left_leg_prev_position + GlobalPosition;
 			if (!left_on_ground && left_leg_ik_node.GlobalPosition.DistanceSquaredTo(left_leg_goal_position) < left_leg_ground_distance_sqrd)
@@ -197,8 +212,8 @@ public partial class NB_player : RigidBody2D
 			}
 			right_leg_prev_position += (right_leg_goal_position - GlobalPosition - right_leg_prev_position) * delta * leg_moving_speed;
 			if (
-			(right_leg_goal_position - right_leg_start_ik_bone.GlobalPosition).LengthSquared() > right_leg_ik_lenght 
-			|| 
+			// (right_leg_goal_position - right_leg_start_ik_bone.GlobalPosition).LengthSquared() > right_leg_ik_lenght 
+			// || 
 			right_leg_timer <= 0
 			)
 			{
@@ -206,8 +221,8 @@ public partial class NB_player : RigidBody2D
 				recalculateControll();
 				getRightPosition();
 			} else {
-				right_leg_timer -= delta;
-				// right_leg_timer -= delta * (right_leg_timer < left_leg_timer?2:1);
+				// right_leg_timer -= delta;
+				right_leg_timer -= delta * (right_leg_timer < left_leg_timer?4:1);
 				
 			}
 			right_leg_ik_node.GlobalPosition = right_leg_prev_position + GlobalPosition;
@@ -231,7 +246,7 @@ public partial class NB_player : RigidBody2D
 	}
 	private void recalculateControll()
 	{
-		controll_multiplier = (left_on_ground ? 0.5f:0) + (right_on_ground ? 0.5f:0);
+		controll_multiplier = Math.Clamp((left_on_ground ? 1f:0) + (right_on_ground ? 1f:0), 0, 1);
 		
 	}
 	private void getLeftPosition()
@@ -244,7 +259,7 @@ public partial class NB_player : RigidBody2D
 				left_leg_goal_position = left_leg_footing_raycast.GetCollisionPoint();
 			} else
 			{
-				left_leg_footing_middle_raycast.TargetPosition = (left_leg_raycast.TargetPosition + left_leg_footing_raycast.TargetPosition).Normalized() * 30;
+				left_leg_footing_middle_raycast.TargetPosition = (left_leg_raycast.TargetPosition + left_leg_footing_raycast.TargetPosition);
 				if (left_leg_footing_middle_raycast.IsColliding())
 				{
 					left_leg_goal_position = left_leg_footing_middle_raycast.GetCollisionPoint();
@@ -269,7 +284,7 @@ public partial class NB_player : RigidBody2D
 				right_leg_goal_position = right_leg_footing_raycast.GetCollisionPoint();
 			} else
 			{
-				right_leg_footing_middle_raycast.TargetPosition = (right_leg_raycast.TargetPosition + right_leg_footing_raycast.TargetPosition).Normalized() * 30;
+				right_leg_footing_middle_raycast.TargetPosition = (right_leg_raycast.TargetPosition + right_leg_footing_raycast.TargetPosition);
 				if (right_leg_footing_middle_raycast.IsColliding())
 				{
 					right_leg_goal_position = right_leg_footing_middle_raycast.GetCollisionPoint();
