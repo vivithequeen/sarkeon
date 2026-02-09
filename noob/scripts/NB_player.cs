@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public partial class NB_player : RigidBody2D
 {
@@ -82,6 +83,10 @@ public partial class NB_player : RigidBody2D
 	//! ARMS
 	[Export]
 	public Node2D cursor_ik_node;
+	[Export]
+	public Label inv_text;
+	public Dictionary<string, int> inventory = new Dictionary<string, int>{};
+	private float destroy_delay = 0;
 	public override void _Ready()
 	{
 		sandInit();
@@ -92,13 +97,34 @@ public partial class NB_player : RigidBody2D
     {
 		checkCursor();
         cursor_ik_node.GlobalPosition += ((GetGlobalMousePosition() - cursor_ik_node.GlobalPosition ) * (float)delta * 10f).Clamp(-10,10) ;
+		destroy_delay -= (float)delta;
     }
 	private void checkCursor()
 	{
-		// if (Input.IsMouseButtonPressed(MouseButton.Left))
-		// {
-			
-		// }
+		if (Input.IsActionPressed("destroy"))
+		{
+			if (destroy_delay <= 0)
+			{
+				destroy_delay = 0.1f;
+				Dictionary<string, int> temp = sand.digSquare((Vector2I) cursor_ik_node.GlobalPosition, 4);
+				foreach (string a in temp.Keys)
+				{
+					if (inventory.ContainsKey(a))
+					{
+						inventory[a] += temp[a];
+					} else
+					{
+						inventory[a] = temp[a];
+					}
+				}
+				inv_text.Text = "Inventory:";
+				foreach (string a in inventory.Keys)
+				{
+					if (a == "Air") {continue;}
+					inv_text.Text += "\n" + a + ": " + inventory[a].ToString();
+				}
+			} 
+		}
 	}
 	//! Physics Process
 	public override void _PhysicsProcess(double delta)
