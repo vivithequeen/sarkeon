@@ -88,6 +88,8 @@ public partial class NB_player : RigidBody2D
 	public Dictionary<string, int> inventory = new Dictionary<string, int>{};
 	private float destroy_delay = 0;
 	public int hit_strength = 100;
+	[Export]
+	public float hit_range = 10f;
 	public override void _Ready()
 	{
 		sandInit();
@@ -98,6 +100,10 @@ public partial class NB_player : RigidBody2D
     {
 		checkCursor();
         cursor_ik_node.GlobalPosition += ((GetGlobalMousePosition() - cursor_ik_node.GlobalPosition ) * (float)delta * 10f).Clamp(-10,10) ;
+		if ((cursor_ik_node.GlobalPosition - GlobalPosition).Length() > hit_range)
+		{
+			cursor_ik_node.GlobalPosition = (cursor_ik_node.GlobalPosition - GlobalPosition).Normalized() * hit_range + GlobalPosition;
+		}
 		destroy_delay -= (float)delta;
     }
 	private void checkCursor()
@@ -106,8 +112,8 @@ public partial class NB_player : RigidBody2D
 		{
 			if (destroy_delay <= 0)
 			{
-				destroy_delay = 0.1f;
-				Dictionary<string, int> temp = sand.digSquare((Vector2I) cursor_ik_node.GlobalPosition, 4, hit_strength);
+				destroy_delay = 0.5f;
+				Dictionary<string, int> temp = sand.digSquare((Vector2I) cursor_ik_node.GlobalPosition, 3, hit_strength);
 				foreach (string a in temp.Keys)
 				{
 					if (inventory.ContainsKey(a))
@@ -159,7 +165,8 @@ public partial class NB_player : RigidBody2D
 				recalculateControll();
 				getLeftPosition();
 			} else {
-				left_leg_timer -= delta  * (left_leg_timer < right_leg_timer?2:1);
+				left_leg_timer -= delta;
+				// left_leg_timer -= delta  * (left_leg_timer < right_leg_timer?2:1);
 			}
 			left_leg_ik_node.GlobalPosition = left_leg_prev_position + GlobalPosition;
 			if (!left_on_ground && left_leg_ik_node.GlobalPosition.DistanceSquaredTo(left_leg_goal_position) < left_leg_ground_distance_sqrd)
@@ -199,7 +206,8 @@ public partial class NB_player : RigidBody2D
 				recalculateControll();
 				getRightPosition();
 			} else {
-				right_leg_timer -= delta * (right_leg_timer < left_leg_timer?2:1);
+				right_leg_timer -= delta;
+				// right_leg_timer -= delta * (right_leg_timer < left_leg_timer?2:1);
 				
 			}
 			right_leg_ik_node.GlobalPosition = right_leg_prev_position + GlobalPosition;
@@ -236,7 +244,7 @@ public partial class NB_player : RigidBody2D
 				left_leg_goal_position = left_leg_footing_raycast.GetCollisionPoint();
 			} else
 			{
-				left_leg_footing_middle_raycast.TargetPosition = (left_leg_raycast.TargetPosition + left_leg_footing_raycast.TargetPosition).Normalized() * 50;
+				left_leg_footing_middle_raycast.TargetPosition = (left_leg_raycast.TargetPosition + left_leg_footing_raycast.TargetPosition).Normalized() * 30;
 				if (left_leg_footing_middle_raycast.IsColliding())
 				{
 					left_leg_goal_position = left_leg_footing_middle_raycast.GetCollisionPoint();
@@ -261,7 +269,7 @@ public partial class NB_player : RigidBody2D
 				right_leg_goal_position = right_leg_footing_raycast.GetCollisionPoint();
 			} else
 			{
-				right_leg_footing_middle_raycast.TargetPosition = (right_leg_raycast.TargetPosition + right_leg_footing_raycast.TargetPosition).Normalized() * 50;
+				right_leg_footing_middle_raycast.TargetPosition = (right_leg_raycast.TargetPosition + right_leg_footing_raycast.TargetPosition).Normalized() * 30;
 				if (right_leg_footing_middle_raycast.IsColliding())
 				{
 					right_leg_goal_position = right_leg_footing_middle_raycast.GetCollisionPoint();
