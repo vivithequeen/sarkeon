@@ -34,6 +34,7 @@ public partial class NB_player : RigidBody2D
 	public Skeleton2D skeleton;
 	[Export]
 	public float leg_moving_speed = 10f;
+	private bool flip_direction = false;
 	//! LEFT LEG
 	[Export]
 	public Node2D left_leg_ik_node;
@@ -93,6 +94,9 @@ public partial class NB_player : RigidBody2D
 	public float hit_range = 10f;
 	private float place_delay = 0;
 	private float place_index = 0;
+	//! Sprites
+	[Export]
+	public  Godot.Collections.Array<Sprite2D> to_flip_sprites;
 	public override void _Ready()
 	{
 		sandInit();
@@ -312,7 +316,7 @@ public partial class NB_player : RigidBody2D
 			{
 				perfect_position = (floor_raycast.GetCollisionPoint() + Vector2.Up * 
 					(movement_crouching ? crouch_distance : standup_distance)
-					- GlobalPosition) * delta * standup_strenght;
+					- GlobalPosition) * delta * standup_strenght + Vector2.Down * (Math.Abs(added_force.X) > 0.0? 40.0f: 0.0f);
 			}
 			added_force += perfect_position * controll_multiplier;
 		}
@@ -323,11 +327,20 @@ public partial class NB_player : RigidBody2D
 		movement_crouching = input.Y > 0;
 		movement_jumping = input.Y < 0;
 		added_force += new Vector2(input.X, 0) * delta * movement_speed * controll_multiplier * (movement_crouching? crouch_speed_multiplier:1);
-		if (input.X != 0)
+		if (input.X != 0 != flip_direction)
 		{
+			flip_direction = input.X != 0;
 			skeleton.GetModificationStack().GetModification(0).Set("flip_bend_direction", input.X < 0);
 			skeleton.GetModificationStack().GetModification(1).Set("flip_bend_direction", input.X < 0);
 			skeleton.GetModificationStack().GetModification(2).Set("flip_bend_direction", input.X < 0);
+			foreach (Sprite2D x in to_flip_sprites) 
+			{
+				x.FlipH = input.X < 0;
+			}
+		}
+		if (input.X == 0) 
+		{
+
 		}
 	}
 	private void sandInit()
@@ -366,7 +379,7 @@ public partial class NB_player : RigidBody2D
 			b_2.Rotation -= (float)Math.PI/2f;
 			Vector2 bone_look = b_3.GlobalPosition - b_2.GlobalPosition;
 			Vector2 goal_look = goal - b_3.GlobalPosition;
-			float error = b_3.GlobalPosition.DistanceTo(goal) * (bone_look.Dot(goal_look) > 0? 1 : -1);
+			float error = (int)((b_3.GlobalPosition.DistanceTo(goal) * (bone_look.Dot(goal_look) > 0? 1 : -1) * 100) / 100.0f);
 			b_1.Rotation += error / b_1_size;
 			return false;
 		}
