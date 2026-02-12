@@ -138,6 +138,17 @@ offset_right = 89.0
 offset_bottom = 33.0
 text = "Inventory:"
 
+[node name="CanvasLayer2" type="CanvasLayer" parent="Player/Camera2D" unique_id=1419298392]
+layer = -1
+
+[node name="ColorRect" type="ColorRect" parent="Player/Camera2D/CanvasLayer2" unique_id=1855929914]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.6152251, 0.55539244, 0.75450003, 1)
+
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player" unique_id=1080347508]
 remote_path = NodePath("../../Player position")
 update_rotation = false
@@ -243,7 +254,7 @@ texture = ExtResource("9_m2ki8")
 [node name="ArmBackLower" type="Sprite2D" parent="Player position/visuals/Booty/Torso/ArmBack" unique_id=1493996283]
 position = Vector2(-59.94934, 86.51401)
 rotation = 1.1467297
-scale = Vector2(1.0000992, 1.0000992)
+scale = Vector2(1.0000997, 1.0000997)
 texture = ExtResource("10_kl5wk")
 
 [node name="LegBack" type="Sprite2D" parent="Player position/visuals/Booty" unique_id=1845640794]
@@ -266,7 +277,7 @@ texture = ExtResource("13_3cyvi")
 
 [node name="LegFronLower" type="Sprite2D" parent="Player position/visuals/Booty/LegFront" unique_id=180533285]
 position = Vector2(-48.444443, 95.679535)
-scale = Vector2(1.0000786, 1.0000786)
+scale = Vector2(1.0000775, 1.0000775)
 texture = ExtResource("14_3o7oh")
 
 [node name="Body" type="Skeleton2D" parent="Player position" unique_id=1411844443]
