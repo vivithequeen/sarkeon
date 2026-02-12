@@ -205,19 +205,19 @@ public partial class Sand : TileMapLayer
 			p_strong: 50
 		));
 		particle_list.Add("Hard_dirt", new NB_particle(
-			NB_type.LIQUID,
-			false,
+			NB_type.SOLID,
+			true,
 			[],
 			"Hard_dirt",
 			p_strong: 500
 		));
 		particle_list.Add("Dirt", new NB_particle(
-			NB_type.LIQUID,
-			false,
+			NB_type.FALLING,
+			true,
 			[
 				new Vector2I(0,2),
 				new Vector2I(1,1),
-				new Vector2I(1,0),
+				new Vector2I(0,1),
 			],
 			"Dirt",
 			p_strong: 150

@@ -87,7 +87,8 @@ public partial class NB_player : RigidBody2D
 	public Label inv_text;
 	public Dictionary<string, int> inventory = new Dictionary<string, int>{};
 	private float destroy_delay = 0;
-	public int hit_strength = 100;
+	[Export]
+	public int hit_strength = 200;
 	[Export]
 	public float hit_range = 10f;
 	private float place_delay = 0;
