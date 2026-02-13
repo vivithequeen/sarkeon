@@ -164,11 +164,27 @@ public partial class NB_player : RigidBody2D
 				updateInventoryText();
 			} 
 		}
-		if (Input.IsActionPressed("destroy"))
+		if (Input.IsActionPressed("place"))
 		{
 			if (place_delay <= 0)
 			{
 				place_delay = 0.2f;
+
+				int indexer_cool = 0;
+				foreach (string a in inventory.Keys)
+				{
+					if (a == "Air") {continue;}
+					if(indexer_cool == place_index) 
+					{
+						inventory[a] -= sand.placeSquare((Vector2I) cursor_ik_node.GlobalPosition, 3, inventory[a], a);
+						break;
+					}
+					indexer_cool += 1;
+				}
+
+
+
+
 			}
 		}
 	}

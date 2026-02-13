@@ -555,9 +555,32 @@ public partial class Sand : TileMapLayer
 		}
 		return return_val;
 	}
-	// public int place(Vector2I p_global_position, int size, int amount, string p_type)
-	// {
-		
-	// 	return return_val;
-	// }
+	public int placeSquare(Vector2I p_global_position, int size, int amount, string p_type)
+	{
+		int placed_amount = 0;
+		for (int x =  - size; x < size; x++)
+		{
+			for (int y = - size; y < size; y++)
+			{
+				Vector2I position_offset =  new Vector2I(x,y) + ( p_global_position - (Vector2I)GlobalPosition) / 4 ;
+				Vector2I position = new Vector2I((int)Math.Floor(position_offset.X / (double)chunk_size.X), (int)Math.Floor(position_offset.Y / (double)chunk_size.Y));
+				string key = vecToString(position);
+				if (chunks.ContainsKey(key))
+				{
+					string temp = chunks[key].pop_pixel_str(position_offset, hit_strength);
+					if (temp == "Air")
+					{
+						placed_amount ++;
+						amount --;
+						chunks[key].particleAdd(createParticle(position_offset, p_type));
+						if (amount == 0) 
+						{
+							return placed_amount;
+						}
+					}
+				}
+			}
+		}
+		return placed_amount;
+	}
 }
