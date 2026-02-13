@@ -222,6 +222,17 @@ public partial class Sand : TileMapLayer
 			"Dirt",
 			p_strong: 150
 		));
+		particle_list.Add("Snow", new NB_particle(
+			NB_type.FALLING,
+			false,
+			[
+				new Vector2I(0,2),
+				new Vector2I(1,0),
+				new Vector2I(0,1),
+			],
+			"Dirt",
+			p_strong: 25
+		));
 		//TODO make it global
 		// Init random numbers
 		random_color = new RandomNumberGenerator();
@@ -249,6 +260,9 @@ public partial class Sand : TileMapLayer
 					break;
 				case Vector2I(14,13):
 					particleCellPlace(createParticle(coords, "Dirt"));
+					break;
+				case Vector2I(9,15):
+					particleCellPlace(createParticle(coords, "Snow"));
 					break;
 				default:
 					break;
@@ -448,6 +462,10 @@ public partial class Sand : TileMapLayer
 			case "Dirt":
 				color_variation = Math.Clamp(color_variation, 0, 2);
 				return_particle.color = new Vector2I(14,11 + color_variation);
+				break;
+			case "Snow":
+				color_variation = Math.Clamp(color_variation, 0, 2);
+				return_particle.color = new Vector2I(8 + color_variation,15);
 				break;
 			default:
 				return_particle.color = new Vector2I(0,0);

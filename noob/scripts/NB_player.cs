@@ -94,6 +94,7 @@ public partial class NB_player : RigidBody2D
 	public float hit_range = 10f;
 	private float place_delay = 0;
 	private int place_index = 0;
+	private bool place_debouncer = true;
 	//! Sprites
 	[Export]
 	public  Godot.Collections.Array<Sprite2D> to_flip_sprites;
@@ -116,7 +117,30 @@ public partial class NB_player : RigidBody2D
 	}
 	private void inventoryActions() 
 	{
-		
+		if (Input.IsActionPressed("choose_up")) {
+			if (place_debouncer) 
+			{
+				place_debouncer = false;
+				place_index = (place_index - 1 < 0 ? inventory.Count - 1: place_index) - 1;
+				updateInventoryText();
+			}
+		} else if (Input.IsActionPressed("choose_down")) 
+		{ 
+			if (place_debouncer) 
+			{
+				place_debouncer = false;
+				place_index = (place_index + 1) % (inventory.Count);
+				updateInventoryText();
+			}
+		} else 
+		{
+			if (!place_debouncer) 
+			{
+				GD.Print(place_index);
+				place_debouncer = true;
+				updateInventoryText();
+			}
+		}
 	}
 	private void checkCursor()
 	{
@@ -137,14 +161,7 @@ public partial class NB_player : RigidBody2D
 						inventory[a] = temp[a];
 					}
 				}
-				inv_text.Text = "Inventory:";
-				int indexer_cool = 0;
-				foreach (string a in inventory.Keys)
-				{
-					if (a == "Air") {continue;}
-					inv_text.Text += "\n" + (indexer_cool == place_index? "> " : "|") + a + ": " + inventory[a].ToString();
-					indexer_cool += 1;
-				}
+				updateInventoryText();
 			} 
 		}
 		if (Input.IsActionPressed("destroy"))
@@ -153,6 +170,17 @@ public partial class NB_player : RigidBody2D
 			{
 				place_delay = 0.2f;
 			}
+		}
+	}
+	private void updateInventoryText() 
+	{
+		inv_text.Text = "Inventory:";
+		int indexer_cool = 0;
+		foreach (string a in inventory.Keys)
+		{
+			if (a == "Air") {continue;}
+			inv_text.Text += "\n" + (indexer_cool == place_index? "> " : "|") + a + ": " + inventory[a].ToString();
+			indexer_cool += 1;
 		}
 	}
 	//! Physics Process
