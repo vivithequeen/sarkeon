@@ -62,7 +62,7 @@ public partial class BaseCritter : Node
 		{
 			return false;
 		}
-		if (position.DistanceTo(_currentCritterNavigationPath[0]) < 1)
+		if (position.DistanceTo(_currentCritterNavigationPath[0]) < 5)
 		{
 
 			_currentCritterNavigationPath.RemoveAt(0);

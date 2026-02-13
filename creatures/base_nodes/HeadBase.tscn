@@ -8,17 +8,19 @@
 script = ExtResource("1_1jeo7")
 
 [node name="TextureRect2" type="TextureRect" parent="."]
+visible = false
 offset_left = 14.0
 offset_top = 21.0
 offset_right = 38.0
-offset_bottom = 62.0
+offset_bottom = 45.0
 rotation = 3.1415927
+scale = Vector2(4, 4)
 texture = ExtResource("3_6pxdm")
 
 [node name="head" type="TextureRect" parent="."]
-offset_left = 182.0
-offset_top = -60.0
-offset_right = 302.0
-offset_bottom = 122.0
+offset_left = 88.0
+offset_top = -22.0
+offset_right = 99.0
 rotation = 1.5707964
+scale = Vector2(4, 4)
 texture = ExtResource("2_6pxdm")

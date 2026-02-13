@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://irs1gihpmyvx"]
+[gd_scene load_steps=3 format=3 uid="uid://irs1gihpmyvx"]
 
 [ext_resource type="Script" uid="uid://ddsxis1g27y6m" path="res://creatures/base_nodes/TailBase.cs" id="1_h31eg"]
-[ext_resource type="Texture2D" uid="uid://c8ijscrlbmr0h" path="res://assets/creature/centipede/joint2.png" id="2_h31eg"]
 [ext_resource type="Texture2D" uid="uid://cpomnjrvdvyks" path="res://assets/creature/centipede/tail.png" id="3_d3v7l"]
 
 [node name="Tailbase" type="Node2D"]
@@ -12,12 +11,13 @@ offset_left = -12.0
 offset_top = -12.0
 offset_right = 12.0
 offset_bottom = 12.0
-texture = ExtResource("2_h31eg")
 
 [node name="TextureRect" type="TextureRect" parent="."]
-offset_top = -16.0
-offset_right = 32.0
-offset_bottom = 93.0
+offset_left = 44.0
+offset_top = -30.0
+offset_right = 59.0
+offset_bottom = -8.0
 rotation = -4.712389
+scale = Vector2(4, 4)
 texture = ExtResource("3_d3v7l")
 flip_v = true

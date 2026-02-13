@@ -3,7 +3,7 @@ using System;
 
 public partial class TailBase : BodySegmentBase
 {
-
+	public float FollowDistance = 15;
 	public override void FollowTarget(Vector2 TargetPosition, double delta)
 	{
 		float DistanceToTarget = GlobalPosition.DistanceTo(TargetPosition);
@@ -11,7 +11,7 @@ public partial class TailBase : BodySegmentBase
 		LookAt(TargetPosition);
 
 
-		if (DistanceToTarget > 15)
+		if (DistanceToTarget > FollowDistance)
 		{
 			GlobalPosition = GlobalPosition.MoveToward(TargetPosition, 300 * (float)delta);
 		}
