@@ -119,7 +119,7 @@ public partial class NB_player : RigidBody2D
 		{
 			if (destroy_delay <= 0)
 			{
-				destroy_delay = 0.1f;
+				destroy_delay = 0.4f;
 				Dictionary<string, int> temp = sand.digSquare((Vector2I) cursor_ik_node.GlobalPosition, 3, hit_strength);
 				float temp_timer = 0;
 				foreach (string a in temp.Keys)
@@ -328,9 +328,9 @@ public partial class NB_player : RigidBody2D
 		movement_crouching = input.Y > 0;
 		movement_jumping = input.Y < 0;
 		added_force += new Vector2(input.X, 0) * delta * movement_speed * controll_multiplier * (movement_crouching? crouch_speed_multiplier:1);
-		if (input.X != 0 != flip_direction)
+		if (input.X != 0 && flip_direction)
 		{
-			flip_direction = input.X != 0;
+			flip_direction = true;
 			skeleton.GetModificationStack().GetModification(0).Set("flip_bend_direction", input.X < 0);
 			skeleton.GetModificationStack().GetModification(1).Set("flip_bend_direction", input.X < 0);
 			skeleton.GetModificationStack().GetModification(2).Set("flip_bend_direction", input.X < 0);
