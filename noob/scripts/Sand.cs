@@ -230,7 +230,7 @@ public partial class Sand : TileMapLayer
 				new Vector2I(1,0),
 				new Vector2I(0,1),
 			],
-			"Dirt",
+			"Snow",
 			p_strong: 25
 		));
 		//TODO make it global
@@ -567,16 +567,16 @@ public partial class Sand : TileMapLayer
 				string key = vecToString(position);
 				if (chunks.ContainsKey(key))
 				{
-					string temp = chunks[key].pop_pixel_str(position_offset, hit_strength);
-					if (temp == "Air")
+					NB_particle temp = chunks[key].getParticle(position_offset);
+					if (temp.particle_name == "Air")
 					{
-						placed_amount ++;
-						amount --;
-						chunks[key].particleAdd(createParticle(position_offset, p_type));
 						if (amount == 0) 
 						{
 							return placed_amount;
 						}
+						placed_amount ++;
+						amount --;
+						chunks[key].particleAdd(createParticle(position_offset, p_type));
 					}
 				}
 			}

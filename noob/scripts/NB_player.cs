@@ -114,6 +114,7 @@ public partial class NB_player : RigidBody2D
 			cursor_ik_node.GlobalPosition = (cursor_ik_node.GlobalPosition - GlobalPosition).Normalized() * hit_range + GlobalPosition;
 		}
 		destroy_delay -= (float)delta;
+		place_delay -= (float)delta;
 	}
 	private void inventoryActions() 
 	{
@@ -129,14 +130,13 @@ public partial class NB_player : RigidBody2D
 			if (place_debouncer) 
 			{
 				place_debouncer = false;
-				place_index = (place_index + 1) % (inventory.Count);
+				place_index = (place_index + 1) % (inventory.Count - 1);
 				updateInventoryText();
 			}
 		} else 
 		{
 			if (!place_debouncer) 
 			{
-				GD.Print(place_index);
 				place_debouncer = true;
 				updateInventoryText();
 			}
@@ -181,10 +181,7 @@ public partial class NB_player : RigidBody2D
 					}
 					indexer_cool += 1;
 				}
-
-
-
-
+				updateInventoryText();
 			}
 		}
 	}
