@@ -1,4 +1,4 @@
-[gd_scene format=4 uid="uid://c7qf6b52tl7ce"]
+[gd_scene format=4 uid="uid://4ll4rtnjf3cw"]
 
 [ext_resource type="Shader" uid="uid://canepjvundqr4" path="res://noob/shaders/line_shader.gdshader" id="1_ejwqg"]
 [ext_resource type="Theme" uid="uid://cbm2mqiwgq108" path="res://noob/themes/main.tres" id="1_g5qpr"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cbjymuray6lxp" path="res://assets/palettes/sunfall-1x.png" id="2_se66j"]
 [ext_resource type="Material" uid="uid://b7jn55ujx7itp" path="res://noob/materials/2d/bgsand.tres" id="3_mvf65"]
 [ext_resource type="Texture2D" uid="uid://cso00r735dudy" path="res://assets/gimp/TILTE.png" id="3_se66j"]
+[ext_resource type="Script" uid="uid://bxemldhv0ue4h" path="res://noob/scripts/multi/buttons.gd" id="6_4edmc"]
 
 [sub_resource type="Animation" id="Animation_lvg3r"]
 length = 0.001
@@ -66,7 +67,7 @@ shader_parameter/sizer = Vector2(0.1, 0.1)
 shader = ExtResource("1_ejwqg")
 shader_parameter/colors = PackedVector4Array(1, 0.831, 0.639, 1, 1, 0.584, 0.216, 1, 0.831, 0.322, 0.067, 1, 0.706, 0.231, 0.157, 1)
 shader_parameter/speed_mul = 1.6
-shader_parameter/sizer = Vector2(1, 1)
+shader_parameter/sizer = Vector2(0.52, 1)
 
 [node name="Main_menu" type="Control" unique_id=418851756]
 layout_mode = 3
@@ -132,21 +133,26 @@ grow_vertical = 2
 material = SubResource("ShaderMaterial_yucc0")
 layout_mode = 2
 text = "PLAY"
+script = ExtResource("6_4edmc")
 
 [node name="Settings" type="Button" parent="HBoxContainer/Panel/VBoxContainer" unique_id=1859038610]
 material = SubResource("ShaderMaterial_bxhha")
 layout_mode = 2
 text = "SETTINGS"
+script = ExtResource("6_4edmc")
 
 [node name="Credits" type="Button" parent="HBoxContainer/Panel/VBoxContainer" unique_id=503162049]
 material = SubResource("ShaderMaterial_bxhha")
 layout_mode = 2
 text = "CREDITS"
+script = ExtResource("6_4edmc")
 
 [node name="Exit" type="Button" parent="HBoxContainer/Panel/VBoxContainer" unique_id=799197950]
 material = SubResource("ShaderMaterial_7mp7o")
 layout_mode = 2
 text = "EXIT"
+script = ExtResource("6_4edmc")
+exit = true
 
 [node name="TextureRect" type="TextureRect" parent="HBoxContainer" unique_id=494623523]
 material = SubResource("ShaderMaterial_0nd65")
