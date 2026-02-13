@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://0rsatx5iv1r0"]
+[gd_scene format=4 uid="uid://0rsatx5iv1r0"]
 
 [ext_resource type="Script" uid="uid://c80yv035w2olg" path="res://noob/scripts/NB_player.cs" id="1_jplgo"]
+[ext_resource type="Shader" uid="uid://canepjvundqr4" path="res://noob/shaders/line_shader.gdshader" id="2_efhog"]
 [ext_resource type="Texture2D" uid="uid://bb58d0nnnrw5e" path="res://noob/assets/player/booty.png" id="2_r4f3f"]
 [ext_resource type="Texture2D" uid="uid://b8sfwywpgompl" path="res://noob/assets/player/torso.png" id="3_efhog"]
 [ext_resource type="Texture2D" uid="uid://dmj8ea52bcjlk" path="res://noob/assets/player/scarf.png" id="4_8rjev"]
@@ -19,6 +20,12 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_wrj65"]
 radius = 5.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8rjev"]
+shader = ExtResource("2_efhog")
+shader_parameter/colors = PackedVector4Array(0.5, 0.8, 1, 1, 0.4, 0.6, 0.9, 1, 0.3, 0.4, 0.8, 1, 0.2, 0.2, 0.7, 1)
+shader_parameter/speed_mul = 0.05
+shader_parameter/sizer = Vector2(-0.465, 0.54)
 
 [sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_p0v8q"]
 target_nodepath = NodePath("../../Global/IK/Left_feet_position")
@@ -142,12 +149,13 @@ text = "Inventory:"
 layer = -1
 
 [node name="ColorRect" type="ColorRect" parent="Player/Camera2D/CanvasLayer2" unique_id=1855929914]
+material = SubResource("ShaderMaterial_8rjev")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.6152251, 0.55539244, 0.75450003, 1)
+color = Color(0.6098317, 0.49005783, 1, 1)
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player" unique_id=1080347508]
 remote_path = NodePath("../../Player position")
@@ -247,14 +255,14 @@ texture = ExtResource("8_k6fkj")
 [node name="ArmBack" type="Sprite2D" parent="Player position/visuals/Booty/Torso" unique_id=607020100]
 z_index = -1
 position = Vector2(81.93544, -27.936798)
-rotation = 0.051377248
+rotation = 0.051377244
 scale = Vector2(1.000134, 1.000134)
 texture = ExtResource("9_m2ki8")
 
 [node name="ArmBackLower" type="Sprite2D" parent="Player position/visuals/Booty/Torso/ArmBack" unique_id=1493996283]
 position = Vector2(-28.456818, 115.68169)
 rotation = 0.516794
-scale = Vector2(1.0021557, 1.0021557)
+scale = Vector2(1.0021527, 1.0021527)
 texture = ExtResource("10_kl5wk")
 
 [node name="Line2D" type="Line2D" parent="Player position/visuals/Booty/Torso" unique_id=1401991416]
@@ -284,7 +292,7 @@ texture = ExtResource("13_3cyvi")
 
 [node name="LegFronLower" type="Sprite2D" parent="Player position/visuals/Booty/LegFront" unique_id=180533285]
 position = Vector2(-15.171097, 152.37193)
-scale = Vector2(0.9991159, 0.9991159)
+scale = Vector2(0.9991155, 0.9991155)
 texture = ExtResource("14_3o7oh")
 
 [node name="Body" type="Skeleton2D" parent="Player position" unique_id=1411844443]

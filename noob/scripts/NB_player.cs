@@ -106,7 +106,7 @@ public partial class NB_player : RigidBody2D
 	public override void _Process(double delta)
 	{
 		checkCursor();
-		cursor_ik_node.GlobalPosition += ((GetGlobalMousePosition() - cursor_ik_node.GlobalPosition ) * (float)delta * 10f).Clamp(-10,10) ;
+		cursor_ik_node.GlobalPosition += ((GetGlobalMousePosition() - cursor_ik_node.GlobalPosition ) * 10f).Clamp(-1000,1000) * (float)delta;
 		if ((cursor_ik_node.GlobalPosition - GlobalPosition).Length() > hit_range)
 		{
 			cursor_ik_node.GlobalPosition = (cursor_ik_node.GlobalPosition - GlobalPosition).Normalized() * hit_range + GlobalPosition;

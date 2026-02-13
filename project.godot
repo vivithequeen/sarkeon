@@ -19,13 +19,15 @@ config/description="It is a survival game with pixel simulation and has procedua
 Think if noita and rainworld "
 run/main_scene="uid://4ll4rtnjf3cw"
 config/features=PackedStringArray("4.6", "C#", "Forward Plus")
+boot_splash/bg_color=Color(0.121028475, 0.08376042, 0.34547004, 1)
+boot_splash/image="uid://eqa2xu45rh4r"
 config/icon="uid://eqa2xu45rh4r"
 
 [autoload]
 
-ImGuiRoot="*uid://dugmpnsxaagba"
 ImGuiInfo="*res://ImGui/ImGuiLogic.cs"
 NB_rand="*res://globals/NB_Rand.cs"
+ImGuiRoot="*uid://dugmpnsxaagba"
 
 [display]
 
