@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://dfb22up8enecy"]
+[gd_scene format=3 uid="uid://0rsatx5iv1r0"]
 
 [ext_resource type="Script" uid="uid://c80yv035w2olg" path="res://noob/scripts/NB_player.cs" id="1_jplgo"]
 [ext_resource type="Texture2D" uid="uid://bb58d0nnnrw5e" path="res://noob/assets/player/booty.png" id="2_r4f3f"]
@@ -118,7 +118,7 @@ right_leg_ground_distance_sqrd = 1.0
 cursor_ik_node = NodePath("../Global/Cursor")
 inv_text = NodePath("Camera2D/CanvasLayer/Label")
 hit_range = 80.0
-to_flip_sprites = [NodePath("../Player position/visuals/Booty"), NodePath("../Player position/visuals/Booty/Torso"), NodePath("../Player position/visuals/Booty/Torso/Scarf"), NodePath("../Player position/visuals/Booty/Torso/ArmFront"), NodePath("../Player position/visuals/Booty/Torso/ArmFront/ArmFrontLower"), NodePath("../Player position/visuals/Booty/Torso/Head"), NodePath("../Player position/visuals/Booty/Torso/Battery"), NodePath("../Player position/visuals/Booty/Torso/ArmBack"), NodePath("../Player position/visuals/Booty/Torso/ArmBack/ArmBackLower"), NodePath("../Player position/visuals/Booty/LegBack"), NodePath("../Player position/visuals/Booty/LegBack/LegBackLower"), NodePath("../Player position/visuals/Booty/LegFront"), NodePath("../Player position/visuals/Booty/LegFront/LegFronLower")]
+to_flip_sprites = []
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=461926144]
 shape = SubResource("CircleShape2D_wrj65")
@@ -222,20 +222,20 @@ texture = ExtResource("4_8rjev")
 
 [node name="ArmFront" type="Sprite2D" parent="Player position/visuals/Booty/Torso" unique_id=1896090014]
 z_index = 1
-position = Vector2(-19.576864, -4.048218)
-rotation = -0.9533034
-scale = Vector2(0.98785365, 0.98785365)
+position = Vector2(-19.670908, -3.9624481)
+rotation = -0.9510913
+scale = Vector2(0.98785377, 0.98785377)
 texture = ExtResource("5_5g8se")
 
 [node name="ArmFrontLower" type="Sprite2D" parent="Player position/visuals/Booty/Torso/ArmFront" unique_id=1084457233]
-position = Vector2(-50.37613, 151.0563)
-rotation = 1.3221349
-scale = Vector2(1.0028389, 1.0028389)
+position = Vector2(-67.44351, 87.67666)
+rotation = 1.0316273
+scale = Vector2(1.0028387, 1.0028387)
 texture = ExtResource("6_ry7no")
 
 [node name="Head" type="Sprite2D" parent="Player position/visuals/Booty/Torso" unique_id=128622101]
-position = Vector2(7.665491, -113.86217)
-scale = Vector2(0.98847646, 0.98847646)
+position = Vector2(7.665489, -113.86217)
+scale = Vector2(0.9884766, 0.9884766)
 texture = ExtResource("7_svoea")
 
 [node name="Battery" type="Sprite2D" parent="Player position/visuals/Booty/Torso" unique_id=274431849]
@@ -246,38 +246,45 @@ texture = ExtResource("8_k6fkj")
 
 [node name="ArmBack" type="Sprite2D" parent="Player position/visuals/Booty/Torso" unique_id=607020100]
 z_index = -1
-position = Vector2(95.67373, -31.327744)
-rotation = -0.26848885
-scale = Vector2(1.0001177, 1.0001177)
+position = Vector2(81.93544, -27.936798)
+rotation = 0.051377248
+scale = Vector2(1.000134, 1.000134)
 texture = ExtResource("9_m2ki8")
 
 [node name="ArmBackLower" type="Sprite2D" parent="Player position/visuals/Booty/Torso/ArmBack" unique_id=1493996283]
-position = Vector2(-59.94934, 86.51401)
-rotation = 1.1467297
-scale = Vector2(1.0000997, 1.0000997)
+position = Vector2(-28.456818, 115.68169)
+rotation = 0.516794
+scale = Vector2(1.0021557, 1.0021557)
 texture = ExtResource("10_kl5wk")
+
+[node name="Line2D" type="Line2D" parent="Player position/visuals/Booty/Torso" unique_id=1401991416]
+points = PackedVector2Array(-400, 0, -300, 0, -200, 0, -100, 0, 0, 0)
+width = 200.0
+texture = ExtResource("4_8rjev")
+texture_mode = 2
 
 [node name="LegBack" type="Sprite2D" parent="Player position/visuals/Booty" unique_id=1845640794]
 z_index = -1
-position = Vector2(50.872494, 128.17307)
-rotation = -0.08543515
-scale = Vector2(0.9991232, 0.9991232)
+position = Vector2(46.11937, 128.58336)
+rotation = -0.033305526
+scale = Vector2(0.9991233, 0.9991233)
 texture = ExtResource("11_lwe32")
 
 [node name="LegBackLower" type="Sprite2D" parent="Player position/visuals/Booty/LegBack" unique_id=43622306]
-position = Vector2(19.372765, 132.48517)
-scale = Vector2(1.0001159, 1.0001159)
+position = Vector2(20.093197, 132.34645)
+rotation = -0.009755616
+scale = Vector2(1.000117, 1.000117)
 texture = ExtResource("12_n6rgc")
 
 [node name="LegFront" type="Sprite2D" parent="Player position/visuals/Booty" unique_id=1553434517]
-position = Vector2(-49.22281, 136.40227)
-rotation = 0.09815658
-scale = Vector2(0.99894273, 0.99894273)
+position = Vector2(-39.99813, 129.99393)
+rotation = 0.098156445
+scale = Vector2(0.9989427, 0.9989427)
 texture = ExtResource("13_3cyvi")
 
 [node name="LegFronLower" type="Sprite2D" parent="Player position/visuals/Booty/LegFront" unique_id=180533285]
-position = Vector2(-48.444443, 95.679535)
-scale = Vector2(1.0000775, 1.0000775)
+position = Vector2(-15.171097, 152.37193)
+scale = Vector2(0.9991159, 0.9991159)
 texture = ExtResource("14_3o7oh")
 
 [node name="Body" type="Skeleton2D" parent="Player position" unique_id=1411844443]
@@ -338,7 +345,7 @@ rest = Transform2D(1, 0, 0, 1, -13, 1)
 metadata/_local_pose_override_enabled_ = true
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player position/Body/Base/body/shoulder_l/arm_l" unique_id=743224317]
-position = Vector2(-7.515272, 8.626656)
+position = Vector2(-7.9123, -0.09542847)
 rotation = 1.5707964
 remote_path = NodePath("../../../../../../visuals/Booty/Torso/ArmFront/ArmFrontLower")
 update_scale = false
@@ -389,7 +396,7 @@ rest = Transform2D(-4.371115e-08, 0.9999946, -0.9999946, -4.371115e-08, -7, 1)
 metadata/_local_pose_override_enabled_ = true
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player position/Body/Base/leg_upper_l" unique_id=177184651]
-position = Vector2(11.305712, 0.41768265)
+position = Vector2(10.57753, -0.43758714)
 rotation = -1.5707964
 remote_path = NodePath("../../../../visuals/Booty/LegFront")
 update_scale = false
@@ -406,7 +413,7 @@ rest = Transform2D(0.9999966, 0, 0, 0.9999966, 17.000092, -1.9073486e-06)
 metadata/_local_pose_override_enabled_ = true
 
 [node name="RemoteTransform2D" type="RemoteTransform2D" parent="Player position/Body/Base/leg_upper_l/leg_lower_l" unique_id=1557922615]
-position = Vector2(4.7642508, 5.257276)
+position = Vector2(9.699641, 1.0780021)
 rotation = -1.5707964
 remote_path = NodePath("../../../../../visuals/Booty/LegFront/LegFronLower")
 update_scale = false
