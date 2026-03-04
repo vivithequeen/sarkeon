@@ -16,7 +16,7 @@ public partial class Sand : TileMapLayer
 		FALLING,
 		SOLID,
 	}
-	
+
 	class NB_particle
 	{
 		public NB_particle (
