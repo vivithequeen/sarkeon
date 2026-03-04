@@ -118,7 +118,7 @@ right_leg_ground_distance_sqrd = 1.0
 cursor_ik_node = NodePath("../Global/Cursor")
 inv_text = NodePath("Camera2D/CanvasLayer/Label")
 hit_range = 80.0
-to_flip_sprites = [NodePath("../Player position/visuals/Booty"), NodePath("../Player position/visuals/Booty/Torso"), NodePath("../Player position/visuals/Booty/Torso/Scarf"), NodePath("../Player position/visuals/Booty/Torso/ArmFront"), NodePath("../Player position/visuals/Booty/Torso/ArmFront/ArmFrontLower"), NodePath("../Player position/visuals/Booty/Torso/Head"), NodePath("../Player position/visuals/Booty/Torso/Battery"), NodePath("../Player position/visuals/Booty/Torso/ArmBack"), NodePath("../Player position/visuals/Booty/Torso/ArmBack/ArmBackLower"), NodePath("../Player position/visuals/Booty/LegBack"), NodePath("../Player position/visuals/Booty/LegBack/LegBackLower"), NodePath("../Player position/visuals/Booty/LegFront"), NodePath("../Player position/visuals/Booty/LegFront/LegFronLower")]
+to_flip_sprites = [NodePath("../Player position/visuals/Booty"), NodePath("../Player position/visuals/Booty/Torso"), NodePath(""), NodePath("../Player position/visuals/Booty/Torso/ArmFront"), NodePath("../Player position/visuals/Booty/Torso/ArmFront/ArmFrontLower"), NodePath("../Player position/visuals/Booty/Torso/Head"), NodePath("../Player position/visuals/Booty/Torso/Battery"), NodePath("../Player position/visuals/Booty/Torso/ArmBack"), NodePath("../Player position/visuals/Booty/Torso/ArmBack/ArmBackLower"), NodePath("../Player position/visuals/Booty/LegBack"), NodePath("../Player position/visuals/Booty/LegBack/LegBackLower"), NodePath("../Player position/visuals/Booty/LegFront"), NodePath("../Player position/visuals/Booty/LegFront/LegFronLower")]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=461926144]
 shape = SubResource("CircleShape2D_wrj65")
@@ -214,12 +214,6 @@ position = Vector2(-10.401323, -122.747)
 scale = Vector2(0.99507135, 0.99507135)
 texture = ExtResource("3_efhog")
 
-[node name="Scarf" type="Sprite2D" parent="Player position/visuals/Booty/Torso" unique_id=1303597770]
-z_index = -1
-position = Vector2(-216.16406, -13.958776)
-scale = Vector2(0.99999994, 0.99999994)
-texture = ExtResource("4_8rjev")
-
 [node name="ArmFront" type="Sprite2D" parent="Player position/visuals/Booty/Torso" unique_id=1896090014]
 z_index = 1
 position = Vector2(-19.576864, -4.048218)
@@ -257,6 +251,12 @@ rotation = 1.1467297
 scale = Vector2(1.0000997, 1.0000997)
 texture = ExtResource("10_kl5wk")
 
+[node name="Line2D" type="Line2D" parent="Player position/visuals/Booty/Torso" unique_id=267714163]
+points = PackedVector2Array(-521.26294, 50.14936, -329.91763, 120.51507, -221.28284, -6.6369934, 41.6628, -15.278366)
+width = 200.0
+texture = ExtResource("4_8rjev")
+texture_mode = 2
+
 [node name="LegBack" type="Sprite2D" parent="Player position/visuals/Booty" unique_id=1845640794]
 z_index = -1
 position = Vector2(50.872494, 128.17307)
@@ -277,7 +277,7 @@ texture = ExtResource("13_3cyvi")
 
 [node name="LegFronLower" type="Sprite2D" parent="Player position/visuals/Booty/LegFront" unique_id=180533285]
 position = Vector2(-48.444443, 95.679535)
-scale = Vector2(1.0000775, 1.0000775)
+scale = Vector2(1.0000771, 1.0000771)
 texture = ExtResource("14_3o7oh")
 
 [node name="Body" type="Skeleton2D" parent="Player position" unique_id=1411844443]

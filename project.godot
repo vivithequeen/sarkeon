@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Sarkeon"
-run/main_scene="uid://dowdqq2cih1gf"
+run/main_scene="uid://dc6u2ptcff2uk"
 config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 config/icon="res://scene/icon.svg"
 
