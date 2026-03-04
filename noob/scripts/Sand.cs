@@ -16,7 +16,7 @@ public partial class Sand : TileMapLayer
 		FALLING,
 		SOLID,
 	}
-	
+
 	class NB_particle
 	{
 		public NB_particle (
@@ -222,6 +222,17 @@ public partial class Sand : TileMapLayer
 			"Dirt",
 			p_strong: 150
 		));
+		particle_list.Add("Snow", new NB_particle(
+			NB_type.FALLING,
+			false,
+			[
+				new Vector2I(0,2),
+				new Vector2I(1,0),
+				new Vector2I(0,1),
+			],
+			"Snow",
+			p_strong: 25
+		));
 		//TODO make it global
 		// Init random numbers
 		random_color = new RandomNumberGenerator();
@@ -249,6 +260,9 @@ public partial class Sand : TileMapLayer
 					break;
 				case Vector2I(14,13):
 					particleCellPlace(createParticle(coords, "Dirt"));
+					break;
+				case Vector2I(9,15):
+					particleCellPlace(createParticle(coords, "Snow"));
 					break;
 				default:
 					break;
@@ -449,6 +463,10 @@ public partial class Sand : TileMapLayer
 				color_variation = Math.Clamp(color_variation, 0, 2);
 				return_particle.color = new Vector2I(14,11 + color_variation);
 				break;
+			case "Snow":
+				color_variation = Math.Clamp(color_variation, 0, 2);
+				return_particle.color = new Vector2I(8 + color_variation,15);
+				break;
 			default:
 				return_particle.color = new Vector2I(0,0);
 				break;
@@ -537,9 +555,32 @@ public partial class Sand : TileMapLayer
 		}
 		return return_val;
 	}
-	// public int place(Vector2I p_global_position, int size, int amount, string p_type)
-	// {
-		
-	// 	return return_val;
-	// }
+	public int placeSquare(Vector2I p_global_position, int size, int amount, string p_type)
+	{
+		int placed_amount = 0;
+		for (int x =  - size; x < size; x++)
+		{
+			for (int y = - size; y < size; y++)
+			{
+				Vector2I position_offset =  new Vector2I(x,y) + ( p_global_position - (Vector2I)GlobalPosition) / 4 ;
+				Vector2I position = new Vector2I((int)Math.Floor(position_offset.X / (double)chunk_size.X), (int)Math.Floor(position_offset.Y / (double)chunk_size.Y));
+				string key = vecToString(position);
+				if (chunks.ContainsKey(key))
+				{
+					NB_particle temp = chunks[key].getParticle(position_offset);
+					if (temp.particle_name == "Air")
+					{
+						if (amount == 0) 
+						{
+							return placed_amount;
+						}
+						placed_amount ++;
+						amount --;
+						chunks[key].particleAdd(createParticle(position_offset, p_type));
+					}
+				}
+			}
+		}
+		return placed_amount;
+	}
 }

@@ -1,0 +1,116 @@
+[gd_scene format=4 uid="uid://bsv5f2q5cl7ot"]
+
+[ext_resource type="Theme" uid="uid://cbm2mqiwgq108" path="res://noob/themes/main.tres" id="1_1ks6k"]
+[ext_resource type="Script" uid="uid://bfgpoml83rsto" path="res://noob/scripts/ready/play_animation.cs" id="2_xxou8"]
+[ext_resource type="Material" uid="uid://b7jn55ujx7itp" path="res://noob/materials/2d/bgsand.tres" id="3_7k603"]
+[ext_resource type="Texture2D" uid="uid://cbjymuray6lxp" path="res://assets/palettes/sunfall-1x.png" id="4_kwnni"]
+[ext_resource type="Shader" uid="uid://canepjvundqr4" path="res://noob/shaders/line_shader.gdshader" id="5_41x33"]
+
+[sub_resource type="Animation" id="Animation_lvg3r"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:color:h")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_mqtce"]
+resource_name = "start"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:color:h")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xjcyo"]
+_data = {
+&"RESET": SubResource("Animation_lvg3r"),
+&"start": SubResource("Animation_mqtce")
+}
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yucc0"]
+shader = ExtResource("5_41x33")
+shader_parameter/colors = PackedVector4Array(1, 0.831, 0.639, 1, 1, 0.584, 0.216, 1, 0.831, 0.322, 0.067, 1, 0.706, 0.231, 0.157, 1)
+shader_parameter/speed_mul = 5.0
+shader_parameter/sizer = Vector2(0.1, 0.1)
+
+[node name="Main_menu" type="Control" unique_id=418851756]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_1ks6k")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1644132445]
+deterministic = true
+libraries/ = SubResource("AnimationLibrary_xjcyo")
+speed_scale = 0.05
+script = ExtResource("2_xxou8")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1268999789]
+z_index = -2
+material = ExtResource("3_7k603")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 3.1415927
+pivot_offset_ratio = Vector2(0.5, 0.5)
+color = Color(1, 0, 0, 1)
+
+[node name="Sunfall1x" type="Sprite2D" parent="." unique_id=1602529988]
+position = Vector2(525, 682)
+scale = Vector2(76.9, 267.5)
+texture = ExtResource("4_kwnni")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=2113077598]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="BACK" type="Button" parent="HBoxContainer" unique_id=1813144554]
+material = SubResource("ShaderMaterial_yucc0")
+layout_mode = 2
+text = "BACK"
+
+[node name="Panel" type="Panel" parent="HBoxContainer" unique_id=450114154]
+custom_minimum_size = Vector2(700, 0)
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/Panel" unique_id=1213001237]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Credits ;PP
+Procedula enemies - ViviTheQueen
+Sand - n0o0b090lv
+Menu - n0o0b090lv
+Music - n0o0b090lv"

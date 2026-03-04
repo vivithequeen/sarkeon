@@ -93,7 +93,8 @@ public partial class NB_player : RigidBody2D
 	[Export]
 	public float hit_range = 10f;
 	private float place_delay = 0;
-	private float place_index = 0;
+	private int place_index = 0;
+	private bool place_debouncer = true;
 	//! Sprites
 	[Export]
 	public  Godot.Collections.Array<Sprite2D> to_flip_sprites;
@@ -105,13 +106,41 @@ public partial class NB_player : RigidBody2D
 	}
 	public override void _Process(double delta)
 	{
+		inventoryActions();
 		checkCursor();
-		cursor_ik_node.GlobalPosition += ((GetGlobalMousePosition() - cursor_ik_node.GlobalPosition ) * (float)delta * 10f).Clamp(-10,10) ;
+		cursor_ik_node.GlobalPosition += ((GetGlobalMousePosition() - cursor_ik_node.GlobalPosition ) * 10f).Clamp(-1000,1000) * (float)delta;
 		if ((cursor_ik_node.GlobalPosition - GlobalPosition).Length() > hit_range)
 		{
 			cursor_ik_node.GlobalPosition = (cursor_ik_node.GlobalPosition - GlobalPosition).Normalized() * hit_range + GlobalPosition;
 		}
 		destroy_delay -= (float)delta;
+		place_delay -= (float)delta;
+	}
+	private void inventoryActions() 
+	{
+		if (Input.IsActionPressed("choose_up")) {
+			if (place_debouncer) 
+			{
+				place_debouncer = false;
+				place_index = (place_index - 1 < 0 ? inventory.Count - 1: place_index) - 1;
+				updateInventoryText();
+			}
+		} else if (Input.IsActionPressed("choose_down")) 
+		{ 
+			if (place_debouncer) 
+			{
+				place_debouncer = false;
+				place_index = (place_index + 1) % (inventory.Count - 1);
+				updateInventoryText();
+			}
+		} else 
+		{
+			if (!place_debouncer) 
+			{
+				place_debouncer = true;
+				updateInventoryText();
+			}
+		}
 	}
 	private void checkCursor()
 	{
@@ -119,7 +148,7 @@ public partial class NB_player : RigidBody2D
 		{
 			if (destroy_delay <= 0)
 			{
-				destroy_delay = 0.1f;
+				destroy_delay = 0.4f;
 				Dictionary<string, int> temp = sand.digSquare((Vector2I) cursor_ik_node.GlobalPosition, 3, hit_strength);
 				float temp_timer = 0;
 				foreach (string a in temp.Keys)
@@ -132,22 +161,39 @@ public partial class NB_player : RigidBody2D
 						inventory[a] = temp[a];
 					}
 				}
-				inv_text.Text = "Inventory:";
-				int indexer_cool = 0;
-				foreach (string a in inventory.Keys)
-				{
-					if (a == "Air") {continue;}
-					indexer_cool += 1;
-					inv_text.Text += "\n" + (indexer_cool == place_index? ">" : "") + a + ": " + inventory[a].ToString();
-				}
+				updateInventoryText();
 			} 
 		}
-		if (Input.IsActionPressed("destroy"))
+		if (Input.IsActionPressed("place"))
 		{
 			if (place_delay <= 0)
 			{
 				place_delay = 0.2f;
+
+				int indexer_cool = 0;
+				foreach (string a in inventory.Keys)
+				{
+					if (a == "Air") {continue;}
+					if(indexer_cool == place_index) 
+					{
+						inventory[a] -= sand.placeSquare((Vector2I) cursor_ik_node.GlobalPosition, 3, inventory[a], a);
+						break;
+					}
+					indexer_cool += 1;
+				}
+				updateInventoryText();
 			}
+		}
+	}
+	private void updateInventoryText() 
+	{
+		inv_text.Text = "Inventory:";
+		int indexer_cool = 0;
+		foreach (string a in inventory.Keys)
+		{
+			if (a == "Air") {continue;}
+			inv_text.Text += "\n" + (indexer_cool == place_index? "> " : "|") + a + ": " + inventory[a].ToString();
+			indexer_cool += 1;
 		}
 	}
 	//! Physics Process
@@ -328,16 +374,22 @@ public partial class NB_player : RigidBody2D
 		movement_crouching = input.Y > 0;
 		movement_jumping = input.Y < 0;
 		added_force += new Vector2(input.X, 0) * delta * movement_speed * controll_multiplier * (movement_crouching? crouch_speed_multiplier:1);
-		if (input.X != 0 != flip_direction)
+		if (input.X != 0)
 		{
-			flip_direction = input.X != 0;
-			skeleton.GetModificationStack().GetModification(0).Set("flip_bend_direction", input.X < 0);
-			skeleton.GetModificationStack().GetModification(1).Set("flip_bend_direction", input.X < 0);
-			skeleton.GetModificationStack().GetModification(2).Set("flip_bend_direction", input.X < 0);
-			foreach (Sprite2D x in to_flip_sprites) 
+			if (flip_direction) 
 			{
-				x.FlipH = input.X < 0;
+				flip_direction = false;
+				skeleton.GetModificationStack().GetModification(0).Set("flip_bend_direction", input.X < 0);
+				skeleton.GetModificationStack().GetModification(1).Set("flip_bend_direction", input.X < 0);
+				skeleton.GetModificationStack().GetModification(2).Set("flip_bend_direction", input.X < 0);
+				foreach (Sprite2D x in to_flip_sprites) 
+				{
+					x.FlipH = input.X < 0;
+				}
 			}
+		} else 
+		{
+			flip_direction = true;
 		}
 		if (input.X == 0) 
 		{
