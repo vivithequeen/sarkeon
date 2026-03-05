@@ -98,6 +98,10 @@ public partial class NB_player : RigidBody2D
 	//! Sprites
 	[Export]
 	public  Godot.Collections.Array<Sprite2D> to_flip_sprites;
+	[Export]
+	public float jump_debouncer_max_timer = 0;
+	public float jump_debouncer_timer = 0;
+
 	public override void _Ready()
 	{
 		sandInit();
@@ -150,7 +154,6 @@ public partial class NB_player : RigidBody2D
 			{
 				destroy_delay = 0.4f;
 				Dictionary<string, int> temp = sand.digSquare((Vector2I) cursor_ik_node.GlobalPosition, 3, hit_strength);
-				float temp_timer = 0;
 				foreach (string a in temp.Keys)
 				{
 					if (inventory.ContainsKey(a))
@@ -295,6 +298,10 @@ public partial class NB_player : RigidBody2D
 				recalculateControll();
 			}
 		}
+		if(!left_on_ground && !right_on_ground)
+		{
+			jump_debouncer_timer = jump_debouncer_max_timer;
+		}
 	}
 	private void recalculateControll()
 	{
@@ -372,7 +379,8 @@ public partial class NB_player : RigidBody2D
 	{
 		Vector2 input = Input.GetVector("left", "right", "up", "down");
 		movement_crouching = input.Y > 0;
-		movement_jumping = input.Y < 0;
+		movement_jumping = input.Y < 0 && jump_debouncer_timer < 0;
+		jump_debouncer_timer -= delta;
 		added_force += new Vector2(input.X, 0) * delta * movement_speed * controll_multiplier * (movement_crouching? crouch_speed_multiplier:1);
 		if (input.X != 0)
 		{
