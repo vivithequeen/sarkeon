@@ -306,7 +306,6 @@ public partial class NB_player : RigidBody2D
 	private void recalculateControll()
 	{
 		controll_multiplier = Math.Clamp((left_on_ground ? 1f:0) + (right_on_ground ? 1f:0), 0, 1);
-		
 	}
 	private void getLeftPosition()
 	{
@@ -440,7 +439,7 @@ public partial class NB_player : RigidBody2D
 			b_2.Rotation -= (float)Math.PI/2f;
 			Vector2 bone_look = b_3.GlobalPosition - b_2.GlobalPosition;
 			Vector2 goal_look = goal - b_3.GlobalPosition;
-			float error = (int)((b_3.GlobalPosition.DistanceTo(goal) * (bone_look.Dot(goal_look) > 0? 1 : -1) * 100) / 100.0f);
+			float error = (int)(b_3.GlobalPosition.DistanceTo(goal) * (bone_look.Dot(goal_look) > 0? 1 : -1) * 100 / 100.0f);
 			b_1.Rotation += error / b_1_size;
 			return false;
 		}
