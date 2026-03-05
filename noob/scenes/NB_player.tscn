@@ -135,10 +135,6 @@ zoom = Vector2(2, 2)
 position_smoothing_enabled = true
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
-drag_left_margin = 0.4
-drag_top_margin = 0.4
-drag_right_margin = 0.4
-drag_bottom_margin = 0.4
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Player/Camera2D" unique_id=1888616190]
 
@@ -228,15 +224,15 @@ texture = ExtResource("3_efhog")
 
 [node name="ArmFront" type="Sprite2D" parent="Player position/visuals/Booty/Torso" unique_id=1896090014]
 z_index = 1
-position = Vector2(-19.670908, -3.9624481)
-rotation = -0.9510913
+position = Vector2(-19.670889, -3.9624481)
+rotation = -0.95109177
 scale = Vector2(0.98785377, 0.98785377)
 texture = ExtResource("5_5g8se")
 
 [node name="ArmFrontLower" type="Sprite2D" parent="Player position/visuals/Booty/Torso/ArmFront" unique_id=1084457233]
-position = Vector2(-67.44351, 87.67666)
-rotation = 1.0316273
-scale = Vector2(1.0028387, 1.0028387)
+position = Vector2(-67.4435, 87.67665)
+rotation = 1.0316272
+scale = Vector2(1.0028385, 1.0028385)
 texture = ExtResource("6_ry7no")
 
 [node name="Head" type="Sprite2D" parent="Player position/visuals/Booty/Torso" unique_id=128622101]
@@ -260,7 +256,7 @@ texture = ExtResource("9_m2ki8")
 [node name="ArmBackLower" type="Sprite2D" parent="Player position/visuals/Booty/Torso/ArmBack" unique_id=1493996283]
 position = Vector2(-28.456818, 115.68169)
 rotation = 0.516794
-scale = Vector2(1.0021346, 1.0021346)
+scale = Vector2(1.002129, 1.002129)
 texture = ExtResource("10_kl5wk")
 
 [node name="Line2D" type="Line2D" parent="Player position/visuals/Booty/Torso" unique_id=1401991416]
@@ -295,7 +291,7 @@ texture = ExtResource("13_3cyvi")
 
 [node name="LegFronLower" type="Sprite2D" parent="Player position/visuals/Booty/LegFront" unique_id=180533285]
 position = Vector2(-15.171097, 152.37193)
-scale = Vector2(0.99911386, 0.99911386)
+scale = Vector2(0.9991135, 0.9991135)
 texture = ExtResource("14_3o7oh")
 
 [node name="Body" type="Skeleton2D" parent="Player position" unique_id=1411844443]
