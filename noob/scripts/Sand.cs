@@ -162,6 +162,12 @@ public partial class Sand : TileMapLayer
 	public Vector2I load_pos { get; set; } = new Vector2I(0,0);
 	[Export]
 	public Vector2I load_size { get; set; } = new Vector2I(1,1);
+	[Export]
+	public int frontground_sand = 0;
+	[Export]
+	public int background_sand = 1;
+	[Export]
+	public int sand_set = 0;
 	//Init sands
 	public Sand()
 	{
@@ -170,69 +176,8 @@ public partial class Sand : TileMapLayer
 		chunks = new Dictionary<String, NB_chunk>{};
 		//init list
 		chunks_update_list = new List<Vector2I>{};
-		//init all sand data
-		particle_list.Add("Stone", new NB_particle(
-			NB_type.SOLID,
-			true,
-			[],
-			"Stone",
-			p_strong: 1000
-		));
-		particle_list.Add("Sand", new NB_particle(
-			NB_type.FALLING,
-			true,
-			[
-				new Vector2I(0,2),
-				new Vector2I(1,1),
-				new Vector2I(2,1),
-				new Vector2I(0,1),
-			],
-			"Sand",
-			p_strong: 100
-		));
-		particle_list.Add("Water", new NB_particle(
-			NB_type.LIQUID,
-			false,
-			[
-				new Vector2I(0,2),
-				new Vector2I(2,1),
-				new Vector2I(1,1),
-				new Vector2I(2,0),
-				new Vector2I(1,0),
-				new Vector2I(0,1),
-			],
-			"Water",
-			p_strong: 50
-		));
-		particle_list.Add("Hard_dirt", new NB_particle(
-			NB_type.SOLID,
-			true,
-			[],
-			"Hard_dirt",
-			p_strong: 500
-		));
-		particle_list.Add("Dirt", new NB_particle(
-			NB_type.FALLING,
-			true,
-			[
-				new Vector2I(0,2),
-				new Vector2I(1,1),
-				new Vector2I(0,1),
-			],
-			"Dirt",
-			p_strong: 150
-		));
-		particle_list.Add("Snow", new NB_particle(
-			NB_type.FALLING,
-			false,
-			[
-				new Vector2I(0,2),
-				new Vector2I(1,0),
-				new Vector2I(0,1),
-			],
-			"Snow",
-			p_strong: 25
-		));
+		
+		
 		//TODO make it global
 		// Init random numbers
 		random_color = new RandomNumberGenerator();
@@ -242,33 +187,131 @@ public partial class Sand : TileMapLayer
 	{
 		initDebugMonitor();
 		//TODO add so you can add multiple particles aka particlesAdd
+		initSand();
+		visualiser();
+	}
+	private void initSand()
+	{
+		switch (sand_set)
+		{
+			case 0:
+					//init all sand data
+				particle_list.Add("Stone", new NB_particle(
+					NB_type.SOLID,
+					true,
+					[],
+					"Stone",
+					p_strong: 1000
+				));
+				particle_list.Add("Sand", new NB_particle(
+					NB_type.FALLING,
+					true,
+					[
+						new Vector2I(0,2),
+						new Vector2I(1,1),
+						new Vector2I(2,1),
+						new Vector2I(0,1),
+					],
+					"Sand",
+					p_strong: 100
+				));
+				particle_list.Add("Water", new NB_particle(
+					NB_type.LIQUID,
+					false,
+					[
+						new Vector2I(0,2),
+						new Vector2I(2,1),
+						new Vector2I(1,1),
+						new Vector2I(2,0),
+						new Vector2I(1,0),
+						new Vector2I(0,1),
+					],
+					"Water",
+					p_strong: 50
+				));
+				particle_list.Add("Hard_dirt", new NB_particle(
+					NB_type.SOLID,
+					true,
+					[],
+					"Hard_dirt",
+					p_strong: 500
+				));
+				particle_list.Add("Dirt", new NB_particle(
+					NB_type.FALLING,
+					true,
+					[
+						new Vector2I(0,2),
+						new Vector2I(1,1),
+						new Vector2I(0,1),
+					],
+					"Dirt",
+					p_strong: 150
+				));
+				particle_list.Add("Snow", new NB_particle(
+					NB_type.FALLING,
+					false,
+					[
+						new Vector2I(0,2),
+						new Vector2I(1,0),
+						new Vector2I(0,1),
+					],
+					"Snow",
+					p_strong: 25
+				));
+				break;
+			case 1:
+				particle_list.Add("Concrete_wall", new NB_particle(
+					NB_type.SOLID,
+					true,
+					[],
+					"Concrete_wall",
+					p_strong: 1000
+				));
+				break;	
+			default:
+				break;
+		}
 		foreach (Vector2I coords in GetUsedCells())
         {
-			switch (GetCellAtlasCoords(coords))
+			switch (sand_set)
 			{
-				case Vector2I(0,2):
-					particleCellPlace(createParticle(coords, "Water"));
-					break;
-				case Vector2I(14,1):
-					particleCellPlace(createParticle(coords, "Sand"));
-					break;
-				case Vector2I(11,15):
-					particleCellPlace(createParticle(coords, "Stone"));
-					break;
-				case Vector2I(14,10):
-					particleCellPlace(createParticle(coords, "Hard_dirt"));
-					break;
-				case Vector2I(14,13):
-					particleCellPlace(createParticle(coords, "Dirt"));
-					break;
-				case Vector2I(9,15):
-					particleCellPlace(createParticle(coords, "Snow"));
+				case 0:
+					switch (GetCellAtlasCoords(coords))
+					{
+						case Vector2I(0,2):
+							particleCellPlace(createParticle(coords, "Water"));
+							break;
+						case Vector2I(14,1):
+							particleCellPlace(createParticle(coords, "Sand"));
+							break;
+						case Vector2I(11,15):
+							particleCellPlace(createParticle(coords, "Stone"));
+							break;
+						case Vector2I(14,10):
+							particleCellPlace(createParticle(coords, "Hard_dirt"));
+							break;
+						case Vector2I(14,13):
+							particleCellPlace(createParticle(coords, "Dirt"));
+							break;
+						case Vector2I(9,15):
+							particleCellPlace(createParticle(coords, "Snow"));
+							break;
+						default:
+							break;
+					}
 					break;
 				default:
+					switch (GetCellAtlasCoords(coords))
+					{
+						case Vector2I(0,5):
+							particleCellPlace(createParticle(coords, "Concrete_wall"));
+							break;
+						default:
+							break;
+					}
 					break;
 			}
         }
-		visualiser();
 	}
 	List<MeshInstance2D> debug_chunks = [];
 	// very unoptimized debug code o.O
@@ -430,7 +473,7 @@ public partial class Sand : TileMapLayer
 					SetCell(particle.particle_position, -1);
 				} else
 				{
-					SetCell(particle.particle_position, particle.solid? 0: 1, particle.color);
+					SetCell(particle.particle_position, particle.solid? frontground_sand: background_sand, particle.color);
 				}
 			}
 		}
@@ -441,34 +484,48 @@ public partial class Sand : TileMapLayer
 		//TODO coloring script goes here
 		return_particle.flip = flip_direction;
 		color_variation += random_color.RandiRange(-1,1);
-		switch (type)
+		switch (sand_set)
 		{
-			case "Sand":
-				color_variation = Math.Clamp(color_variation, 0, 4);
-				return_particle.color = new Vector2I(14,color_variation);
+			case 0:
+				switch (type)
+				{
+					case "Sand":
+						color_variation = Math.Clamp(color_variation, 0, 4);
+						return_particle.color = new Vector2I(14,color_variation);
+						break;
+					case "Stone":
+						color_variation = Math.Clamp(color_variation, 0, 3);
+						return_particle.color = new Vector2I(9 + color_variation,15);
+						break;
+					case "Water":
+						color_variation = Math.Clamp(color_variation, 0, 3);
+						return_particle.color = new Vector2I(2,8 + color_variation);
+						break;
+					case "Hard_dirt":
+						color_variation = Math.Clamp(color_variation, 0, 2);
+						return_particle.color = new Vector2I(14,8 + color_variation);
+						break;
+					case "Dirt":
+						color_variation = Math.Clamp(color_variation, 0, 2);
+						return_particle.color = new Vector2I(14,11 + color_variation);
+						break;
+					case "Snow":
+						color_variation = Math.Clamp(color_variation, 0, 2);
+						return_particle.color = new Vector2I(8 + color_variation,15);
+						break;
+					default:
+						return_particle.color = new Vector2I(0,0);
+						break;
+				}
 				break;
-			case "Stone":
-				color_variation = Math.Clamp(color_variation, 0, 3);
-				return_particle.color = new Vector2I(9 + color_variation,15);
-				break;
-			case "Water":
-				color_variation = Math.Clamp(color_variation, 0, 3);
-				return_particle.color = new Vector2I(2,8 + color_variation);
-				break;
-			case "Hard_dirt":
-				color_variation = Math.Clamp(color_variation, 0, 2);
-				return_particle.color = new Vector2I(14,8 + color_variation);
-				break;
-			case "Dirt":
-				color_variation = Math.Clamp(color_variation, 0, 2);
-				return_particle.color = new Vector2I(14,11 + color_variation);
-				break;
-			case "Snow":
-				color_variation = Math.Clamp(color_variation, 0, 2);
-				return_particle.color = new Vector2I(8 + color_variation,15);
-				break;
-			default:
-				return_particle.color = new Vector2I(0,0);
+			case 1:
+				switch (type)
+				{
+					case "Concrete_wall":
+						color_variation = Math.Clamp(color_variation, 0, 4);
+						return_particle.color = new Vector2I(color_variation, 5);
+						break;
+				}
 				break;
 		}
 		return return_particle;

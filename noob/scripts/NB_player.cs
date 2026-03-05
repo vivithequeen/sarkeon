@@ -152,7 +152,7 @@ public partial class NB_player : RigidBody2D
 		{
 			if (destroy_delay <= 0)
 			{
-				destroy_delay = 0.4f;
+				destroy_delay = 0.1f;
 				Dictionary<string, int> temp = sand.digSquare((Vector2I) cursor_ik_node.GlobalPosition, 3, hit_strength);
 				foreach (string a in temp.Keys)
 				{
@@ -167,11 +167,11 @@ public partial class NB_player : RigidBody2D
 				updateInventoryText();
 			} 
 		}
-		if (Input.IsActionPressed("place"))
+		if (Input.IsActionPressed("place") && (left_on_ground || right_on_ground))
 		{
 			if (place_delay <= 0)
 			{
-				place_delay = 0.2f;
+				place_delay = 0.1f;
 
 				int indexer_cool = 0;
 				foreach (string a in inventory.Keys)
