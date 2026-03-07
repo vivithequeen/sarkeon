@@ -612,7 +612,7 @@ public partial class Sand : TileMapLayer
 		return chunks_update_list.Distinct().Count();
 	}
 	//! Public for player
-	public Dictionary<string, int> digSquare(Vector2I p_global_position, int size, int hit_strength)
+	public Dictionary<string, int> digSquare(Vector2I p_global_position, int size, int hit_strength, int amount)
 	{
 		Dictionary<string, int> return_val = new Dictionary<string, int>{};
 		for (int x =  - size; x < size; x++)
@@ -625,8 +625,13 @@ public partial class Sand : TileMapLayer
 				if (chunks.ContainsKey(key))
 				{
 					string temp = chunks[key].pop_pixel_str(position_offset, hit_strength);
-					if (temp != "")
+					if (temp != "" && temp != "Air")
 					{
+						amount --;
+						if (amount < 0)
+						{
+							return return_val;
+						}
 						if (return_val.ContainsKey(temp))
 						{
 							return_val[temp] += 1;

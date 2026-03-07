@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
 
 public partial class NB_player : RigidBody2D
 {
@@ -101,6 +102,9 @@ public partial class NB_player : RigidBody2D
 	[Export]
 	public float jump_debouncer_max_timer = 0;
 	public float jump_debouncer_timer = 0;
+	[Export]
+	public int inventory_size_max = 0;
+	private int inventory_size = 0;
 
 	public override void _Ready()
 	{
@@ -153,16 +157,19 @@ public partial class NB_player : RigidBody2D
 			if (destroy_delay <= 0)
 			{
 				destroy_delay = 0.1f;
-				Dictionary<string, int> temp = sand.digSquare((Vector2I) cursor_ik_node.GlobalPosition, 3, hit_strength);
+				int left_space = inventory_size_max - inventory_size;
+				Dictionary<string, int> temp = sand.digSquare((Vector2I) cursor_ik_node.GlobalPosition, 3, hit_strength, left_space);
 				foreach (string a in temp.Keys)
 				{
+					int temp_additive = Math.Min(temp[a], left_space);
 					if (inventory.ContainsKey(a))
 					{
-						inventory[a] += temp[a];
+						inventory[a] += temp_additive;
 					} else
 					{
-						inventory[a] = temp[a];
+						inventory[a] = temp_additive;
 					}
+					inventory_size += temp_additive;
 				}
 				updateInventoryText();
 			} 
@@ -179,7 +186,9 @@ public partial class NB_player : RigidBody2D
 					if (a == "Air") {continue;}
 					if(indexer_cool == place_index) 
 					{
-						inventory[a] -= sand.placeSquare((Vector2I) cursor_ik_node.GlobalPosition, 3, inventory[a], a);
+						int temp_remover = sand.placeSquare((Vector2I) cursor_ik_node.GlobalPosition, 3, inventory[a], a);
+						inventory[a] -= temp_remover;
+						inventory_size -= temp_remover;
 						if (inventory[a] == 0)
 						{
 							inventory.Remove(a);

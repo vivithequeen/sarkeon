@@ -166,6 +166,7 @@ update_scale = false
 
 [node name="RayCast2D" type="RayCast2D" parent="Player position" unique_id=1480249273]
 collision_mask = 4
+hit_from_inside = true
 
 [node name="Left_raycasts" type="Node2D" parent="Player position" unique_id=205047360]
 position = Vector2(-3.398898, 1.4305668)
@@ -174,14 +175,17 @@ scale = Vector2(0.9999986, 0.9999986)
 [node name="Leg_raycast_l" type="RayCast2D" parent="Player position/Left_raycasts" unique_id=361760065]
 target_position = Vector2(0, 40)
 collision_mask = 4
+hit_from_inside = true
 
 [node name="Leg_footing_raycast_l" type="RayCast2D" parent="Player position/Left_raycasts" unique_id=2072229218]
 target_position = Vector2(0, 40)
 collision_mask = 4
+hit_from_inside = true
 
 [node name="Leg_footing_midle_raycast_l" type="RayCast2D" parent="Player position/Left_raycasts" unique_id=2137182428]
 target_position = Vector2(0, 40)
 collision_mask = 4
+hit_from_inside = true
 
 [node name="Right_raycasts" type="Node2D" parent="Player position" unique_id=49068835]
 position = Vector2(4.064312, 2.7220469)
@@ -256,7 +260,7 @@ texture = ExtResource("9_m2ki8")
 [node name="ArmBackLower" type="Sprite2D" parent="Player position/visuals/Booty/Torso/ArmBack" unique_id=1493996283]
 position = Vector2(-28.456818, 115.68169)
 rotation = 0.516794
-scale = Vector2(1.0021265, 1.0021265)
+scale = Vector2(1.0021257, 1.0021257)
 texture = ExtResource("10_kl5wk")
 
 [node name="Line2D" type="Line2D" parent="Player position/visuals/Booty/Torso" unique_id=1401991416]
@@ -292,7 +296,7 @@ texture = ExtResource("13_3cyvi")
 
 [node name="LegFronLower" type="Sprite2D" parent="Player position/visuals/Booty/LegFront" unique_id=180533285]
 position = Vector2(-15.171097, 152.37193)
-scale = Vector2(0.9991132, 0.9991132)
+scale = Vector2(0.99911296, 0.99911296)
 texture = ExtResource("14_3o7oh")
 
 [node name="Body" type="Skeleton2D" parent="Player position" unique_id=1411844443]

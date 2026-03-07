@@ -1361,17 +1361,13 @@ scale = Vector2(0.9878538, 0.9878538)
 
 [node name="ArmFrontLower" parent="Player/Player position/visuals/Booty/Torso/ArmFront" index="0" unique_id=1084457233]
 position = Vector2(-67.44352, 87.67662)
-scale = Vector2(1.0028386, 1.0028386)
 
 [node name="ArmBack" parent="Player/Player position/visuals/Booty/Torso" parent_id_path=PackedInt32Array(336296722, 1357397652) index="3" unique_id=607020100]
 position = Vector2(81.93547, -27.936798)
 
 [node name="ArmBackLower" parent="Player/Player position/visuals/Booty/Torso/ArmBack" index="0" unique_id=1493996283]
 position = Vector2(-28.456875, 115.68164)
-scale = Vector2(1.0021213, 1.0021213)
-
-[node name="LegFronLower" parent="Player/Player position/visuals/Booty/LegFront" parent_id_path=PackedInt32Array(336296722, 1553434517) index="0" unique_id=180533285]
-scale = Vector2(0.9991132, 0.9991132)
+scale = Vector2(1.0021124, 1.0021124)
 
 [node name="body" parent="Player/Player position/Body/Base" parent_id_path=PackedInt32Array(336296722, 1439864877) index="1" unique_id=476512565]
 rotation = 3.1415925
@@ -1391,7 +1387,7 @@ rotation = 0.516795
 
 [node name="leg_upper_l" parent="Player/Player position/Body/Base" parent_id_path=PackedInt32Array(336296722, 1439864877) index="2" unique_id=1756337715]
 rotation = 1.6689528
-scale = Vector2(0.9999943, 0.9999943)
+scale = Vector2(0.9999942, 0.9999942)
 
 [node name="leg_upper_r" parent="Player/Player position/Body/Base" parent_id_path=PackedInt32Array(336296722, 1439864877) index="3" unique_id=1168277833]
 rotation = -0.033305526
@@ -1426,5 +1422,9 @@ offset_top = -14.0
 offset_right = 153.0
 offset_bottom = 9.0
 text = "WASD - MOVE"
+
+[node name="Objects" type="Node2D" parent="." unique_id=1334200861]
+
+[node name="Door" type="Node2D" parent="Objects" unique_id=159795464]
 
 [editable path="Player"]
