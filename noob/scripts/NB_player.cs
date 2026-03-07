@@ -95,7 +95,6 @@ public partial class NB_player : RigidBody2D
 	public float hit_range = 10f;
 	private float place_delay = 0;
 	private int place_index = 0;
-	private bool place_debouncer = true;
 	//! Sprites
 	[Export]
 	public  Godot.Collections.Array<Sprite2D> to_flip_sprites;
@@ -126,29 +125,21 @@ public partial class NB_player : RigidBody2D
 	}
 	private void inventoryActions() 
 	{
-		if (Input.IsActionPressed("choose_up")) {
-			if (place_debouncer) 
-			{
-				place_debouncer = false;
-				place_index = (place_index - 1 < 0 ? inventory.Count - 1: place_index) - 1;
-				updateInventoryText();
-			}
-		} else if (Input.IsActionPressed("choose_down")) 
-		{ 
-			if (place_debouncer) 
-			{
-				place_debouncer = false;
-				place_index = (place_index + 1) % (inventory.Count - 1);
-				updateInventoryText();
-			}
-		} else 
+		if (inventory.Count == 0) {return;}
+		if (Input.IsActionJustPressed("choose_up")) 
 		{
-			if (!place_debouncer) 
-			{
-				place_debouncer = true;
-				updateInventoryText();
-			}
+			place_index = (place_index - 1 < 0 ? inventory.Count: place_index) - 1;
+			updateInventoryText();
+		} 
+		if (Input.IsActionJustPressed("choose_down")) 
+		{ 
+			place_index = (place_index + 1) % inventory.Count;
+			updateInventoryText();
 		}
+		if (Input.IsActionJustPressed("inv_1")) {place_index = 0; updateInventoryText();}
+		if (Input.IsActionJustPressed("inv_2")) {place_index = 1; updateInventoryText();}
+		if (Input.IsActionJustPressed("inv_3")) {place_index = 2; updateInventoryText();}
+		if (Input.IsActionJustPressed("inv_4")) {place_index = 3; updateInventoryText();}
 	}
 	private void checkCursor()
 	{
