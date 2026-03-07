@@ -614,6 +614,8 @@ public partial class Sand : TileMapLayer
 	//! Public for player
 	public Dictionary<string, int> digSquare(Vector2I p_global_position, int size, int hit_strength, int amount)
 	{
+		GD.Print(amount);
+		if (amount <= 0) {return new Dictionary<string, int>{};}
 		Dictionary<string, int> return_val = new Dictionary<string, int>{};
 		for (int x =  - size; x < size; x++)
 		{

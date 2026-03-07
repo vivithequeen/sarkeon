@@ -194,7 +194,7 @@ public partial class NB_player : RigidBody2D
 	}
 	private void updateInventoryText() 
 	{
-		inv_text.Text = "Inventory:";
+		inv_text.Text = "Inventory: " + inventory_size.ToString() + "/" + inventory_size_max.ToString();
 		int indexer_cool = 0;
 		foreach (string a in inventory.Keys)
 		{

@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bf1yn4xulhhf7" path="res://assets/sand/particles/MainColors.png" id="2_703fy"]
 [ext_resource type="Texture2D" uid="uid://c8as7v4sxsa6l" path="res://noob/assets/color/color_pallet.png" id="3_5kyfp"]
 [ext_resource type="Script" uid="uid://cqu6k1janosbw" path="res://noob/scripts/Sand.cs" id="4_qg533"]
+[ext_resource type="PackedScene" uid="uid://dc6gcw1w0lcpg" path="res://noob/scenes/Game_objects/door.tscn" id="5_703fy"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dyd1a"]
 texture = ExtResource("2_703fy")
@@ -1357,17 +1358,18 @@ sand = NodePath("../../Sand")
 
 [node name="ArmFront" parent="Player/Player position/visuals/Booty/Torso" parent_id_path=PackedInt32Array(336296722, 1357397652) index="0" unique_id=1896090014]
 position = Vector2(-19.6709, -3.9624481)
-scale = Vector2(0.9878538, 0.9878538)
+scale = Vector2(0.98785406, 0.98785406)
 
 [node name="ArmFrontLower" parent="Player/Player position/visuals/Booty/Torso/ArmFront" index="0" unique_id=1084457233]
-position = Vector2(-67.44352, 87.67662)
+position = Vector2(-67.44351, 87.67662)
+scale = Vector2(1.0028427, 1.0028427)
 
 [node name="ArmBack" parent="Player/Player position/visuals/Booty/Torso" parent_id_path=PackedInt32Array(336296722, 1357397652) index="3" unique_id=607020100]
 position = Vector2(81.93547, -27.936798)
 
 [node name="ArmBackLower" parent="Player/Player position/visuals/Booty/Torso/ArmBack" index="0" unique_id=1493996283]
 position = Vector2(-28.456875, 115.68164)
-scale = Vector2(1.0021124, 1.0021124)
+scale = Vector2(1.0021067, 1.0021067)
 
 [node name="body" parent="Player/Player position/Body/Base" parent_id_path=PackedInt32Array(336296722, 1439864877) index="1" unique_id=476512565]
 rotation = 3.1415925
@@ -1387,7 +1389,7 @@ rotation = 0.516795
 
 [node name="leg_upper_l" parent="Player/Player position/Body/Base" parent_id_path=PackedInt32Array(336296722, 1439864877) index="2" unique_id=1756337715]
 rotation = 1.6689528
-scale = Vector2(0.9999942, 0.9999942)
+scale = Vector2(0.99999416, 0.99999416)
 
 [node name="leg_upper_r" parent="Player/Player position/Body/Base" parent_id_path=PackedInt32Array(336296722, 1439864877) index="3" unique_id=1168277833]
 rotation = -0.033305526
@@ -1425,6 +1427,6 @@ text = "WASD - MOVE"
 
 [node name="Objects" type="Node2D" parent="." unique_id=1334200861]
 
-[node name="Door" type="Node2D" parent="Objects" unique_id=159795464]
+[node name="Door" parent="Objects" unique_id=910241174 instance=ExtResource("5_703fy")]
 
 [editable path="Player"]
