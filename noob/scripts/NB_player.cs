@@ -180,6 +180,10 @@ public partial class NB_player : RigidBody2D
 					if(indexer_cool == place_index) 
 					{
 						inventory[a] -= sand.placeSquare((Vector2I) cursor_ik_node.GlobalPosition, 3, inventory[a], a);
+						if (inventory[a] == 0)
+						{
+							inventory.Remove(a);
+						}
 						break;
 					}
 					indexer_cool += 1;
