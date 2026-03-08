@@ -267,6 +267,13 @@ public partial class Sand : TileMapLayer
 					"Wall",
 					p_strong: 800
 				));
+				particle_list.Add("Wall_bg", new NB_particle(
+					NB_type.SOLID,
+					false,
+					[],
+					"Wall_bg",
+					p_strong: 800
+				));
 				particle_list.Add("Concrete_wall", new NB_particle(
 					NB_type.SOLID,
 					true,
@@ -319,6 +326,9 @@ public partial class Sand : TileMapLayer
 					{
 						case Vector2I(0,5):
 							particleCellPlace(createParticle(coords, "Wall"));
+							break;
+						case Vector2I(0,6):
+							particleCellPlace(createParticle(coords, "Wall_bg"));
 							break;
 						case Vector2I(0,7):
 							particleCellPlace(createParticle(coords, "Concrete_wall"));
@@ -544,6 +554,10 @@ public partial class Sand : TileMapLayer
 					case "Wall":
 						color_variation = Math.Clamp(color_variation, 0, 4);
 						return_particle.color = new Vector2I(color_variation, 5);
+						break;
+					case "Wall_bg":
+						color_variation = Math.Clamp(color_variation, 0, 4);
+						return_particle.color = new Vector2I(color_variation, 6);
 						break;
 					case "Concrete_wall":
 						color_variation = Math.Clamp(color_variation, 0, 4);

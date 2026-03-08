@@ -25,3 +25,5 @@ To remix just download repo and import with godot mono 4.6 and up ;))
 1 - Ground / player
 2 - Water
 3 - Raycast Ground
+4 - Interactables / collision
+5 - Interactables / dialogue

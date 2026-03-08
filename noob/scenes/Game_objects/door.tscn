@@ -1,12 +1,56 @@
 [gd_scene format=3 uid="uid://dc6gcw1w0lcpg"]
 
+[ext_resource type="Texture2D" uid="uid://5yiu4380u283" path="res://noob/assets/placeholders/door.png" id="1_eqads"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wxcpn"]
+atlas = ExtResource("1_eqads")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6mci5"]
+atlas = ExtResource("1_eqads")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_l3ul8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wxcpn")
+}],
+"loop": true,
+"name": &"close",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6mci5")
+}],
+"loop": true,
+"name": &"open",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_iupgw"]
+size = Vector2(10, 96)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bkutl"]
-size = Vector2(4, 98)
+size = Vector2(10, 96)
 
 [node name="Door" type="Node2D" unique_id=910241174]
 
-[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=2042976075]
+[node name="door_visual" type="AnimatedSprite2D" parent="." unique_id=1439554366]
+scale = Vector2(1.5, 1.5)
+sprite_frames = SubResource("SpriteFrames_l3ul8")
+animation = &"close"
+
+[node name="open_area" type="Area2D" parent="." unique_id=1021180225]
+collision_layer = 8
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="open_area" unique_id=1549089530]
+shape = SubResource("RectangleShape2D_iupgw")
+
+[node name="door_col" type="StaticBody2D" parent="." unique_id=2042976075]
 collision_layer = 5
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1702865211]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="door_col" unique_id=1702865211]
 shape = SubResource("RectangleShape2D_bkutl")
